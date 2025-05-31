@@ -30,13 +30,13 @@ const Header = () => {
           WallArt
         </h1>
       </div>
-      <div className="px-auto relative flex w-full max-w-lg items-center">
+      <div className="relative flex w-full max-w-lg items-center">
         <Search className="absolute top-1/2 left-3 size-5 -translate-y-1/2 transform text-muted-foreground" />
         <Input
           type="text"
           variant="ghost"
           placeholder="Search..."
-          className="py-2 pr-4 pl-10"
+          className="px-10"
         />
       </div>
       <nav className="flex items-center gap-2">
