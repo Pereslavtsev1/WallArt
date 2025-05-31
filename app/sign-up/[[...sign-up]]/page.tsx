@@ -103,7 +103,7 @@ export default function SignUpPage() {
               </SignUp.Step>
 
               <SignUp.Step name="continue">
-                <div className="w-full min-w-sm rounded-xl border border-muted-foreground p-10">
+                <div className="w-full max-w-sm rounded-xl border border-muted-foreground p-10">
                   <div className="flex flex-col gap-6">
                     <header className="grid gap-1">
                       <h1 className="text-lg font-bold">
