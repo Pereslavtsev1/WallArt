@@ -1,15 +1,9 @@
-"use client";
-
-import Header from "./(main-page)/header";
+import Header from "@/components/general/header";
 
 function Home() {
-  return (
-    <div className="flex h-dvh w-full justify-center bg-background text-foreground">
-      <div className="w-full max-w-7xl">
+    return (
         <Header />
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Home;
