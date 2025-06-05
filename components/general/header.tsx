@@ -6,7 +6,6 @@ import Logo from "@/components/ui/Logo";
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 
 import { Search } from "lucide-react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
