@@ -5,27 +5,16 @@ import { Input } from "@/components/ui/input";
 import Logo from "@/components/ui/Logo";
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 
-import { Moon, Plus, Search, Sun } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 
 const Header = () => {
   const router = useRouter();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
   const { user, isLoaded } = useUser();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
 
   return (
     <header className="flex w-full items-center justify-between gap-4 overflow-x-hidden py-2">
