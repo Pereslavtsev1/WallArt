@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import Logo from "@/components/ui/Logo";
 import { SignedIn, SignedOut, useUser } from "@clerk/nextjs";
 
-import { Moon, Search, Sun } from "lucide-react";
+import { Moon, Plus, Search, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +17,7 @@ const Header = () => {
     const router = useRouter();
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const { user, isLoaded, isSignedIn } = useUser();
+    const { user, isLoaded } = useUser();
 
     useEffect(() => {
         setMounted(true);
@@ -53,9 +53,9 @@ const Header = () => {
                         Signup
                     </Button>
                 </SignedOut>
-                {!isLoaded ? <Skeleton className="rounded-full size-9" /> :
+                {!isLoaded ? <Skeleton className="size-9 rounded-full" /> :
                     <SignedIn>
-                        <Link href="/user-profile">
+                        <Link href="/settings">
                             {isLoaded && user?.imageUrl && (
                                 <Image
                                     src={user.imageUrl}
@@ -71,23 +71,10 @@ const Header = () => {
                 }
                 <Button
                     variant="ghost"
-                    onClick={toggleTheme}
+                    onClick={() => router.push("/upload-image")}
                     className="hidden sm:flex"
-                    aria-label={
-                        mounted
-                            ? `Switch to ${theme === "light" ? "dark" : "light"} mode`
-                            : "Toggle theme"
-                    }
                 >
-                    {mounted ? (
-                        theme === "light" ? (
-                            <Sun className="size-5" />
-                        ) : (
-                            <Moon className="size-5" />
-                        )
-                    ) : (
-                        <div className="size-5" />
-                    )}
+                    <Plus className="size-6" />
                 </Button>
             </nav>
         </header >
