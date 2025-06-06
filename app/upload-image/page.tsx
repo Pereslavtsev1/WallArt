@@ -236,10 +236,6 @@ export default function FileUploadDropzone() {
         .map((file) => uploadFile(file.file));
 
       await Promise.all(uploadPromises);
-
-      const allFilesUploaded = files.every(
-        (file) => file.uploaded || file.error,
-      );
       const hasFailedUploads = files.some((file) => file.error);
 
       if (hasFailedUploads) {
