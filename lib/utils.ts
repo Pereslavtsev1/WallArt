@@ -35,7 +35,7 @@ export const wallpaperFormSchema = z.object({
 
 export type WallpaperFormData = z.infer<typeof wallpaperFormSchema>;
 
-export const calculateFileHash = async (file: File): Promise<string> => {
+export const calculateFileHash = async (file: File) => {
   const buffer = await file.arrayBuffer();
   const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
