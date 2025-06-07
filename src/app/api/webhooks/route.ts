@@ -10,6 +10,8 @@ export async function POST(req: NextRequest) {
     const { id } = evt.data;
     const eventType = evt.type;
     console.log(evt.data);
+    console.log(id);
+    console.log(eventType);
     if (evt.type === "user.created") {
       console.log("userId:", evt.data.id);
     }
