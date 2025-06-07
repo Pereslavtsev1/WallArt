@@ -1,8 +1,8 @@
 "use client";
-import Header from "@/components/general/header";
-import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Header from "../components/general/header";
+import { Button } from "../components/ui/button";
 
 function Home() {
   const router = useRouter();

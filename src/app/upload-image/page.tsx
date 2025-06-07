@@ -4,18 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, CheckCircle, Loader2, Upload, X } from "lucide-react";
-import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import { useDropzone, type FileRejection } from "react-dropzone";
-import { toast } from "sonner";
-import { v4 as uuid } from "uuid";
 import {
   calculateFileHash,
   cn,
   WallpaperFormData,
   wallpaperFormSchema,
 } from "@/lib/utils";
+import { AlertCircle, CheckCircle, Loader2, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
+import { useDropzone, type FileRejection } from "react-dropzone";
+import { toast } from "sonner";
+import { v4 as uuid } from "uuid";
 
 interface UploadFile {
   id: string;
