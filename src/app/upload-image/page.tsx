@@ -411,7 +411,7 @@ export default function FileUploadDropzone() {
                     >
                       <div className="flex min-w-0 flex-1 items-center space-x-3">
                         <Image
-                          src={file.previewUrl || "/placeholder.svg"}
+                          src={file.previewUrl}
                           alt="Preview"
                           width={40}
                           height={40}
