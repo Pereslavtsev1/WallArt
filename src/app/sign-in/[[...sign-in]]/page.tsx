@@ -1,6 +1,8 @@
 "use client";
-import { Button } from "@/src/components/ui/button";
-import { Icons } from "@/src/components/ui/icons";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/ui/icons";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
 
@@ -22,12 +24,10 @@ export default function SignInPage() {
                     </div>
                     <Clerk.Field name="identifier" className="space-y-2">
                       <Clerk.Label asChild>
-                        <Clerk.Label className="font-semibold">
-                          Email address
-                        </Clerk.Label>
+                        <Label className="font-semibold">Email address</Label>
                       </Clerk.Label>
                       <Clerk.Input type="email" required asChild>
-                        <Clerk.Input
+                        <Input
                           variant="ghost"
                           className="text-sm font-semibold"
                           placeholder="example@gmail.com"
@@ -156,10 +156,10 @@ export default function SignInPage() {
                       </header>
                       <Clerk.Field name="password" className="space-y-2">
                         <Clerk.Label asChild>
-                          <Clerk.Label>Password</Clerk.Label>
+                          <Label>Password</Label>
                         </Clerk.Label>
                         <Clerk.Input type="password" asChild>
-                          <Clerk.Input
+                          <Input
                             variant="ghost"
                             className="text-sm font-semibold"
                           />
