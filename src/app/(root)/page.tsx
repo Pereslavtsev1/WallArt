@@ -3,15 +3,6 @@ import WallpaperList from "@/components/general/wallpapers-lits";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getWallpapers } from "./server/actions";
-import { MenubarShortcut } from "@/components/ui/menubar";
-import {
-  Menubar,
-  MenubarMenu,
-  MenubarTrigger,
-  MenubarContent,
-  MenubarItem,
-  MenubarSeparator,
-} from "@radix-ui/react-menubar";
 
 export default async function Home() {
   const initinalWallpapers = await getWallpapers({ page: 1 });
@@ -23,6 +14,7 @@ export default async function Home() {
         <Button asChild>
           <Link href="/upload-image">Upload Wallpaper</Link>
         </Button>
+        <div></div>
       </div>
       <WallpaperList
         className="py-10"
