@@ -22,6 +22,7 @@ const TagsInput = ({
   value: selectedTags,
   onChange: setSelectedTags,
   tags,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onBlur,
 }: TagsInputProps) => {
   const [open, setOpen] = useState(false);
