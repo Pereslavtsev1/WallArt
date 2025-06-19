@@ -65,6 +65,7 @@ export async function createWallpaper(
         await tx.insert(wallpapersToTags).values(wallpaperTagsInsert);
       }
 
+      revalidatePath("/");
       return { id: wallpaperId, userId: user.userId };
     });
     console.log(result);
@@ -106,7 +107,6 @@ export async function getWallpapers({
         .offset(offset);
     }
 
-    revalidatePath("/");
     return await query.limit(limit).offset(offset);
   } catch (error) {
     console.error("Failed to fetch wallpapers:", error);
