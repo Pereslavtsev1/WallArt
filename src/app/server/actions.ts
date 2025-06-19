@@ -48,7 +48,6 @@ export async function createWallpaper(
           userId: user.userId,
         })
         .returning({ id: wallpapersTable.id });
-
       if (!createdWallpaper) {
         throw new Error("Failed to save Wallpaper");
       }

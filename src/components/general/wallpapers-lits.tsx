@@ -16,16 +16,6 @@ const WallpaperList = ({
   const [page, setPage] = useState<number>(1);
   const [ref, inView] = useInView();
 
-  const getAspectRatio = (index: number) => {
-    const patterns = [
-      "aspect-square",
-      "aspect-[2/3]",
-      "aspect-[16/9]",
-      "aspect-[3/2]",
-      "aspect-[4/3]",
-    ];
-    return patterns[index % patterns.length];
-  };
   const loadMoreWallpapers = useCallback(async () => {
     const nextPage = page + 1;
     const newWallpapers = await getWallpapers({ page: nextPage });
@@ -44,30 +34,29 @@ const WallpaperList = ({
 
   return (
     <div
-      className={`${className} columns-2 gap-2 md:columns-3 md:gap-4 lg:columns-4 lg:gap-6`}
+      className={`${className} grid grid-flow-dense auto-rows-[250px] grid-cols-1 gap-6 py-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4`}
     >
-      {wallpapers.map((wallpaper, index) => (
-        <div
-          key={wallpaper.id}
-          className="group relative mb-6 break-inside-avoid overflow-hidden rounded-xl shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
-        >
-          <div className={`${getAspectRatio(index)} relative w-full`}>
+      {wallpapers.map((wallpaper, index) => {
+        const rowSpan = index % 3 === 0 ? 1 : 2;
+        return (
+          <div
+            key={wallpaper.id}
+            className={`group row-span-${rowSpan} relative flex flex-col overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl`}
+          >
             <Image
               src={wallpaper.imageUrl}
               alt={wallpaper.title}
               fill
               className="rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <div className="absolute right-4 bottom-4 left-4 text-white">
-                <h3 className="text-lg font-semibold drop-shadow-lg">
-                  {wallpaper.title}
-                </h3>
-              </div>
+            <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-transparent to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span className="text-lg font-semibold text-white drop-shadow">
+                {wallpaper.title}
+              </span>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <div ref={ref} />
     </div>
   );
