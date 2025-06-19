@@ -1,6 +1,5 @@
 "use client";
 
-import { createWallpaper } from "@/app/(root)/server/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,6 +21,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import TagsInput from "./tags-input";
+import { createWallpaper } from "@/app/server/actions";
 
 interface FileUploadDropzoneProps {
   avalibaleTags: Tag[];

@@ -1,4 +1,4 @@
-import { getTags } from "@/app/(root)/server/actions";
+import { getTags } from "@/app/server/actions";
 import FileUploadDropzone from "@/components/general/file-dropzone";
 
 export default async function UploadImagePage() {

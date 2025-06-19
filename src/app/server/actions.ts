@@ -28,10 +28,6 @@ export async function createUser(user: User) {
   }
 }
 
-export async function getAllUsers() {
-  const users = await db.select().from(usersTable);
-  return users;
-}
 export async function createWallpaper(
   wallpaper: Omit<Wallpaper, "userId" | "createdAt">,
   tagsIds: string[],

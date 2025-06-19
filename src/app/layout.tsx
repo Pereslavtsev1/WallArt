@@ -28,9 +28,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <head />
-        <body
-          className={`${openSans.variable} ${geistMono.variable} max-w-7xl px-2 antialiased sm:px-4 md:px-6 lg:px-8 mx-auto`}
-        >
+        <body className={`${openSans.variable} ${geistMono.variable}`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

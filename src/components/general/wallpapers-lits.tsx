@@ -1,5 +1,5 @@
 "use client";
-import { getWallpapers } from "@/app/(root)/server/actions";
+import { getWallpapers } from "@/app/server/actions";
 import type { Wallpaper } from "@/db/schema";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
