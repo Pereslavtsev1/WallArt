@@ -1,4 +1,5 @@
 "use client";
+
 import { getWallpapers } from "@/app/server/actions";
 import type { Wallpaper } from "@/db/schema";
 import Image from "next/image";
@@ -14,17 +15,25 @@ const WallpaperList = ({
 }) => {
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>(initinalWallpapers);
   const [page, setPage] = useState<number>(1);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasMore, setHasMore] = useState<boolean>(true);
   const [ref, inView] = useInView();
 
   const loadMoreWallpapers = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
     const nextPage = page + 1;
     const newWallpapers = await getWallpapers({ page: nextPage });
 
     if (newWallpapers.length) {
       setPage(nextPage);
       setWallpapers((prev) => [...prev, ...newWallpapers]);
+    } else {
+      setHasMore(false);
     }
-  }, [page]);
+    setIsLoading(false);
+  }, [page, isLoading, hasMore]);
 
   useEffect(() => {
     if (inView) {
@@ -57,7 +66,7 @@ const WallpaperList = ({
           </div>
         );
       })}
-      <div ref={ref} />
+      {hasMore && <div ref={ref} />}
     </div>
   );
 };

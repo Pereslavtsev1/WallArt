@@ -86,7 +86,7 @@ export async function getTags() {
 }
 export async function getWallpapers({
   page = 1,
-  limit = 12,
+  limit = 10,
   search,
 }: {
   page?: number;
