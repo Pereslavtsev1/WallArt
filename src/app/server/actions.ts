@@ -10,6 +10,7 @@ import {
 } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function createUser(user: User) {
   console.log(user);
@@ -105,6 +106,7 @@ export async function getWallpapers({
         .offset(offset);
     }
 
+    revalidatePath("/");
     return await query.limit(limit).offset(offset);
   } catch (error) {
     console.error("Failed to fetch wallpapers:", error);
