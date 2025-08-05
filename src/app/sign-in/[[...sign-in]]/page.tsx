@@ -2,66 +2,75 @@
 import * as Clerk from '@clerk/elements/common'
 import * as SignIn from '@clerk/elements/sign-in'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Icons } from '@/components/ui/icons'
 
 export default function SignInPage() {
   return (
-    <div className="flex min-h-dvh w-full items-center justify-center p-6 md:p-10">
-      <SignIn.Root>
-        <Clerk.Loading>
-          {(isGlobalLoading) => (
-            <>
-              <SignIn.Step name="start">
-                <div className="w-full max-w-sm rounded-xl border border-muted-foreground bg-background p-10 text-card-foreground shadow-lg">
-                  <div className="grid gap-6">
-                    <div className="flex flex-col gap-1">
-                      <h1 className="text-lg font-bold">Sign in</h1>
-                      <p className="text-xs font-semibold text-muted-foreground">
-                        Welcome back! Enter your details to continue
+    <main className="flex h-screen items-center">
+      <div className="grid w-full grow items-center px-4 sm:justify-center">
+        <SignIn.Root>
+          <Clerk.Loading>
+            {(isGlobalLoading) => (
+              <>
+                <SignIn.Step name="start">
+                  <Card className="w-full bg-background sm:w-96">
+                    <CardHeader>
+                      <CardTitle>Sign in to WallArt</CardTitle>
+                      <CardDescription className="font-semibold">
+                        Welcome back! Please sign in to continue
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-y-4">
+                      <Clerk.Connection name="google" asChild>
+                        <Button
+                          type="button"
+                          disabled={isGlobalLoading}
+                          className="w-full font-semibold"
+                        >
+                          <Clerk.Loading scope="provider:google">
+                            {(isLoading) =>
+                              isLoading ? (
+                                <Icons.spinner className="size-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Icons.google className="mr-2 size-4" />
+                                  Google
+                                </>
+                              )
+                            }
+                          </Clerk.Loading>
+                        </Button>
+                      </Clerk.Connection>
+                      <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+                        or
                       </p>
-                    </div>
-                    <Clerk.Field name="identifier" className="space-y-2">
-                      <Clerk.Label asChild>
-                        <Label className="font-semibold">Email address</Label>
-                      </Clerk.Label>
-                      <Clerk.Input type="email" required asChild>
-                        <Input
-                          variant="ghost"
-                          className="text-sm font-semibold"
-                          placeholder="example@gmail.com"
-                        />
-                      </Clerk.Input>
-                      <Clerk.FieldError className="block text-sm text-destructive" />
-                    </Clerk.Field>
-                    <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-                      or
-                    </p>
-                    <Clerk.Connection name="google" asChild>
-                      <Button
-                        className="w-full"
-                        type="button"
-                        disabled={isGlobalLoading}
-                      >
-                        <Clerk.Loading scope="provider:google">
-                          {(isLoading) =>
-                            isLoading ? (
-                              <Icons.spinner className="size-4 animate-spin" />
-                            ) : (
-                              <>
-                                <Icons.google className="mr-2 size-4" />
-                                Login with Google
-                              </>
-                            )
-                          }
-                        </Clerk.Loading>
-                      </Button>
-                    </Clerk.Connection>
-                    <footer>
+                      <Clerk.Field name="identifier" className="space-y-2">
+                        <Clerk.Label asChild>
+                          <Label className="font-semibold">Email address</Label>
+                        </Clerk.Label>
+                        <Clerk.Input type="email" required asChild>
+                          <Input className="font-semibold" variant="ghost" />
+                        </Clerk.Input>
+                        <Clerk.FieldError className="block text-sm text-destructive" />
+                      </Clerk.Field>
+                    </CardContent>
+                    <CardFooter>
                       <div className="grid w-full gap-y-4">
                         <SignIn.Action submit asChild>
-                          <Button disabled={isGlobalLoading} className="w-full">
+                          <Button
+                            disabled={isGlobalLoading}
+                            className="font-semibold"
+                          >
                             <Clerk.Loading>
                               {(isLoading) => {
                                 return isLoading ? (
@@ -73,54 +82,52 @@ export default function SignInPage() {
                             </Clerk.Loading>
                           </Button>
                         </SignIn.Action>
+
                         <Button
                           variant="link"
                           size="sm"
                           asChild
-                          className="w-full"
+                          className="font-semibold"
                         >
-                          <Clerk.Link
-                            navigate="sign-up"
-                            className="font-semibold"
-                          >
+                          <Clerk.Link navigate="sign-up">
                             Don&apos;t have an account? Sign up
                           </Clerk.Link>
                         </Button>
                       </div>
-                    </footer>
-                  </div>
-                </div>
-              </SignIn.Step>
+                    </CardFooter>
+                  </Card>
+                </SignIn.Step>
 
-              <SignIn.Step name="choose-strategy">
-                <div className="w-full max-w-sm rounded-xl border border-muted-foreground bg-background p-10">
-                  <div className="grid gap-6">
-                    <header className="grid gap-1">
-                      <h1 className="text-lg font-bold">Use another method</h1>
-                      <p className="text-xs font-semibold text-muted-foreground">
+                <SignIn.Step name="choose-strategy">
+                  <Card className="w-full sm:w-96">
+                    <CardHeader>
+                      <CardTitle>Use another method</CardTitle>
+                      <CardDescription>
                         Facing issues? You can use any of these methods to sign
                         in.
-                      </p>
-                    </header>
-                    <SignIn.SupportedStrategy name="email_code" asChild>
-                      <Button
-                        type="button"
-                        variant="link"
-                        disabled={isGlobalLoading}
-                      >
-                        Email code
-                      </Button>
-                    </SignIn.SupportedStrategy>
-                    <SignIn.SupportedStrategy name="password" asChild>
-                      <Button
-                        type="button"
-                        variant="link"
-                        disabled={isGlobalLoading}
-                      >
-                        Password
-                      </Button>
-                    </SignIn.SupportedStrategy>
-                    <footer>
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-y-4">
+                      <SignIn.SupportedStrategy name="email_code" asChild>
+                        <Button
+                          type="button"
+                          variant="link"
+                          disabled={isGlobalLoading}
+                        >
+                          Email code
+                        </Button>
+                      </SignIn.SupportedStrategy>
+                      <SignIn.SupportedStrategy name="password" asChild>
+                        <Button
+                          type="button"
+                          variant="link"
+                          disabled={isGlobalLoading}
+                        >
+                          Password
+                        </Button>
+                      </SignIn.SupportedStrategy>
+                    </CardContent>
+                    <CardFooter>
                       <div className="grid w-full gap-y-4">
                         <SignIn.Action navigate="previous" asChild>
                           <Button disabled={isGlobalLoading}>
@@ -136,37 +143,31 @@ export default function SignInPage() {
                           </Button>
                         </SignIn.Action>
                       </div>
-                    </footer>
-                  </div>
-                </div>
-              </SignIn.Step>
+                    </CardFooter>
+                  </Card>
+                </SignIn.Step>
 
-              <SignIn.Step name="verifications">
-                <SignIn.Strategy name="password">
-                  <div className="w-full max-w-sm rounded-xl border border-muted-foreground bg-background p-10">
-                    <div className="grid gap-6">
-                      <header className="grid gap-1">
-                        <h1 className="text-lg font-bold">
-                          Enter your password
-                        </h1>
-                        <p className="text-xs font-semibold text-muted-foreground">
-                          Welcome back <SignIn.SafeIdentifier />. Enter your
-                          password below to continue
+                <SignIn.Step name="verifications">
+                  <SignIn.Strategy name="password">
+                    <Card className="w-full sm:w-96">
+                      <CardHeader>
+                        <CardTitle>Enter your password</CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          Welcome back <SignIn.SafeIdentifier />
                         </p>
-                      </header>
-                      <Clerk.Field name="password" className="space-y-2">
-                        <Clerk.Label asChild>
-                          <Label>Password</Label>
-                        </Clerk.Label>
-                        <Clerk.Input type="password" asChild>
-                          <Input
-                            variant="ghost"
-                            className="text-sm font-semibold"
-                          />
-                        </Clerk.Input>
-                        <Clerk.FieldError className="block text-sm text-destructive" />
-                      </Clerk.Field>
-                      <footer>
+                      </CardHeader>
+                      <CardContent className="grid gap-y-4">
+                        <Clerk.Field name="password" className="space-y-2">
+                          <Clerk.Label asChild>
+                            <Label>Password</Label>
+                          </Clerk.Label>
+                          <Clerk.Input type="password" asChild>
+                            <Input />
+                          </Clerk.Input>
+                          <Clerk.FieldError className="block text-sm text-destructive" />
+                        </Clerk.Field>
+                      </CardContent>
+                      <CardFooter>
                         <div className="grid w-full gap-y-4">
                           <SignIn.Action submit asChild>
                             <Button disabled={isGlobalLoading}>
@@ -187,65 +188,67 @@ export default function SignInPage() {
                             </Button>
                           </SignIn.Action>
                         </div>
-                      </footer>
-                    </div>
-                  </div>
-                </SignIn.Strategy>
+                      </CardFooter>
+                    </Card>
+                  </SignIn.Strategy>
 
-                <SignIn.Strategy name="email_code">
-                  <div className="w-full max-w-sm rounded-xl border border-muted-foreground p-10">
-                    <div className="flex flex-col gap-6">
-                      <header className="grid gap-1">
-                        <h1 className="text-lg font-bold">Check your email</h1>
-                        <p className="text-xs font-semibold text-muted-foreground">
+                  <SignIn.Strategy name="email_code">
+                    <Card className="w-full sm:w-96">
+                      <CardHeader>
+                        <CardTitle>Check your email</CardTitle>
+                        <CardDescription>
                           Enter the verification code sent to your email
+                        </CardDescription>
+                        <p className="text-sm text-muted-foreground">
+                          Welcome back <SignIn.SafeIdentifier />
                         </p>
-                      </header>
-                      <Clerk.Field name="code">
-                        <Clerk.Label className="sr-only">
-                          Email verification code
-                        </Clerk.Label>
-                        <div className="grid items-center justify-center gap-y-2">
-                          <div className="flex justify-center text-center">
-                            <Clerk.Input
-                              type="otp"
-                              autoSubmit
-                              className="flex justify-center has-[:disabled]:opacity-50"
-                              render={({ value, status }) => {
-                                return (
-                                  <div
-                                    data-status={status}
-                                    className="relative flex size-12 items-center justify-center border-y border-r border-input font-semibold transition-all first:rounded-l-md first:border-l last:rounded-r-md"
-                                  >
-                                    {value}
-                                  </div>
-                                )
-                              }}
-                            />
-                          </div>
-                          <Clerk.FieldError className="block text-center text-sm text-destructive" />
-                          <SignIn.Action
-                            asChild
-                            resend
-                            className="text-muted-foreground"
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            fallback={({ resendableAfter }: any) => (
-                              <Button variant="link" size="sm" disabled>
-                                Didn&apos;t receive a code? Resend (
-                                <span className="tabular-nums">
-                                  {resendableAfter}
-                                </span>
-                                )
+                      </CardHeader>
+                      <CardContent className="grid gap-y-4">
+                        <Clerk.Field name="code">
+                          <Clerk.Label className="sr-only">
+                            Email verification code
+                          </Clerk.Label>
+                          <div className="grid items-center justify-center gap-y-2">
+                            <div className="flex justify-center text-center">
+                              <Clerk.Input
+                                type="otp"
+                                autoSubmit
+                                className="flex justify-center has-[:disabled]:opacity-50"
+                                render={({ value, status }) => {
+                                  return (
+                                    <div
+                                      data-status={status}
+                                      className="relative flex h-9 w-9 items-center justify-center border-y border-r border-input text-sm shadow-sm transition-all first:rounded-l-md first:border-l last:rounded-r-md data-[status=cursor]:ring-1 data-[status=cursor]:ring-ring data-[status=selected]:ring-1 data-[status=selected]:ring-ring"
+                                    >
+                                      {value}
+                                    </div>
+                                  )
+                                }}
+                              />
+                            </div>
+                            <Clerk.FieldError className="block text-center text-sm text-destructive" />
+                            <SignIn.Action
+                              asChild
+                              resend
+                              className="text-muted-foreground"
+                              fallback={({ resendableAfter }) => (
+                                <Button variant="link" size="sm" disabled>
+                                  Didn&apos;t receive a code? Resend (
+                                  <span className="tabular-nums">
+                                    {resendableAfter}
+                                  </span>
+                                  )
+                                </Button>
+                              )}
+                            >
+                              <Button variant="link" size="sm">
+                                Didn&apos;t receive a code? Resend
                               </Button>
-                            )}
-                          >
-                            <Button variant="link" size="sm">
-                              Didn&apos;t receive a code? Resend
-                            </Button>
-                          </SignIn.Action>
-                        </div>
-                      </Clerk.Field>
-                      <footer>
+                            </SignIn.Action>
+                          </div>
+                        </Clerk.Field>
+                      </CardContent>
+                      <CardFooter>
                         <div className="grid w-full gap-y-4">
                           <SignIn.Action submit asChild>
                             <Button disabled={isGlobalLoading}>
@@ -266,15 +269,15 @@ export default function SignInPage() {
                             </Button>
                           </SignIn.Action>
                         </div>
-                      </footer>
-                    </div>
-                  </div>
-                </SignIn.Strategy>
-              </SignIn.Step>
-            </>
-          )}
-        </Clerk.Loading>
-      </SignIn.Root>
-    </div>
+                      </CardFooter>
+                    </Card>
+                  </SignIn.Strategy>
+                </SignIn.Step>
+              </>
+            )}
+          </Clerk.Loading>
+        </SignIn.Root>
+      </div>
+    </main>
   )
 }
