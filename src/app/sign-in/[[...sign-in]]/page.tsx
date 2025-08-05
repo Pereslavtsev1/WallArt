@@ -231,7 +231,8 @@ export default function SignInPage() {
                               asChild
                               resend
                               className="text-muted-foreground"
-                              fallback={({ resendableAfter }) => (
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              fallback={({ resendableAfter }: any) => (
                                 <Button variant="link" size="sm" disabled>
                                   Didn&apos;t receive a code? Resend (
                                   <span className="tabular-nums">
