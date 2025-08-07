@@ -5,7 +5,7 @@ export function useSearch() {
   const context = useContext(SearchContext)
 
   if (context === undefined) {
-    throw new Error('usesearch must be used within a search-provider')
+    throw new Error('useSettings must be used within a search-provider')
   }
 
   return context

@@ -1,6 +1,4 @@
 'use client'
-import * as Clerk from '@clerk/elements/common'
-import * as SignIn from '@clerk/elements/sign-in'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -10,9 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Icons } from '@/components/ui/icons'
+import * as Clerk from '@clerk/elements/common'
+import * as SignIn from '@clerk/elements/sign-in'
 
 export default function SignInPage() {
   return (

@@ -3,6 +3,7 @@ import { SignedIn, SignedOut } from '@clerk/nextjs'
 import { Wallpaper } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation'
+import UserItem from '../general/user-item/user-item'
 
 const Header = () => {
   const router = useRouter()
@@ -28,7 +29,15 @@ const Header = () => {
           </Button>
         </div>
       </SignedOut>
-      <SignedIn></SignedIn>
+      <SignedIn>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => router.push('/settings')}
+        >
+          <UserItem />
+        </Button>
+      </SignedIn>
     </header>
   )
 }
