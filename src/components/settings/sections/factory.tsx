@@ -3,6 +3,8 @@ import Appearance from './appearance'
 import General from './general'
 import Profile from './profile'
 import Security from './security'
+import Collections from './collections'
+import MyWallpaper from './my-wallpaper'
 
 export interface SectionFactoryProps {
   sectionId: SectionIDs
@@ -18,6 +20,10 @@ class SectionFactory {
         return <Appearance />
       case SectionIDs.SECURITY:
         return <Security userId={userId} />
+      case SectionIDs.COLLECTIONS:
+        return <Collections />
+      case SectionIDs.MYWALLPAPER:
+        return <MyWallpaper />
       default:
         const exhaustiveCheck: never = sectionId
         throw new Error(`Unhandled section ID: ${exhaustiveCheck}`)

@@ -4,6 +4,7 @@ import { Wallpaper } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation'
 import UserItem from '../general/user-item/user-item'
+import Search from '../general/search/search'
 
 const Header = () => {
   const router = useRouter()
@@ -13,6 +14,7 @@ const Header = () => {
         <Wallpaper />
         <h1 className="text-lg font-bold">WallArt</h1>
       </div>
+      <Search />
       <SignedOut>
         <div className="flex items-center gap-x-2">
           <Button

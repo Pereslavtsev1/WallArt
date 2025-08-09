@@ -1,6 +1,5 @@
 'use client'
 
-import { SectionIDs } from '@/components/providers/settings-provider'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -8,7 +7,7 @@ import SettingsSection from './section'
 
 const General = () => {
   return (
-    <SettingsSection id={SectionIDs.GENERAL}>
+    <SettingsSection>
       <SettingsSection.Header
         title="General Settings"
         description="Manage your general account settings and preferences."
@@ -19,7 +18,7 @@ const General = () => {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label className="font-semibold">Public Profile</Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm font-semibold text-muted-foreground">
                 Allow others to see your profile information.
               </p>
             </div>

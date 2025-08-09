@@ -9,14 +9,13 @@ import {
 import { ReactNode } from 'react'
 
 interface SettingsSectionProps {
-  id: string
   children: ReactNode
   className?: string
 }
 
 interface SettingsHeaderProps {
-  title: string
-  description: string
+  title?: string
+  description?: string
   children?: ReactNode
   className?: string
 }
@@ -31,8 +30,8 @@ interface SettingsFooterProps {
   className?: string
 }
 
-const SettingsSection = ({ children, className, id }: SettingsSectionProps) => (
-  <section id={id}>
+const SettingsSection = ({ children, className }: SettingsSectionProps) => (
+  <section>
     <Card className={`${className} w-full space-y-2 bg-background`}>
       {children}
     </Card>
@@ -43,10 +42,17 @@ const SettingsSectionHeader = ({
   title,
   description,
   className,
+  children,
 }: SettingsHeaderProps) => (
   <CardHeader className={`${className} font-semibold`}>
-    <CardTitle>{title}</CardTitle>
-    <CardDescription>{description}</CardDescription>
+    {children ? (
+      children
+    ) : (
+      <>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </>
+    )}
   </CardHeader>
 )
 

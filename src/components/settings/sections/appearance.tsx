@@ -1,6 +1,5 @@
 'use client'
 
-import { SectionIDs } from '@/components/providers/settings-provider'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { useTheme } from 'next-themes'
@@ -10,7 +9,7 @@ const Appearance = () => {
   const { theme, setTheme } = useTheme()
 
   return (
-    <SettingsSection id={SectionIDs.APPEARANCE}>
+    <SettingsSection>
       <SettingsSection.Header
         title="Appearance"
         description="Customize the appearance of the application."

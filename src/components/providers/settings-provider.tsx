@@ -6,6 +6,8 @@ export enum SectionIDs {
   SECURITY = 'Security',
   GENERAL = 'General',
   APPEARANCE = 'Appearance',
+  COLLECTIONS = 'Collections',
+  MYWALLPAPER = 'My wallpaper',
 }
 type SettingsStore = {
   activeSection: SectionIDs

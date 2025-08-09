@@ -11,7 +11,7 @@ import SettingsSection from './section'
 const Security = ({ userId }: { userId: string }) => {
   const sessions = fetchSessions(userId)
   return (
-    <SettingsSection id={SectionIDs.SECURITY}>
+    <SettingsSection>
       <SettingsSection.Header
         title="Security Settings"
         description="Manage your account security and authentication preferences."
