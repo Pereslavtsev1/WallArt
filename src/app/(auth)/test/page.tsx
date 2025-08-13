@@ -1,8 +1,7 @@
 'use client'
-import WallpaperUpload from '@/components/general/modals/wallpaper-upload'
 
 const Page = () => {
-  return <WallpaperUpload />
+  return <h1>Hello world</h1>
 }
 
 export default Page

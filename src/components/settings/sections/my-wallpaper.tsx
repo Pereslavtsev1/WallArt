@@ -41,7 +41,7 @@ export default function MyWallpaper() {
         </div>
         <Button onClick={() => toggle()}>
           <PlusIcon className="h-4 w-4" />
-          <span className="hidden sm:inline">Add wallpaper</span>
+          <span className="hidden font-semibold sm:inline">Add wallpaper</span>
         </Button>
       </SettingsSection.Header>
       <SettingsSection.Content>
