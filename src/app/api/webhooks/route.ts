@@ -1,4 +1,3 @@
-import { createUser } from '@/app/actions/user-actions'
 import { User } from '@/db/schema'
 import { verifyWebhook } from '@clerk/nextjs/webhooks'
 import { NextRequest } from 'next/server'

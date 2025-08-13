@@ -1,10 +1,12 @@
 'use client'
 
+import { createWallpaper } from '@/actions/wallpaper-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useUploadWallpaper } from '@/hooks/use-upload-wallpaper'
 import S3Service from '@/services/S3-service'
+import { useUser } from '@clerk/nextjs'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '@radix-ui/react-label'
 import { useCallback, useState } from 'react'
@@ -35,7 +37,7 @@ const schema = z.object({
 const WallpaperUpload = () => {
   const { open, toggle } = useUploadWallpaper()
   const [file, setFile] = useState<UploadFile>()
-
+  const { user } = useUser()
   const {
     register,
     handleSubmit,
@@ -46,12 +48,6 @@ const WallpaperUpload = () => {
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   })
-
-  const onSubmit = async (data: z.infer<typeof schema>) => {
-    Promise.all([S3Service.uploadFile(data.file)])
-    console.log('here')
-    reset()
-  }
 
   const onFileSelect = useCallback(
     (acceptedFile: File) => {
@@ -71,6 +67,22 @@ const WallpaperUpload = () => {
     },
     [setValue, trigger]
   )
+
+  if (!user) {
+    return
+  }
+  const onSubmit = async (data: z.infer<typeof schema>) => {
+    const key = await S3Service.uploadFile(data.file)
+    createWallpaper({
+      title: data.title,
+      description: data.description,
+      authorId: user.id,
+      key: key,
+    })
+    console.log('here')
+    reset()
+  }
+
   return (
     <ImageUploadDialog open={open} className="ring-0" onOpenChange={toggle}>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>

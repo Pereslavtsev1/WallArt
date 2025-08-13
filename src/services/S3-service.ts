@@ -38,7 +38,10 @@ class S3Service {
     }
   }
 
-  static async uploadFile(file: File, onProgress?: (progress: number) => void) {
+  static async uploadFile(
+    file: File,
+    onProgress?: (progress: number) => void
+  ): Promise<string> {
     const presignedUrlResponse = await S3Service.getPresignedUrl({
       key: uuid(),
       filename: file.name,
