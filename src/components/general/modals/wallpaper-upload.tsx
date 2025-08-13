@@ -9,13 +9,14 @@ import S3Service from '@/services/S3-service'
 import { useUser } from '@clerk/nextjs'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '@radix-ui/react-label'
-import { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
 import Dropzone from '../dropzone/dropzone-input'
 import { SelectedImagePreview } from '../selected-image-preview/selected-image-preview'
 import ImageUploadDialog from './image-upload'
+import { toast } from 'sonner'
+import { useCallback, useState } from 'react'
 
 export type UploadFile = {
   key: string
@@ -41,7 +42,7 @@ const WallpaperUpload = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     trigger,
     setValue,
     reset,
@@ -72,15 +73,35 @@ const WallpaperUpload = () => {
     return
   }
   const onSubmit = async (data: z.infer<typeof schema>) => {
-    const key = await S3Service.uploadFile(data.file)
-    createWallpaper({
-      title: data.title,
-      description: data.description,
-      authorId: user.id,
-      key: key,
-    })
-    console.log('here')
-    reset()
+    try {
+      const key = await S3Service.uploadFile(data.file)
+      if (key) {
+        await createWallpaper({
+          title: data.title,
+          description: data.description,
+          authorId: user.id,
+          key: key,
+        })
+        toast.success('Wallpaper Uploaded', {
+          description: 'Your wallpaper has been successfully uploaded!',
+        })
+      } else {
+        console.error('Failed to get a key from S3 upload.')
+        toast.error('Upload Failed', {
+          description:
+            'Could not get a key for the uploaded file. Please try again.',
+        })
+      }
+    } catch (error) {
+      console.error('Error uploading wallpaper:', error)
+      toast.error('Upload Error', {
+        description: 'An unexpected error occurred during the upload process.',
+      })
+    } finally {
+      reset()
+      setFile(undefined)
+      toggle()
+    }
   }
 
   return (
@@ -145,7 +166,7 @@ const WallpaperUpload = () => {
 
         <ImageUploadDialog.Footer>
           <Button type="submit" className="font-semibold">
-            Upload
+            {isSubmitting ? 'Uploading...' : 'Upload'}
           </Button>
           <Button variant="outline" className="font-semibold" onClick={toggle}>
             Cancel
