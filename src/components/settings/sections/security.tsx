@@ -1,4 +1,3 @@
-import { SectionIDs } from '@/components/providers/settings-provider'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'

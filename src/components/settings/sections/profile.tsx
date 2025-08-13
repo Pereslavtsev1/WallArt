@@ -9,31 +9,6 @@ import { ImageIcon } from 'lucide-react'
 import SettingsSection from './section'
 const Profile = () => {
   const user = useUser()
-
-  const collections = [
-    {
-      id: '4',
-      title: 'City Skyline',
-      imageUrl:
-        'https://images.unsplash.com/photo-1750841896955-23adce921f6f?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'A stunning view of a city skyline at sunset.',
-    },
-
-    {
-      id: '5',
-      title: 'City Skyline',
-      imageUrl:
-        'https://images.unsplash.com/photo-1750841896955-23adce921f6f?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'A stunning view of a city skyline at sunset.',
-    },
-    {
-      id: '6',
-      title: 'City Skyline',
-      imageUrl:
-        'https://images.unsplash.com/photo-1750841896955-23adce921f6f?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'A stunning view of a city skyline at sunset.',
-    },
-  ]
   return (
     <>
       <SettingsSection>
