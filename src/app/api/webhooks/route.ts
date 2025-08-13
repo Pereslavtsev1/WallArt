@@ -8,13 +8,11 @@ export async function POST(req: NextRequest) {
     const evt = await verifyWebhook(req)
 
     if (evt.type === 'user.created') {
-      if (!evt.data.username) {
-        throw new Error("User name can't be empty")
-      }
-
       const user: User = {
         id: evt.data.id,
-        username: evt.data.username,
+        username: evt.data.username
+          ? evt.data.username
+          : evt.data.email_addresses[0].email_address,
         createdAt: new Date(evt.data.created_at),
       }
       await createUser(user)
