@@ -2,7 +2,7 @@
 
 import { UploadCloudIcon } from 'lucide-react';
 import { useCallback } from 'react';
-import { FileRejection, useDropzone } from 'react-dropzone';
+import { type FileRejection, useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { formatFileSize } from '@/utils/functions';

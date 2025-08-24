@@ -1,18 +1,17 @@
 import { useForm } from 'react-hook-form';
 import z from 'zod';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useCreateCollectionStore } from '@/stores/create-collection-store';
-import { Button } from '@/components/ui/button';
 
 const schema = z.object({
   title: z.string().min(4, { message: 'Title must be at least 4 characters' }),

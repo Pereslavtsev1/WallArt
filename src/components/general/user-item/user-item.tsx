@@ -1,8 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const UserItem = () => {
-  const user = useUser()
+  const user = useUser();
   return (
     <div>
       <Avatar>
@@ -10,7 +10,7 @@ const UserItem = () => {
         <AvatarFallback>{user.user?.username}</AvatarFallback>
       </Avatar>
     </div>
-  )
-}
+  );
+};
 
-export default UserItem
+export default UserItem;

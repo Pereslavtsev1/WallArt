@@ -1,15 +1,15 @@
-'use client'
-import { Button } from '@/components/ui/button'
-import { Session } from '@/utils/types'
-import { LogOutIcon } from 'lucide-react'
-import { use } from 'react'
+"use client";
+import { LogOutIcon } from "lucide-react";
+import { use } from "react";
+import { Button } from "@/components/ui/button";
+import type { Session } from "@/utils/types";
 
 export default function DeviceList({
   promise,
 }: {
-  promise: Promise<Session[]>
+  promise: Promise<Session[]>;
 }) {
-  const sessions = use(promise)
+  const sessions = use(promise);
 
   return (
     <div className="w-full space-y-2">
@@ -21,8 +21,8 @@ export default function DeviceList({
           >
             <div className="w-full space-y-1 truncate">
               <p className="truncate text-sm">
-                {session.latest_activity.browser_name}{' '}
-                {session.latest_activity.browser_version} on{' '}
+                {session.latest_activity.browser_name}{" "}
+                {session.latest_activity.browser_version} on{" "}
                 {session.latest_activity.device_type}
               </p>
 
@@ -43,5 +43,5 @@ export default function DeviceList({
         <p>No session data available.</p>
       )}
     </div>
-  )
+  );
 }

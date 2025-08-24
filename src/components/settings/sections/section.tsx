@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   Card,
   CardContent,
@@ -5,29 +6,28 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { ReactNode } from 'react'
+} from '@/components/ui/card';
 
 interface SettingsSectionProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 interface SettingsHeaderProps {
-  title?: string
-  description?: string
-  children?: ReactNode
-  className?: string
+  title?: string;
+  description?: string;
+  children?: ReactNode;
+  className?: string;
 }
 
 interface SettingsContentProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 interface SettingsFooterProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 const SettingsSection = ({ children, className }: SettingsSectionProps) => (
@@ -36,7 +36,7 @@ const SettingsSection = ({ children, className }: SettingsSectionProps) => (
       {children}
     </Card>
   </section>
-)
+);
 
 const SettingsSectionHeader = ({
   title,
@@ -54,24 +54,24 @@ const SettingsSectionHeader = ({
       </>
     )}
   </CardHeader>
-)
+);
 
 const SettingsSectionContent = ({
   children,
   className,
 }: SettingsContentProps) => (
   <CardContent className={`${className} space-y-6`}>{children}</CardContent>
-)
+);
 
 const SettingsSectionFooter = ({
   children,
   className,
 }: SettingsFooterProps) => (
   <CardFooter className={className}>{children}</CardFooter>
-)
+);
 
-SettingsSection.Header = SettingsSectionHeader
-SettingsSection.Content = SettingsSectionContent
-SettingsSection.Footer = SettingsSectionFooter
+SettingsSection.Header = SettingsSectionHeader;
+SettingsSection.Content = SettingsSectionContent;
+SettingsSection.Footer = SettingsSectionFooter;
 
-export default SettingsSection
+export default SettingsSection;

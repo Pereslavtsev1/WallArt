@@ -1,13 +1,13 @@
-'use client'
-import { SignedIn, SignedOut } from '@clerk/nextjs'
-import { Wallpaper } from 'lucide-react'
-import { Button } from '../ui/button'
-import { useRouter } from 'next/navigation'
-import UserItem from '../general/user-item/user-item'
-import Search from '../general/search/search'
+"use client";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { Wallpaper } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Search from "../general/search/search";
+import UserItem from "../general/user-item/user-item";
+import { Button } from "../ui/button";
 
 const Header = () => {
-  const router = useRouter()
+  const router = useRouter();
   return (
     <header className="flex h-16 items-center justify-between gap-4 p-4">
       <div className="flex items-center gap-x-2">
@@ -19,13 +19,13 @@ const Header = () => {
         <div className="flex items-center gap-x-2">
           <Button
             className="font-semibold"
-            onClick={() => router.push('/sign-up')}
+            onClick={() => router.push("/sign-up")}
           >
             Sign up
           </Button>
           <Button
             className="font-semibold"
-            onClick={() => router.push('/sign-in')}
+            onClick={() => router.push("/sign-in")}
           >
             Login
           </Button>
@@ -35,13 +35,13 @@ const Header = () => {
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => router.push('/settings')}
+          onClick={() => router.push("/settings")}
         >
           <UserItem />
         </Button>
       </SignedIn>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
