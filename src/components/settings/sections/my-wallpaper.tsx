@@ -1,43 +1,36 @@
 import { EyeIcon, ForwardIcon, PlusIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { findWallpaperById } from '@/actions/wallpaper-actions';
 import ImageCard from '@/components/general/image-card/image-card';
 import { Button } from '@/components/ui/button';
+import { CardDescription, CardTitle } from '@/components/ui/card';
+import type { Wallpaper } from '@/db/schema';
 import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
+import { buildImageUrl } from '@/utils/functions';
 import SettingsSection from './section';
 
-export default function MyWallpaper() {
+export default function MyWallpaper({ userId }: { userId: string }) {
   const { toggle } = useUploadWallpaperStore();
-  const collections = [
-    {
-      id: '4',
-      title: 'City Skyline',
-      imageUrl:
-        'https://images.unsplash.com/photo-1750841896955-23adce921f6f?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'A stunning view of a city skyline at sunset.',
-    },
-    {
-      id: '5',
-      title: 'Mountain Lake',
-      imageUrl:
-        'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'Serene lake nestled among majestic mountains.',
-    },
-    {
-      id: '6',
-      title: 'Forest Path',
-      imageUrl:
-        'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1180&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      description: 'A peaceful path winding through a dense forest.',
-    },
-  ];
-
+  const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
+  useEffect(() => {
+    const fetchWallpapers = async () => {
+      const data = await findWallpaperById(userId);
+      if (data.suscess && data.data) {
+        console.log(data.data);
+        setWallpapers(data.data);
+      }
+    };
+    fetchWallpapers();
+  }, [userId]);
+  console.log(wallpapers);
   return (
     <SettingsSection>
       <SettingsSection.Header className='flex items-center justify-between'>
         <div className='space-y-1.5'>
-          <h2 className='text-2xl font-bold tracking-tight'>My wallpaper</h2>
-          <p className='text-sm text-muted-foreground'>
+          <CardTitle>My wallpaper</CardTitle>
+          <CardDescription className='text-sm text-muted-foreground'>
             Manage your custom wallpapers.
-          </p>
+          </CardDescription>
         </div>
         <Button onClick={() => toggle()}>
           <PlusIcon className='size-4' />
@@ -46,9 +39,12 @@ export default function MyWallpaper() {
       </SettingsSection.Header>
       <SettingsSection.Content>
         <div className='grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 lg:grid-cols-3'>
-          {collections.map((wallpaper) => (
+          {wallpapers.map((wallpaper) => (
             <ImageCard className='bg-background' key={wallpaper.id}>
-              <ImageCard.Image src={wallpaper.imageUrl} alt='Description' />
+              <ImageCard.Image
+                src={buildImageUrl(wallpaper.key)}
+                alt='Description'
+              />
               <ImageCard.Info
                 title={wallpaper.title}
                 description={wallpaper.description}

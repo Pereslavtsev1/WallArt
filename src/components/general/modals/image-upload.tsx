@@ -85,15 +85,9 @@ const ImageUploadDialogFooter = ({
 );
 interface SelectedFilePreviewProps {
   file: UploadFile;
-  onRemove: () => void; // Callback to remove the file
+  onRemove: () => void;
 }
 
-/**
- * A component to display a preview of a selected file, including its name, size,
- * upload progress, and status. Allows removing the file.
- * @param file The UploadFile object to display.
- * @param onRemove Callback function to execute when the remove button is clicked.
- */
 export const SelectedFilePreview = ({
   file,
   onRemove,

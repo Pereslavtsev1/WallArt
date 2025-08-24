@@ -46,6 +46,7 @@ const WallpaperUpload = () => {
     trigger,
     setValue,
     reset,
+    clearErrors,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
@@ -100,6 +101,7 @@ const WallpaperUpload = () => {
     } finally {
       reset();
       setFile(undefined);
+      clearErrors();
       toggle();
     }
   };
@@ -167,7 +169,16 @@ const WallpaperUpload = () => {
           <Button type='submit' className='font-semibold'>
             {isSubmitting ? 'Uploading...' : 'Upload'}
           </Button>
-          <Button variant='outline' className='font-semibold' onClick={toggle}>
+          <Button
+            variant='outline'
+            className='font-semibold'
+            onClick={() => {
+              reset();
+              clearErrors();
+              setFile(undefined);
+              toggle();
+            }}
+          >
             Cancel
           </Button>
         </ImageUploadDialog.Footer>

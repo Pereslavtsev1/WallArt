@@ -1,8 +1,9 @@
 'use client';
 
 import { ImagesIcon, PlusIcon } from 'lucide-react';
-import * as button from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { CardDescription, CardTitle } from '@/components/ui/card';
+import { useCreateCollectionStore } from '@/stores/create-collection-store';
 import CollectionCard from './collection-card';
 import SettingsSection from './section';
 
@@ -32,6 +33,7 @@ const collections = [
 ];
 
 const Collections = () => {
+  const { toggle } = useCreateCollectionStore();
   return (
     <SettingsSection>
       <SettingsSection.Header className='flex items-center justify-between'>
@@ -39,11 +41,10 @@ const Collections = () => {
           <CardTitle>Collections</CardTitle>
           <CardDescription>Browse our wallpaper collections</CardDescription>
         </div>
-        <button.Button>
+        <Button onClick={toggle}>
           <PlusIcon />
-          {/* TODO: change sm:grid */}
-          <span className='hidden sm:grid'>Add collection</span>
-        </button.Button>
+          <span className='hidden sm:inline font-semibold'>Add collection</span>
+        </Button>
       </SettingsSection.Header>
       <SettingsSection.Content>
         <div className='grid grid-cols-1 gap-x-4 gap-y-4 lg:grid-cols-2'>

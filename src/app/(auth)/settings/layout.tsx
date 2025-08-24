@@ -1,4 +1,5 @@
 'use client';
+import CreateCollection from '@/components/general/modals/create-collection';
 import WallpaperUpload from '@/components/general/modals/wallpaper-upload';
 import SettingsSidebar from '@/components/general/settings/sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -14,6 +15,8 @@ export default function RootLayout({
         <SettingsSidebar />
         {children}
       </div>
+
+      <CreateCollection />
       <WallpaperUpload />
     </SidebarProvider>
   );

@@ -15,7 +15,7 @@ interface ImageCardImageProps {
 
 interface ImageCardInfoProps {
   title: string;
-  description: string;
+  description?: string | null;
 }
 
 interface ImageCardActionsProps {

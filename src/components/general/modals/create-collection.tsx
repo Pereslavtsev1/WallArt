@@ -1,9 +1,18 @@
 import { useForm } from 'react-hook-form';
 import z from 'zod';
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useCreateCollectionStore } from '@/stores/create-collection-store';
+import { Button } from '@/components/ui/button';
 
 const schema = z.object({
   title: z.string().min(4, { message: 'Title must be at least 4 characters' }),
@@ -11,15 +20,23 @@ const schema = z.object({
 });
 
 const CreateCollection = () => {
+  const { toggle, open } = useCreateCollectionStore();
   const {
     register,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof schema>>();
   return (
-    <Dialog>
-      <DialogHeader></DialogHeader>
+    <Dialog open={open} onOpenChange={toggle}>
       <DialogContent>
         <div>
+          <DialogTitle className='text-lg font-semibold'>
+            Create collection
+          </DialogTitle>
+          <DialogDescription className='text-sm text-muted-foreground font-semibold'>
+            Create a new collection to organize your wallpapers.
+          </DialogDescription>
+        </div>
+        <div className='flex flex-col gap-y-2'>
           <Label className='text-sm font-semibold'>Title</Label>
           <Input
             variant='ghost'
@@ -32,7 +49,6 @@ const CreateCollection = () => {
             </p>
           )}
         </div>
-
         <div className='flex flex-col gap-y-2'>
           <Label className='text-sm font-semibold'>Wallpaper Description</Label>
           <Textarea
@@ -43,6 +59,14 @@ const CreateCollection = () => {
             className='resize-none text-sm font-semibold placeholder:font-semibold'
           />
         </div>
+        <DialogFooter className='flex flex-row justify-end'>
+          <Button type='submit' className='font-semibold'>
+            {isSubmitting ? 'Uploading...' : 'Upload'}
+          </Button>
+          <Button variant='outline' className='font-semibold' onClick={toggle}>
+            Cancel
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

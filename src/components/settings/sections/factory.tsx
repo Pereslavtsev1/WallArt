@@ -23,7 +23,7 @@ class SectionFactory {
       case SectionIDs.COLLECTIONS:
         return <Collections />;
       case SectionIDs.MYWALLPAPER:
-        return <MyWallpaper />;
+        return <MyWallpaper userId={userId} />;
       default: {
         const exhaustiveCheck: never = sectionId;
         throw new Error(`Unhandled section ID: ${exhaustiveCheck}`);
