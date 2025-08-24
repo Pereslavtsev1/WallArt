@@ -1,9 +1,108 @@
 {
-  "id": "e15277a5-6993-4c56-8f91-2f0c8b435d48",
+  "id": "9f7f8cbe-39ed-4385-9d87-3918f440ce0d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.collections_table": {
+      "name": "collections_table",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "collections_table_title_unique": {
+          "name": "collections_table_title_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "title"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.collections_to_wallpapers": {
+      "name": "collections_to_wallpapers",
+      "schema": "",
+      "columns": {
+        "wallpaper_id": {
+          "name": "wallpaper_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "collection_id": {
+          "name": "collection_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "collections_to_wallpapers_wallpaper_id_wallpapers_table_id_fk": {
+          "name": "collections_to_wallpapers_wallpaper_id_wallpapers_table_id_fk",
+          "tableFrom": "collections_to_wallpapers",
+          "tableTo": "wallpapers_table",
+          "columnsFrom": [
+            "wallpaper_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "collections_to_wallpapers_collection_id_collections_table_id_fk": {
+          "name": "collections_to_wallpapers_collection_id_collections_table_id_fk",
+          "tableFrom": "collections_to_wallpapers",
+          "tableTo": "collections_table",
+          "columnsFrom": [
+            "collection_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.tags_table": {
       "name": "tags_table",
       "schema": "",
