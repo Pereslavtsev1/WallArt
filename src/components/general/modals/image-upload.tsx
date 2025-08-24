@@ -1,6 +1,9 @@
-'use client'
+'use client';
 
-import type { ReactNode } from 'react'
+import { X } from 'lucide-react';
+import Image from 'next/image';
+import type { ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,35 +11,32 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { UploadFile } from './wallpaper-upload'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { formatFileSize, getStatusIcon } from '@/utils/functions'
-import { X } from 'lucide-react'
+} from '@/components/ui/dialog';
+import { formatFileSize, getStatusIcon } from '@/utils/functions';
+import type { UploadFile } from './wallpaper-upload';
 
 interface ImageUploadDialogProps {
-  children: ReactNode
-  open: boolean
-  onOpenChange?: (open: boolean) => void
-  className?: string
+  children: ReactNode;
+  open: boolean;
+  onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 interface ImageUploadHeaderProps {
-  title?: string
-  description?: string
-  children?: ReactNode
-  className?: string
+  title?: string;
+  description?: string;
+  children?: ReactNode;
+  className?: string;
 }
 
 interface ImageUploadContentProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 interface ImageUploadFooterProps {
-  children: ReactNode
-  className?: string
+  children: ReactNode;
+  className?: string;
 }
 
 const ImageUploadDialog = ({
@@ -50,7 +50,7 @@ const ImageUploadDialog = ({
       {children}
     </DialogContent>
   </Dialog>
-)
+);
 
 const ImageUploadDialogHeader = ({
   title,
@@ -68,24 +68,24 @@ const ImageUploadDialogHeader = ({
       </>
     )}
   </DialogHeader>
-)
+);
 
 const ImageUploadDialogContent = ({
   children,
   className,
 }: ImageUploadContentProps) => (
   <div className={`${className} space-y-4`}>{children}</div>
-)
+);
 
 const ImageUploadDialogFooter = ({
   children,
   className,
 }: ImageUploadFooterProps) => (
   <DialogFooter className={className}>{children}</DialogFooter>
-)
+);
 interface SelectedFilePreviewProps {
-  file: UploadFile
-  onRemove: () => void // Callback to remove the file
+  file: UploadFile;
+  onRemove: () => void; // Callback to remove the file
 }
 
 /**
@@ -100,70 +100,70 @@ export const SelectedFilePreview = ({
 }: SelectedFilePreviewProps) => {
   return (
     <>
-      <h3 className="text-sm font-semibold">Selected File</h3>
-      <div className="space-y-2">
+      <h3 className='text-sm font-semibold'>Selected File</h3>
+      <div className='space-y-2'>
         <div
           key={file.key}
-          className="flex items-center justify-between rounded-lg border border-input p-3"
+          className='flex items-center justify-between rounded-lg border border-input p-3'
         >
-          <div className="flex min-w-0 flex-1 items-center space-x-3">
+          <div className='flex min-w-0 flex-1 items-center space-x-3'>
             <Image
               src={
                 file.previewUrl ||
                 '/placeholder.svg?height=40&width=40&query=file preview'
               }
-              alt="Preview"
+              alt='Preview'
               width={40}
               height={40}
-              className="rounded object-cover"
+              className='rounded object-cover'
             />
-            <div className="font-semibold">
-              <p className="max-w-40 truncate text-sm">{file.file.name}</p>
-              <p className="text-xs text-muted-foreground">
+            <div className='font-semibold'>
+              <p className='max-w-40 truncate text-sm'>{file.file.name}</p>
+              <p className='text-xs text-muted-foreground'>
                 {formatFileSize(file.file.size)}
               </p>
               {file.uploading && (
                 <div>
-                  <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div className='h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
                     <div
-                      className="h-2 rounded-full bg-blue-600 transition-all duration-300"
+                      className='h-2 rounded-full bg-blue-600 transition-all duration-300'
                       style={{ width: `${file.progress}%` }}
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className='text-xs text-muted-foreground'>
                     {file.progress}% uploaded
                   </p>
                 </div>
               )}
               {file.error && (
-                <p className="text-xs text-red-500">
+                <p className='text-xs text-red-500'>
                   Upload failed. Please try again.
                 </p>
               )}
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className='flex items-center space-x-2'>
             {getStatusIcon(file)}
             <Button
-              variant="ghost"
-              size="sm"
-              className="size-8 p-0"
-              type="button"
+              variant='ghost'
+              size='sm'
+              className='size-8 p-0'
+              type='button'
               onClick={onRemove}
               disabled={file.uploading || file.uploaded}
             >
-              <X className="size-4" />
+              <X className='size-4' />
             </Button>
           </div>
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-ImageUploadDialog.SelectedFilePreview = SelectedFilePreview
-ImageUploadDialog.Header = ImageUploadDialogHeader
-ImageUploadDialog.Content = ImageUploadDialogContent
-ImageUploadDialog.Footer = ImageUploadDialogFooter
+ImageUploadDialog.SelectedFilePreview = SelectedFilePreview;
+ImageUploadDialog.Header = ImageUploadDialogHeader;
+ImageUploadDialog.Content = ImageUploadDialogContent;
+ImageUploadDialog.Footer = ImageUploadDialogFooter;
 
-export default ImageUploadDialog
+export default ImageUploadDialog;

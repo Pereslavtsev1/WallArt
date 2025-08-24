@@ -1,39 +1,38 @@
-import Image from 'next/image'
-import type React from 'react'
-import type { ReactNode } from 'react'
+import Image from 'next/image';
+import type { ReactNode } from 'react';
 
-interface ImageCardProps {
-  className: string
-  children: ReactNode
+interface ImageCardRootProps {
+  children: ReactNode;
+  className?: string;
 }
 
 interface ImageCardImageProps {
-  src: string
-  alt: string
-  children?: ReactNode
-  asChild?: boolean
+  src: string;
+  alt: string;
+  children?: ReactNode;
+  asChild?: boolean;
 }
 
 interface ImageCardInfoProps {
-  title: string
-  description: string
+  title: string;
+  description: string;
 }
 
 interface ImageCardActionsProps {
-  children?: ReactNode
+  children: ReactNode;
 }
 
-const ImageCard = ({ children, className }: ImageCardProps) => {
+const ImageCard = ({ children, className }: ImageCardRootProps) => {
   return (
     <div
-      className={`${className} relative flex flex-col gap-y-4 overflow-hidden rounded-lg border bg-background pb-4 shadow-sm`}
+      className={`${className ?? ''} relative flex flex-col gap-y-4 overflow-hidden rounded-lg border bg-background pb-4 shadow-sm`}
     >
       {children}
     </div>
-  )
-}
+  );
+};
 
-const ImageCardImage = ({
+const ImageComponent = ({
   src,
   alt,
   children,
@@ -44,30 +43,31 @@ const ImageCardImage = ({
       {asChild ? (
         children
       ) : (
-        <div className="relative aspect-video">
-          <Image src={src} alt={alt} fill className="object-cover" />
+        <div className='relative aspect-video'>
+          <Image src={src} alt={alt} fill className='object-cover' />
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-const ImageCardInfo = ({ title, description }: ImageCardInfoProps) => {
+const Info = ({ title, description }: ImageCardInfoProps) => {
   return (
-    <div className="px-4">
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="line-clamp-1 text-sm font-semibold text-muted-foreground">
+    <div className='px-4'>
+      <h3 className='text-lg font-semibold'>{title}</h3>
+      <p className='line-clamp-1 text-sm font-semibold text-muted-foreground'>
         {description}
       </p>
     </div>
-  )
-}
+  );
+};
 
-const ImageCardActions = ({ children }: ImageCardActionsProps) => {
-  return <div className="flex space-x-2 px-4">{children}</div>
-}
+const Actions = ({ children }: ImageCardActionsProps) => {
+  return <div className='flex space-x-2 px-4'>{children}</div>;
+};
 
-ImageCard.Image = ImageCardImage
-ImageCard.Info = ImageCardInfo
-ImageCard.Actions = ImageCardActions
-export default ImageCard
+ImageCard.Image = ImageComponent;
+ImageCard.Info = Info;
+ImageCard.Actions = Actions;
+
+export default ImageCard;

@@ -1,6 +1,13 @@
-'use client'
-import { SectionIDs } from '@/components/providers/settings-provider'
-import { Button } from '@/components/ui/button'
+'use client';
+import {
+  Folders,
+  ImageIcon,
+  Palette,
+  Settings,
+  Shield,
+  User,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarGroup,
@@ -11,21 +18,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { useSettings } from '@/hooks/use-settings'
-import { cn } from '@/lib/utils'
-import {
-  Folders,
-  ImageIcon,
-  Palette,
-  Settings,
-  Shield,
-  User,
-} from 'lucide-react'
+} from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
+import { SectionIDs, useSettingsStore } from '@/stores/settings-store';
 
 const SettingsSidebar = () => {
-  const { activeSection, setActiveSection } = useSettings()
-  const { setOpenMobile } = useSidebar()
+  const { activeSection, setActiveSection } = useSettingsStore();
+  const { setOpenMobile } = useSidebar();
   const settingsNavigation = [
     {
       title: 'Account',
@@ -61,36 +60,36 @@ const SettingsSidebar = () => {
         },
       ],
     },
-  ]
+  ];
   return (
-    <Sidebar variant="sidebar" className="relative w-80 border-none">
-      <SidebarHeader className="bg-background">
-        <h1 className="px-2 text-xl font-bold">Settings</h1>
+    <Sidebar variant='sidebar' className='relative w-80 border-none'>
+      <SidebarHeader className='bg-background'>
+        <h1 className='px-2 text-xl font-bold'>Settings</h1>
       </SidebarHeader>
-      <div className="h-full bg-background">
+      <div className='h-full bg-background'>
         {settingsNavigation.map((group) => (
           <SidebarGroup key={group.title}>
-            <SidebarGroupLabel className="font-semibold">
+            <SidebarGroupLabel className='font-semibold'>
               {group.title}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (
-                  <SidebarMenuItem key={item.section} className="px-2">
+                  <SidebarMenuItem key={item.section} className='px-2'>
                     <SidebarMenuButton asChild>
                       <Button
                         className={cn(
                           'h-10 justify-start font-semibold transition-colors duration-300',
-                          activeSection === item.section ? 'bg-accent' : ''
+                          activeSection === item.section ? 'bg-accent' : '',
                         )}
-                        variant="ghost"
+                        variant='ghost'
                         onClick={() => {
-                          setActiveSection(item.section)
-                          setOpenMobile(false)
+                          setActiveSection(item.section);
+                          setOpenMobile(false);
                         }}
                       >
                         <item.icon />
-                        <span className="truncate">{item.section}</span>
+                        <span className='truncate'>{item.section}</span>
                       </Button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -101,7 +100,7 @@ const SettingsSidebar = () => {
         ))}
       </div>
     </Sidebar>
-  )
-}
+  );
+};
 
-export default SettingsSidebar
+export default SettingsSidebar;

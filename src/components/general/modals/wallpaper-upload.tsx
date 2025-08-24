@@ -1,44 +1,44 @@
-'use client'
+'use client';
 
-import { createWallpaper } from '@/actions/wallpaper-actions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { useUploadWallpaper } from '@/hooks/use-upload-wallpaper'
-import S3Service from '@/services/S3-service'
-import { useUser } from '@clerk/nextjs'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Label } from '@radix-ui/react-label'
-import { useForm } from 'react-hook-form'
-import { v4 as uuid } from 'uuid'
-import { z } from 'zod'
-import Dropzone from '../dropzone/dropzone-input'
-import { SelectedImagePreview } from '../selected-image-preview/selected-image-preview'
-import ImageUploadDialog from './image-upload'
-import { toast } from 'sonner'
-import { useCallback, useState } from 'react'
+import { useUser } from '@clerk/nextjs';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Label } from '@radix-ui/react-label';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { v4 as uuid } from 'uuid';
+import { z } from 'zod';
+import { createWallpaper } from '@/actions/wallpaper-actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import S3Service from '@/services/S3-service';
+import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
+import Dropzone from '../dropzone/dropzone-input';
+import { SelectedImagePreview } from '../selected-image-preview/selected-image-preview';
+import ImageUploadDialog from './image-upload';
 
 export type UploadFile = {
-  key: string
-  file: File
-  uploading: boolean
-  progress: number
-  uploaded: boolean
-  error: boolean
-  previewUrl: string
-}
+  key: string;
+  file: File;
+  uploading: boolean;
+  progress: number;
+  uploaded: boolean;
+  error: boolean;
+  previewUrl: string;
+};
 const schema = z.object({
   title: z.string().min(4, { message: 'Title must be at least 4 characters' }),
   description: z.optional(z.string()),
   file: z.instanceof(File).refine((file) => file.size > 0, {
     message: 'File is required.',
   }),
-})
+});
 
 const WallpaperUpload = () => {
-  const { open, toggle } = useUploadWallpaper()
-  const [file, setFile] = useState<UploadFile>()
-  const { user } = useUser()
+  const { open, toggle } = useUploadWallpaperStore();
+  const [file, setFile] = useState<UploadFile>();
+  const { user } = useUser();
   const {
     register,
     handleSubmit,
@@ -48,11 +48,11 @@ const WallpaperUpload = () => {
     reset,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-  })
+  });
 
   const onFileSelect = useCallback(
     (acceptedFile: File) => {
-      const file = acceptedFile
+      const file = acceptedFile;
       const newFile = {
         key: uuid(),
         file,
@@ -61,88 +61,87 @@ const WallpaperUpload = () => {
         uploaded: false,
         error: false,
         previewUrl: URL.createObjectURL(file),
-      }
-      setFile(newFile)
-      setValue('file', acceptedFile, { shouldValidate: true })
-      trigger('file')
+      };
+      setFile(newFile);
+      setValue('file', acceptedFile, { shouldValidate: true });
+      trigger('file');
     },
-    [setValue, trigger]
-  )
+    [setValue, trigger],
+  );
 
   if (!user) {
-    return
+    return;
   }
   const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
-      const key = await S3Service.uploadFile(data.file)
+      const key = await S3Service.uploadFile(data.file);
       if (key) {
         await createWallpaper({
           title: data.title,
           description: data.description,
           authorId: user.id,
           key: key,
-        })
+        });
         toast.success('Wallpaper Uploaded', {
           description: 'Your wallpaper has been successfully uploaded!',
-        })
+        });
       } else {
-        console.error('Failed to get a key from S3 upload.')
+        console.error('Failed to get a key from S3 upload.');
         toast.error('Upload Failed', {
           description:
             'Could not get a key for the uploaded file. Please try again.',
-        })
+        });
       }
     } catch (error) {
-      console.error('Error uploading wallpaper:', error)
+      console.error('Error uploading wallpaper:', error);
       toast.error('Upload Error', {
         description: 'An unexpected error occurred during the upload process.',
-      })
+      });
     } finally {
-      reset()
-      setFile(undefined)
-      toggle()
+      reset();
+      setFile(undefined);
+      toggle();
     }
-  }
+  };
 
   return (
-    <ImageUploadDialog open={open} className="ring-0" onOpenChange={toggle}>
-      <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+    <ImageUploadDialog open={open} className='ring-0' onOpenChange={toggle}>
+      <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
         <ImageUploadDialog.Header
-          title="Upload Wallpaper"
-          description="Drag and drop your image here, or click to select a file."
-          className="font-semibold"
+          title='Upload Wallpaper'
+          description='Drag and drop your image here, or click to select a file.'
+          className='font-semibold'
         />
 
         <ImageUploadDialog.Content>
-          <div className="flex flex-col gap-y-2">
-            <Label className="text-sm font-semibold">Title</Label>
+          <div className='flex flex-col gap-y-2'>
+            <Label className='text-sm font-semibold'>Title</Label>
             <Input
-              variant="ghost"
+              variant='ghost'
               {...register('title')}
-              className="text-sm font-semibold"
+              className='text-sm font-semibold'
             />
             {errors.title && (
-              <p className="text-xs font-semibold text-red-500">
+              <p className='text-xs font-semibold text-red-500'>
                 {errors.title.message}
               </p>
             )}
           </div>
 
-          <div className="flex flex-col gap-y-2">
-            <Label className="text-sm font-semibold">
+          <div className='flex flex-col gap-y-2'>
+            <Label className='text-sm font-semibold'>
               Wallpaper Description
             </Label>
             <Textarea
-              id="message"
-              placeholder="Enter your message"
+              placeholder='Enter your message'
               {...register('description')}
-              variant="ghost"
+              variant='ghost'
               rows={4}
-              className="resize-none text-sm font-semibold placeholder:font-semibold"
+              className='resize-none text-sm font-semibold placeholder:font-semibold'
             />
           </div>
 
-          <div className="flex flex-col gap-y-2">
+          <div className='flex flex-col gap-y-2'>
             {file ? (
               <SelectedImagePreview
                 file={file}
@@ -150,14 +149,14 @@ const WallpaperUpload = () => {
               />
             ) : (
               <Dropzone
-                className="border-input font-semibold text-muted-foreground"
+                className='border-input font-semibold text-muted-foreground'
                 onFileSelected={onFileSelect}
                 maxFiles={1}
                 maxSize={10 * 1024 * 1024}
               />
             )}
             {errors.file && (
-              <p className="text-xs font-semibold text-red-500">
+              <p className='text-xs font-semibold text-red-500'>
                 Please select a wallpaper file.
               </p>
             )}
@@ -165,16 +164,16 @@ const WallpaperUpload = () => {
         </ImageUploadDialog.Content>
 
         <ImageUploadDialog.Footer>
-          <Button type="submit" className="font-semibold">
+          <Button type='submit' className='font-semibold'>
             {isSubmitting ? 'Uploading...' : 'Upload'}
           </Button>
-          <Button variant="outline" className="font-semibold" onClick={toggle}>
+          <Button variant='outline' className='font-semibold' onClick={toggle}>
             Cancel
           </Button>
         </ImageUploadDialog.Footer>
       </form>
     </ImageUploadDialog>
-  )
-}
+  );
+};
 
-export default WallpaperUpload
+export default WallpaperUpload;
