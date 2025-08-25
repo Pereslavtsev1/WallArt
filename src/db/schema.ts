@@ -12,6 +12,7 @@ export const wallpapersTable = pgTable('wallpapers_table', {
   description: varchar('description'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   authorId: varchar('authorId').references(() => usersTable.id),
+  collectionId: uuid('collection_id').references(() => collectionsTable.id),
   key: varchar('key').notNull().unique(),
 });
 
@@ -33,6 +34,9 @@ export const collectionsTable = pgTable('collections_table', {
   title: varchar('title').notNull().unique(),
   description: varchar('description'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
+  userId: varchar('userId')
+    .notNull()
+    .references(() => usersTable.id),
 });
 
 export const collectionsToWallpapersTable = pgTable(

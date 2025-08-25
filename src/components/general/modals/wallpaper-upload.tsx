@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@radix-ui/react-label';
 import { useCallback, useState } from 'react';
@@ -38,7 +38,7 @@ const schema = z.object({
 const WallpaperUpload = () => {
   const { open, toggle } = useUploadWallpaperStore();
   const [file, setFile] = useState<UploadFile>();
-  const { user } = useUser();
+  const { userId } = useAuth();
   const {
     register,
     handleSubmit,
@@ -70,17 +70,20 @@ const WallpaperUpload = () => {
     [setValue, trigger],
   );
 
-  if (!user) {
-    return;
-  }
   const onSubmit = async (data: z.infer<typeof schema>) => {
+    if (!userId) {
+      toast.error('Authentication Required', {
+        description: 'You must be logged in to upload a wallpaper.',
+      });
+      return;
+    }
     try {
       const key = await S3Service.uploadFile(data.file);
       if (key) {
         await createWallpaper({
           title: data.title,
           description: data.description,
-          authorId: user.id,
+          authorId: userId,
           key: key,
         });
         toast.success('Wallpaper Uploaded', {

@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       };
       const promise = createUser(user);
       const promise2 = createCollection({
+        userId: user.id,
         title: 'Favorites',
         description: 'My favorite wallpapers',
       });
