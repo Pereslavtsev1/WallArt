@@ -1,14 +1,18 @@
+import { auth } from '@clerk/nextjs/server';
+import { Label } from '@radix-ui/react-label';
 import { Key } from 'lucide-react';
-import { Suspense } from 'react';
+import SettingsSection from '@/components/settings/sections/section';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { fetchSessions } from '@/utils/types';
-import DeviceList from './device-list';
-import SettingsSection from './section';
+import { getUserSessions } from '@/actions/user-actions';
+import DeviceList from '@/components/settings/sections/device-list';
+import { Suspense } from 'react';
 
-const Security = ({ userId }: { userId: string }) => {
-  const sessions = fetchSessions(userId);
+export async function SecuritySettings() {
+  const { userId } = await auth();
+  if (!userId) return;
+  const sessions = getUserSessions(userId);
+
   return (
     <SettingsSection>
       <SettingsSection.Header
@@ -42,9 +46,9 @@ const Security = ({ userId }: { userId: string }) => {
       </SettingsSection.Content>
     </SettingsSection>
   );
-};
+}
 
-export default Security;
+export default SecuritySettings;
 
 const DeviceListSkeleton = () => {
   return (

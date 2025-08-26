@@ -27,12 +27,19 @@ export type Session = {
   tasks: { key: string }[];
 };
 
-export const fetchSessions = async (userId: string) => {
-  const response = await fetch(`/api/sessions?userId=${userId}`);
+export async function getUserSessions(userId: string) {
+  const url = `https://api.clerk.com/v1/sessions?user_id=${userId}&status=active&paginated=false`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  console.log(response);
 
   if (!response.ok) {
     throw new Error('Failed to fetch sessions');
   }
 
   return response.json();
-};
+}

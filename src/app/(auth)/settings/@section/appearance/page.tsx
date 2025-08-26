@@ -1,11 +1,11 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import SettingsSection from '@/components/settings/sections/section';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import SettingsSection from './section';
 
-const Appearance = () => {
+const AppearancePage = () => {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -90,4 +90,4 @@ const Appearance = () => {
   );
 };
 
-export default Appearance;
+export default AppearancePage;

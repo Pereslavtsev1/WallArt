@@ -16,14 +16,8 @@ export async function createWallpaper(wallpaper: Wallpaper) {
   }
 }
 
-export async function findWallpaperById(userId: string) {
-  try {
-    const result = await db.query.wallpapersTable.findMany({
-      where: eq(wallpapersTable.authorId, userId),
-    });
-    return { suscess: true, data: result };
-  } catch (error) {
-    console.error('Error creating wallpaper:', error);
-    return { success: false, error: 'Failed to create wallpaper.' };
-  }
+export async function findAllWallpapersByUserId(userId: string) {
+  return await db.query.wallpapersTable.findMany({
+    where: eq(wallpapersTable.userId, userId),
+  });
 }

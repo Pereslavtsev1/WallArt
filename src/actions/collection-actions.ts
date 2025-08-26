@@ -42,7 +42,7 @@ export async function findAllCollectionsByUserId1(userId: string) {
 }
 
 export async function findAllCollectionsByUserId(userId: string) {
-  return await db.query.collectionsTable.findMany({
+  return db.query.collectionsTable.findMany({
     where: eq(collectionsTable.userId, userId),
   });
 }

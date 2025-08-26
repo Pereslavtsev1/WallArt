@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Folders,
   ImageIcon,
@@ -7,6 +8,7 @@ import {
   Shield,
   User,
 } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -25,24 +27,31 @@ import { SectionIDs, useSettingsStore } from '@/stores/settings-store';
 const SettingsSidebar = () => {
   const { activeSection, setActiveSection } = useSettingsStore();
   const { setOpenMobile } = useSidebar();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const settingsNavigation = [
     {
       title: 'Account',
       items: [
         {
           section: SectionIDs.PROFILE,
+          label: 'Profile',
           icon: User,
         },
         {
           section: SectionIDs.SECURITY,
+          label: 'Security',
           icon: Shield,
         },
         {
           section: SectionIDs.COLLECTIONS,
+          label: 'Collections',
           icon: Folders,
         },
         {
-          section: SectionIDs.MYWALLPAPER,
+          section: SectionIDs.WALLPAPERS,
+          label: 'Wallpapers',
           icon: ImageIcon,
         },
       ],
@@ -52,15 +61,18 @@ const SettingsSidebar = () => {
       items: [
         {
           section: SectionIDs.GENERAL,
+          label: 'General',
           icon: Settings,
         },
         {
           section: SectionIDs.APPEARANCE,
+          label: 'Appearance',
           icon: Palette,
         },
       ],
     },
   ];
+
   return (
     <Sidebar variant='sidebar' className='relative w-80 border-none'>
       <SidebarHeader className='bg-background'>
@@ -74,26 +86,33 @@ const SettingsSidebar = () => {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.section} className='px-2'>
-                    <SidebarMenuButton asChild>
-                      <Button
-                        className={cn(
-                          'h-10 justify-start font-semibold transition-colors duration-300',
-                          activeSection === item.section ? 'bg-accent' : '',
-                        )}
-                        variant='ghost'
-                        onClick={() => {
-                          setActiveSection(item.section);
-                          setOpenMobile(false);
-                        }}
-                      >
-                        <item.icon />
-                        <span className='truncate'>{item.section}</span>
-                      </Button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {group.items.map((item) => {
+                  const isActive =
+                    activeSection === item.section ||
+                    pathname.endsWith(item.section);
+
+                  return (
+                    <SidebarMenuItem key={item.section} className='px-2'>
+                      <SidebarMenuButton asChild>
+                        <Button
+                          className={cn(
+                            'h-10 justify-start font-semibold transition-colors duration-300',
+                            isActive ? 'bg-accent text-accent-foreground' : '',
+                          )}
+                          variant='ghost'
+                          onClick={() => {
+                            setActiveSection(item.section);
+                            router.push(`/settings/${item.section}`);
+                            setOpenMobile(false);
+                          }}
+                        >
+                          <item.icon className='mr-2 h-5 w-5' />
+                          <span className='truncate'>{item.label}</span>
+                        </Button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

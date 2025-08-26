@@ -1,17 +1,21 @@
 import { create } from 'zustand';
-export enum SectionIDs {
-  PROFILE = 'Profile',
-  SECURITY = 'Security',
-  GENERAL = 'General',
-  APPEARANCE = 'Appearance',
-  COLLECTIONS = 'Collections',
-  MYWALLPAPER = 'My wallpaper',
+export const SectionIDs = {
+  PROFILE: 'profile',
+  SECURITY: 'security',
+  COLLECTIONS: 'collections',
+  WALLPAPERS: 'wallpapers',
+  GENERAL: 'general',
+  APPEARANCE: 'appearance',
+} as const;
+
+export type SectionID = (typeof SectionIDs)[keyof typeof SectionIDs];
+
+interface SettingsState {
+  activeSection: SectionID;
+  setActiveSection: (section: SectionID) => void;
 }
-type SettingsStore = {
-  activeSection: SectionIDs;
-  setActiveSection: (value: SectionIDs) => void;
-};
-export const useSettingsStore = create<SettingsStore>((set) => ({
+
+export const useSettingsStore = create<SettingsState>((set) => ({
   activeSection: SectionIDs.PROFILE,
-  setActiveSection: (value: SectionIDs) => set({ activeSection: value }),
+  setActiveSection: (section) => set({ activeSection: section }),
 }));

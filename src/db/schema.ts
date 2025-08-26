@@ -11,8 +11,7 @@ export const wallpapersTable = pgTable('wallpapers_table', {
   title: varchar('title').notNull(),
   description: varchar('description'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
-  authorId: varchar('authorId').references(() => usersTable.id),
-  collectionId: uuid('collection_id').references(() => collectionsTable.id),
+  userId: varchar('userId').references(() => usersTable.id),
   key: varchar('key').notNull().unique(),
 });
 

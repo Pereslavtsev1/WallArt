@@ -1,12 +1,12 @@
 'use client';
 import { useUser } from '@clerk/nextjs';
 import { ImageIcon } from 'lucide-react';
+import SettingsSection from '@/components/settings/sections/section';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import SettingsSection from './section';
 
 const Profile = () => {
   const user = useUser();
