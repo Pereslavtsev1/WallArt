@@ -1,14 +1,14 @@
 import { auth } from '@clerk/nextjs/server';
 import { Label } from '@radix-ui/react-label';
 import { Key } from 'lucide-react';
+import { Suspense } from 'react';
+import { getUserSessions } from '@/actions/user-actions';
+import DeviceList from '@/components/settings/sections/device-list';
 import SettingsSection from '@/components/settings/sections/section';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getUserSessions } from '@/actions/user-actions';
-import DeviceList from '@/components/settings/sections/device-list';
-import { Suspense } from 'react';
 
-export async function SecuritySettings() {
+export default async function SecuritySection() {
   const { userId } = await auth();
   if (!userId) return;
   const sessions = getUserSessions(userId);
@@ -47,8 +47,6 @@ export async function SecuritySettings() {
     </SettingsSection>
   );
 }
-
-export default SecuritySettings;
 
 const DeviceListSkeleton = () => {
   return (

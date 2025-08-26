@@ -83,7 +83,7 @@ const WallpaperUpload = () => {
         await createWallpaper({
           title: data.title,
           description: data.description,
-          authorId: userId,
+          userId: userId,
           key: key,
         });
         toast.success('Wallpaper Uploaded', {

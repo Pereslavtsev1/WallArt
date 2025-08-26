@@ -5,7 +5,7 @@ import SettingsSection from '@/components/settings/sections/section';
 import WallpaperList from '@/components/settings/sections/wallpaper-list';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 
-export default async function MyWallpaper() {
+export default async function WallpapersSection() {
   const { userId } = await auth();
   if (!userId) {
     return null;
