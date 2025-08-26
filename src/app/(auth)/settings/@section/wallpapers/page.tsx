@@ -10,8 +10,10 @@ export default async function WallpapersSection() {
   if (!userId) {
     return null;
   }
+  console.log(userId);
 
   const wallpapers = findAllWallpapersByUserId(userId);
+  console.log(wallpapers);
 
   return (
     <SettingsSection>

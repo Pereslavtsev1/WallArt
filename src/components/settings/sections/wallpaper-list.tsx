@@ -6,7 +6,9 @@ import type { Wallpaper } from '@/db/schema';
 import { buildImageUrl } from '@/utils/functions';
 
 const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
+  console.log(promise);
   const wallpapers = use(promise);
+
   return (
     <>
       {wallpapers.map((wallpaper) => (
