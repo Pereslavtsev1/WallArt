@@ -9,8 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default async function SecuritySection() {
-  const { userId } = await auth();
-  if (!userId) return;
+  const { userId, redirectToSignIn } = await auth();
+
+  if (!userId) return redirectToSignIn();
   const sessions = getUserSessions(userId);
 
   return (
@@ -37,9 +38,9 @@ export default async function SecuritySection() {
           <div className='space-y-4'>
             <h3 className='font-semibold'>Login History</h3>
             <div className='space-y-3 font-semibold'>
-              <Suspense fallback=<DeviceListSkeleton />>
-                <DeviceList promise={sessions} />
-              </Suspense>
+              {/* <Suspense fallback=<DeviceListSkeleton />> */}
+              {/*   <DeviceList promise={sessions} /> */}
+              {/* </Suspense> */}
             </div>
           </div>
         </div>

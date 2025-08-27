@@ -4,13 +4,14 @@ import { findAllCollectionsByUserId } from '@/actions/collection-actions';
 import CollectionsList from '@/components/settings/sections/collections-list';
 import SettingsSection from '@/components/settings/sections/section';
 export default async function Collections() {
-  const { userId } = await auth();
-  if (!userId) {
-    return;
-  }
-  const collections = findAllCollectionsByUserId(userId);
-  console.log(userId);
+  const { userId, redirectToSignIn } = await auth();
 
+  if (!userId) return redirectToSignIn();
+  console.log(userId);
+  const collections = findAllCollectionsByUserId(userId);
+  if (collections === undefined) {
+    throw new Error('collections undefined');
+  }
   return (
     <SettingsSection>
       <SettingsSection.Content>
