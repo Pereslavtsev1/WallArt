@@ -1,5 +1,5 @@
 {
-  "id": "9f7f8cbe-39ed-4385-9d87-3918f440ce0d",
+  "id": "20d1733c-c363-4453-9f46-6a9faec81ebe",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -33,10 +33,30 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "userId": {
+          "name": "userId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "collections_table_userId_users_table_id_fk": {
+          "name": "collections_table_userId_users_table_id_fk",
+          "tableFrom": "collections_table",
+          "tableTo": "users_table",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "collections_table_title_unique": {
@@ -207,8 +227,20 @@
           "notNull": true,
           "default": "now()"
         },
-        "authorId": {
-          "name": "authorId",
+        "width": {
+          "name": "width",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height": {
+          "name": "height",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -222,12 +254,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "wallpapers_table_authorId_users_table_id_fk": {
-          "name": "wallpapers_table_authorId_users_table_id_fk",
+        "wallpapers_table_userId_users_table_id_fk": {
+          "name": "wallpapers_table_userId_users_table_id_fk",
           "tableFrom": "wallpapers_table",
           "tableTo": "users_table",
           "columnsFrom": [
-            "authorId"
+            "userId"
           ],
           "columnsTo": [
             "id"

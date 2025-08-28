@@ -13,13 +13,13 @@ const Header = () => {
   const { isLoaded } = useAuth();
 
   return (
-    <header className='flex h-16 items-center justify-between gap-4 py-4'>
-      <div className='flex gap-x-2'>
+    <header className='flex items-center justify-between gap-4 py-4'>
+      <div className='flex w-1/6'>
         <Link href={'/'} className='font-bold text-lg'>
           WallArt
         </Link>
       </div>
-      <div className='flex-1 max-w-2xl mx-8'>
+      <div className='max-w-2xl mx-8 w-full'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4' />
           <Input
@@ -30,30 +30,20 @@ const Header = () => {
           />
         </div>
       </div>
-      <div className='flex h-full'>
+      <div className='flex w-1/6 justify-end'>
         {!isLoaded ? (
           <div className='flex gap-x-2'>
-            <Skeleton className='w-20 h-full' />
-
-            <Skeleton className='w-20 h-full' />
+            <Skeleton className='w-[4.5rem] h-8' />
           </div>
         ) : (
           <>
             <SignedOut>
-              <div className='flex items-center gap-x-2'>
-                <Button
-                  className='font-semibold'
-                  onClick={() => router.push('/sign-up')}
-                >
-                  Sign up
-                </Button>
-                <Button
-                  className='font-semibold'
-                  onClick={() => router.push('/sign-in')}
-                >
-                  Login
-                </Button>
-              </div>
+              <Button
+                className='font-semibold text-sm h-8'
+                onClick={() => router.push('/sign-in')}
+              >
+                Login
+              </Button>
             </SignedOut>
             <SignedIn>
               <Button

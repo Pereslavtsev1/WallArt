@@ -26,6 +26,8 @@ export type UploadFile = {
   uploaded: boolean;
   error: boolean;
   previewUrl: string;
+  width: number;
+  height: number;
 };
 const schema = z.object({
   title: z.string().min(4, { message: 'Title must be at least 4 characters' }),
@@ -43,7 +45,6 @@ const WallpaperUpload = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    trigger,
     setValue,
     reset,
     clearErrors,
@@ -53,21 +54,28 @@ const WallpaperUpload = () => {
 
   const onFileSelect = useCallback(
     (acceptedFile: File) => {
-      const file = acceptedFile;
-      const newFile = {
-        key: uuid(),
-        file,
-        uploading: false,
-        progress: 0,
-        uploaded: false,
-        error: false,
-        previewUrl: URL.createObjectURL(file),
+      const previewUrl = URL.createObjectURL(acceptedFile);
+      const image = new Image();
+      image.src = previewUrl;
+
+      image.onload = () => {
+        const newFile: UploadFile = {
+          key: uuid(),
+          file: acceptedFile,
+          uploading: false,
+          progress: 0,
+          uploaded: false,
+          error: false,
+          previewUrl,
+          width: image.naturalWidth,
+          height: image.naturalHeight,
+        };
+        setFile(newFile);
       };
-      setFile(newFile);
+
       setValue('file', acceptedFile, { shouldValidate: true });
-      trigger('file');
     },
-    [setValue, trigger],
+    [setValue],
   );
 
   const onSubmit = async (data: z.infer<typeof schema>) => {
@@ -75,6 +83,10 @@ const WallpaperUpload = () => {
       toast.error('Authentication Required', {
         description: 'You must be logged in to upload a wallpaper.',
       });
+      return;
+    }
+    if (!file) {
+      toast.error('No image selected');
       return;
     }
     try {
@@ -85,6 +97,8 @@ const WallpaperUpload = () => {
           description: data.description,
           userId: userId,
           key: key,
+          width: file.width,
+          height: file.height,
         });
         toast.success('Wallpaper Uploaded', {
           description: 'Your wallpaper has been successfully uploaded!',
@@ -169,7 +183,11 @@ const WallpaperUpload = () => {
         </ImageUploadDialog.Content>
 
         <ImageUploadDialog.Footer>
-          <Button type='submit' className='font-semibold'>
+          <Button
+            type='submit'
+            className='font-semibold'
+            disabled={isSubmitting}
+          >
             {isSubmitting ? 'Uploading...' : 'Upload'}
           </Button>
           <Button

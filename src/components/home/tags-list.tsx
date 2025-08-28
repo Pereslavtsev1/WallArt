@@ -46,11 +46,15 @@ const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
       <div
         ref={containerRef}
         onWheel={handleWheel}
-        className='overflow-x-auto overflow-y-hidden flex gap-x-2 py-4 px-2 cursor-pointer scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+        className='overflow-x-auto overflow-y-hidden flex gap-x-2 py-4 cursor-pointer scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
       >
         {/* TODO: Change tags in db              */}
         {tags.map((tag) => (
-          <Button key={tag.id} className='font-semibold' variant={'ghost'}>
+          <Button
+            key={tag.id}
+            className='font-semibold justify-start'
+            variant={'ghost'}
+          >
             {tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}
           </Button>
         ))}
