@@ -6,8 +6,8 @@ import type { Wallpaper } from '@/db/schema';
 import { buildImageUrl } from '@/utils/functions';
 
 const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
-  console.log(promise);
   const wallpapers = use(promise);
+  console.log(wallpapers);
 
   return (
     <>
@@ -26,7 +26,7 @@ const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
               <EyeIcon className='mt-0.5 size-4' />
               View
             </Button>
-            <Button variant='secondary'>
+            <Button variant='secondary' className='font-semibold'>
               <ForwardIcon />
               Share
             </Button>

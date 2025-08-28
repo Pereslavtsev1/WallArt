@@ -7,9 +7,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
 
+const schema = z.object({
+  title: z.string().min(4, { message: 'Title must be at least 4 characters' }),
+  description: z.optional(z.string()),
+});
 const Profile = () => {
   const user = useUser();
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    reset,
+    clearErrors,
+  } = useForm<z.infer<typeof schema>>();
+
   return (
     <SettingsSection>
       <SettingsSection.Header

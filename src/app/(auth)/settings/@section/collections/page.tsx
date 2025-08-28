@@ -1,8 +1,14 @@
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
 import { findAllCollectionsByUserId } from '@/actions/collection-actions';
-import CollectionsList from '@/components/settings/sections/collections-list';
+import CollectionCard from '@/components/settings/sections/collections/collection-card';
+import CollectionsList from '@/components/settings/sections/collections/collections-list';
 import SettingsSection from '@/components/settings/sections/section';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { CardTitle, CardDescription } from '@/components/ui/card';
+import { PlusIcon } from 'lucide-react';
+import CreateCollectionButton from '@/components/settings/sections/collections/create-collection-button';
 export default async function Collections() {
   const { userId, redirectToSignIn } = await auth();
 
@@ -14,9 +20,17 @@ export default async function Collections() {
   }
   return (
     <SettingsSection>
+      <SettingsSection.Header className='flex items-center justify-between'>
+        <div className='space-y-1.5'>
+          <CardTitle>Collections</CardTitle>
+
+          <CardDescription>Browse our wallpaper collections</CardDescription>
+        </div>
+        <CreateCollectionButton />
+      </SettingsSection.Header>
       <SettingsSection.Content>
         <div className='grid grid-cols-1 gap-x-4 gap-y-4 lg:grid-cols-2'>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<CollectionSkeletonList />}>
             <CollectionsList promise={collections} />
           </Suspense>
         </div>
@@ -24,3 +38,21 @@ export default async function Collections() {
     </SettingsSection>
   );
 }
+const CollectionSkeletonList = () => {
+  return (
+    <>
+      {[...Array(4)].map((_, index) => (
+        <CollectionCard key={index.toString()}>
+          <div className='h-30 space-y-2'>
+            <Skeleton className='size-10 rounded-full mb-4' />
+            <div className='space-y-2'>
+              <Skeleton className='h-5' />
+
+              <Skeleton className='h-10' />
+            </div>
+          </div>
+        </CollectionCard>
+      ))}
+    </>
+  );
+};

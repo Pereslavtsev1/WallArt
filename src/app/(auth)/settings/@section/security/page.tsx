@@ -26,8 +26,8 @@ export default async function SecuritySection() {
             <div className='flex items-center gap-3 font-semibold'>
               <Key className='h-5 w-5 text-primary' />
               <div className='space-y-1'>
-                <Label className='font-semibold'>Password</Label>
-                <p className='text-sm text-muted-foreground'>
+                <Label className='font-semibold text-base'>Password</Label>
+                <p className='text-muted-foreground text-xs'>
                   Change your account password.
                 </p>
               </div>
@@ -38,9 +38,9 @@ export default async function SecuritySection() {
           <div className='space-y-4'>
             <h3 className='font-semibold'>Login History</h3>
             <div className='space-y-3 font-semibold'>
-              {/* <Suspense fallback=<DeviceListSkeleton />> */}
-              {/*   <DeviceList promise={sessions} /> */}
-              {/* </Suspense> */}
+              <Suspense fallback=<DeviceListSkeleton />>
+                <DeviceList promise={sessions} />
+              </Suspense>
             </div>
           </div>
         </div>

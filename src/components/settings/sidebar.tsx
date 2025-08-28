@@ -2,6 +2,7 @@
 
 import {
   Folders,
+  Home,
   ImageIcon,
   Palette,
   Settings,
@@ -28,7 +29,6 @@ const SettingsSidebar = () => {
   const { activeSection, setActiveSection } = useSettingsStore();
   const { setOpenMobile } = useSidebar();
   const router = useRouter();
-  const pathname = usePathname();
 
   const settingsNavigation = [
     {
@@ -79,6 +79,27 @@ const SettingsSidebar = () => {
         <h1 className='px-2 text-xl font-bold'>Settings</h1>
       </SidebarHeader>
       <div className='h-full bg-background'>
+        <SidebarGroup>
+          <SidebarGroupLabel className='font-semibold'>
+            General
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem className='px-2'>
+                <SidebarMenuButton asChild>
+                  <Button
+                    variant={'ghost'}
+                    className='h-10 justify-start font-semibold transition-colors duration-300'
+                    onClick={() => router.push('/')}
+                  >
+                    <Home className='mr-2 h-5 w-5' />
+                    Home
+                  </Button>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         {settingsNavigation.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel className='font-semibold'>
@@ -86,33 +107,27 @@ const SettingsSidebar = () => {
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map((item) => {
-                  const isActive =
-                    activeSection === item.section ||
-                    pathname.endsWith(item.section);
-
-                  return (
-                    <SidebarMenuItem key={item.section} className='px-2'>
-                      <SidebarMenuButton asChild>
-                        <Button
-                          className={cn(
-                            'h-10 justify-start font-semibold transition-colors duration-300',
-                            isActive ? 'bg-accent text-accent-foreground' : '',
-                          )}
-                          variant='ghost'
-                          onClick={() => {
-                            setActiveSection(item.section);
-                            router.push(`/settings/${item.section}`);
-                            setOpenMobile(false);
-                          }}
-                        >
-                          <item.icon className='mr-2 h-5 w-5' />
-                          <span className='truncate'>{item.label}</span>
-                        </Button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.section} className='px-2'>
+                    <SidebarMenuButton asChild>
+                      <Button
+                        className={cn(
+                          'h-10 justify-start font-semibold transition-colors duration-300',
+                          activeSection === item.section ? 'bg-accent/40' : '',
+                        )}
+                        variant='ghost'
+                        onClick={() => {
+                          setActiveSection(item.section);
+                          router.push(`/settings/${item.section}`);
+                          setOpenMobile(false);
+                        }}
+                      >
+                        <item.icon className='mr-2 h-5 w-5' />
+                        <span className='truncate'>{item.label}</span>
+                      </Button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
