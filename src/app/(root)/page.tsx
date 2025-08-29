@@ -3,7 +3,7 @@ import { findAllWallpapers } from '@/actions/wallpaper-actions';
 import Header from '@/components/home/header';
 import Tags from '@/components/home/tags-list';
 import WallpaperList from '@/components/home/wallpaper-list';
-import { wallpapersTable, WallpaperWithUser } from '@/db/schema';
+import { wallpapersTable } from '@/db/schema';
 
 export default async function Home() {
   const tags = findAllTags();

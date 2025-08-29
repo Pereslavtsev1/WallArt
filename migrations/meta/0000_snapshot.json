@@ -1,5 +1,5 @@
 {
-  "id": "394239b2-829b-4d22-b10c-b9083af83fe7",
+  "id": "c0982ed6-7939-45b4-bc68-bfc207b9282d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -276,110 +276,6 @@
           ]
         }
       },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.wallpapers_to_tags": {
-      "name": "wallpapers_to_tags",
-      "schema": "",
-      "columns": {
-        "wallpaper_id": {
-          "name": "wallpaper_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "tag_id": {
-          "name": "tag_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk": {
-          "name": "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk",
-          "tableFrom": "wallpapers_to_tags",
-          "tableTo": "wallpapers_table",
-          "columnsFrom": [
-            "wallpaper_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "wallpapers_to_tags_tag_id_tags_table_id_fk": {
-          "name": "wallpapers_to_tags_tag_id_tags_table_id_fk",
-          "tableFrom": "wallpapers_to_tags",
-          "tableTo": "tags_table",
-          "columnsFrom": [
-            "tag_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.wallpapers_to_users": {
-      "name": "wallpapers_to_users",
-      "schema": "",
-      "columns": {
-        "wallpaper_id": {
-          "name": "wallpaper_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "wallpapers_to_users_wallpaper_id_wallpapers_table_id_fk": {
-          "name": "wallpapers_to_users_wallpaper_id_wallpapers_table_id_fk",
-          "tableFrom": "wallpapers_to_users",
-          "tableTo": "wallpapers_table",
-          "columnsFrom": [
-            "wallpaper_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "wallpapers_to_users_user_id_users_table_id_fk": {
-          "name": "wallpapers_to_users_user_id_users_table_id_fk",
-          "tableFrom": "wallpapers_to_users",
-          "tableTo": "users_table",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

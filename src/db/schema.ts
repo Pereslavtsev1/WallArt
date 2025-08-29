@@ -29,7 +29,9 @@ export const wallpapersTable = pgTable('wallpapers_table', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   width: integer('width').notNull(),
   height: integer('height').notNull(),
-  userId: varchar('user_id').references(() => usersTable.id),
+  userId: varchar('user_id')
+    .references(() => usersTable.id)
+    .notNull(),
   fileKey: varchar('file_key').notNull().unique(),
 });
 
@@ -106,6 +108,6 @@ export type Wallpaper = typeof wallpapersTable.$inferInsert;
 export type Collection = typeof collectionsTable.$inferInsert;
 export type UsersRelations = typeof usersRelations;
 
-export type WallpaperWithUser = typeof wallpapersTable.$inferSelect & {
-  user: typeof usersTable.$inferSelect;
+export type WallpaperWithUser = Wallpaper & {
+  user: User;
 };

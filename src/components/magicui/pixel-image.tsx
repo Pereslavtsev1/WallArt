@@ -91,7 +91,7 @@ export const PixelImage = ({
   }, [rows, cols, maxAnimationDelay]);
   console.log(pieces);
   return (
-    <div>
+    <>
       {pieces.map((piece, index) => (
         <div
           key={index}
@@ -111,7 +111,7 @@ export const PixelImage = ({
             fill
             objectFit='cover'
             className={cn(
-              'z-1 object-cover',
+              'select-none',
               grayscaleAnimation && (showColor ? 'grayscale-0' : 'grayscale'),
             )}
             style={{
@@ -122,6 +122,6 @@ export const PixelImage = ({
           />
         </div>
       ))}
-    </div>
+    </>
   );
 };
