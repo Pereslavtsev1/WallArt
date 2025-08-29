@@ -3,8 +3,7 @@ CREATE TABLE "collections_table" (
 	"title" varchar NOT NULL,
 	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"user_id" varchar NOT NULL,
-	CONSTRAINT "collections_table_title_unique" UNIQUE("title")
+	"user_id" varchar NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "collections_to_wallpapers" (
@@ -22,7 +21,7 @@ CREATE TABLE "users_table" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"username" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"image_url" varchar NOT NULL,
+	"image_url" text NOT NULL,
 	CONSTRAINT "users_table_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
@@ -34,8 +33,8 @@ CREATE TABLE "wallpapers_table" (
 	"width" integer NOT NULL,
 	"height" integer NOT NULL,
 	"user_id" varchar,
-	"key" varchar NOT NULL,
-	CONSTRAINT "wallpapers_table_key_unique" UNIQUE("key")
+	"file_key" varchar NOT NULL,
+	CONSTRAINT "wallpapers_table_file_key_unique" UNIQUE("file_key")
 );
 --> statement-breakpoint
 CREATE TABLE "wallpapers_to_tags" (

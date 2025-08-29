@@ -6,7 +6,7 @@ import WallpaperList from '@/components/home/wallpaper-list';
 import { wallpapersTable } from '@/db/schema';
 
 export default async function Home() {
-  // const tags = findAllTags();
+  const tags = findAllTags();
   // const wallpapers = findAllWallpapers({
   //   orderByField: wallpapersTable.createdAt,
   //   orderDirection: 'desc',
@@ -16,10 +16,12 @@ export default async function Home() {
   return (
     <div className='max-w-7xl mx-auto'>
       <Header />
-      <div>{/* <Tags promise={tags} /> */}</div>
-      <div className='columns-1 sm:columns-2 lg:columns-3 gap-4'>
-        {/* <WallpaperList promise={wallpapers} /> */}
+      <div>
+        <Tags promise={tags} />
       </div>
+      {/* <div className='columns-1 sm:columns-2 lg:columns-3 gap-4'> */}
+      {/*   <WallpaperList promise={wallpapers} /> */}
+      {/* </div> */}
     </div>
   );
 }

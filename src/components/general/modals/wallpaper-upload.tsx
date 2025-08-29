@@ -92,17 +92,25 @@ const WallpaperUpload = () => {
     try {
       const key = await S3Service.uploadFile(data.file);
       if (key) {
-        await createWallpaper({
+        const res = await createWallpaper({
           title: data.title,
           description: data.description,
           userId: userId,
-          key: key,
+          fileKey: key,
           width: file.width,
           height: file.height,
         });
-        toast.success('Wallpaper Uploaded', {
-          description: 'Your wallpaper has been successfully uploaded!',
-        });
+        if (res.success) {
+          toast.success('Wallpaper Uploaded', {
+            description: 'Your wallpaper has been successfully uploaded!',
+          });
+        } else {
+          console.error(res.error);
+          toast.error('Upload Failed', {
+            description:
+              'An unexpected error occurred during the upload process.',
+          });
+        }
       } else {
         console.error('Failed to get a key from S3 upload.');
         toast.error('Upload Failed', {

@@ -1,7 +1,7 @@
 'use server';
 
 import { db } from '@/db';
-import { type User, usersTable } from '@/db/schema';
+import { collectionsTable, type User, usersTable } from '@/db/schema';
 
 export async function createUser(user: User) {
   try {
@@ -28,4 +28,14 @@ export async function getUserSessions(userId: string) {
   }
 
   return response.json();
+}
+export async function createUserAndCollection(user: User) {
+  await db.transaction(async (tx) => {
+    await tx.insert(usersTable).values(user);
+    await tx.insert(collectionsTable).values({
+      userId: user.id,
+      title: 'Favorites',
+      description: 'My favorite wallpapers',
+    });
+  });
 }

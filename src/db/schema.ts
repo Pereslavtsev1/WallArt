@@ -2,10 +2,10 @@ import { relations } from 'drizzle-orm';
 import {
   integer,
   pgTable,
+  text,
   timestamp,
   uuid,
   varchar,
-  text,
 } from 'drizzle-orm/pg-core';
 
 /** ------------------- Tables ------------------- */
@@ -14,7 +14,7 @@ export const usersTable = pgTable('users_table', {
   id: varchar('id').primaryKey(),
   username: varchar('username').notNull().unique(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  imageUrl: varchar('image_url').notNull(),
+  imageUrl: text('image_url').notNull(),
 });
 
 export const tagsTable = pgTable('tags_table', {
@@ -30,12 +30,12 @@ export const wallpapersTable = pgTable('wallpapers_table', {
   width: integer('width').notNull(),
   height: integer('height').notNull(),
   userId: varchar('user_id').references(() => usersTable.id),
-  key: varchar('key').notNull().unique(),
+  fileKey: varchar('file_key').notNull().unique(),
 });
 
 export const collectionsTable = pgTable('collections_table', {
   id: uuid('id').primaryKey().defaultRandom(),
-  title: varchar('title').notNull().unique(),
+  title: varchar('title').notNull(),
   description: text('description'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id')
@@ -43,7 +43,7 @@ export const collectionsTable = pgTable('collections_table', {
     .references(() => usersTable.id),
 });
 
-/** ------------------- Relations Table ------------------- */
+/** ------------------- Relations Tables ------------------- */
 
 export const collectionsToWallpapersTable = pgTable(
   'collections_to_wallpapers',
@@ -86,12 +86,55 @@ export const wallpapersRelations = relations(wallpapersTable, ({ many }) => ({
   users: many(usersTable),
 }));
 
+export const collectionsToWallpapersRelations = relations(
+  collectionsToWallpapersTable,
+  ({ one }) => ({
+    collection: one(collectionsTable, {
+      fields: [collectionsToWallpapersTable.collectionId],
+      references: [collectionsTable.id],
+    }),
+    wallpaper: one(wallpapersTable, {
+      fields: [collectionsToWallpapersTable.wallpaperId],
+      references: [wallpapersTable.id],
+    }),
+  }),
+);
+
+export const wallpapersToTagsRelations = relations(
+  wallpapersToTagsTable,
+  ({ one }) => ({
+    wallpaper: one(wallpapersTable, {
+      fields: [wallpapersToTagsTable.wallpaperId],
+      references: [wallpapersTable.id],
+    }),
+    tag: one(tagsTable, {
+      fields: [wallpapersToTagsTable.tagId],
+      references: [tagsTable.id],
+    }),
+  }),
+);
+
+export const wallpapersToUsersRelations = relations(
+  wallpapersToUsersTable,
+  ({ one }) => ({
+    wallpaper: one(wallpapersTable, {
+      fields: [wallpapersToUsersTable.wallpaperId],
+      references: [wallpapersTable.id],
+    }),
+    user: one(usersTable, {
+      fields: [wallpapersToUsersTable.userId],
+      references: [usersTable.id],
+    }),
+  }),
+);
+
 /** ------------------- Types ------------------- */
 
 export type User = typeof usersTable.$inferInsert;
 export type Tag = typeof tagsTable.$inferInsert;
 export type Wallpaper = typeof wallpapersTable.$inferInsert;
 export type Collection = typeof collectionsTable.$inferInsert;
+
 export type UserSelect = typeof usersTable.$inferSelect;
 export type TagSelect = typeof tagsTable.$inferSelect;
 export type WallpaperSelect = typeof wallpapersTable.$inferSelect;

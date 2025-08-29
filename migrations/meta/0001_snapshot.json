@@ -1,6 +1,6 @@
 {
-  "id": "823f9353-a309-4fef-ba80-1a4074fed5de",
-  "prevId": "11aa315f-5ae8-4dfd-8d26-9e1065a8b274",
+  "id": "bbda52a5-4090-4d46-b3ed-d3f26f40fb60",
+  "prevId": "394239b2-829b-4d22-b10c-b9083af83fe7",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -58,15 +58,7 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "collections_table_title_unique": {
-          "name": "collections_table_title_unique",
-          "columns": [
-            "title"
-          ],
-          "nullsNotDistinct": false
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -182,7 +174,7 @@
         },
         "image_url": {
           "name": "image_url",
-          "type": "varchar",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -251,8 +243,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "key": {
-          "name": "key",
+        "file_key": {
+          "name": "file_key",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
@@ -276,10 +268,10 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "wallpapers_table_key_unique": {
-          "name": "wallpapers_table_key_unique",
+        "wallpapers_table_file_key_unique": {
+          "name": "wallpapers_table_file_key_unique",
           "columns": [
-            "key"
+            "file_key"
           ],
           "nullsNotDistinct": false
         }

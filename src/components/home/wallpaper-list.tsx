@@ -16,7 +16,7 @@ const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
           style={{ aspectRatio: `${wallpaper.width} / ${wallpaper.height}` }}
         >
           <Image
-            src={buildImageUrl(wallpaper.key)}
+            src={buildImageUrl(wallpaper.fileKey)}
             alt={wallpaper.title}
             fill
             style={{ objectFit: 'cover' }}

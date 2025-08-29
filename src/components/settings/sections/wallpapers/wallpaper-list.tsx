@@ -14,7 +14,7 @@ const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
       {wallpapers.map((wallpaper) => (
         <ImageCard className='bg-background' key={wallpaper.id}>
           <ImageCard.Image
-            src={buildImageUrl(wallpaper.key)}
+            src={buildImageUrl(wallpaper.fileKey)}
             alt='Description'
           />
           <ImageCard.Info
