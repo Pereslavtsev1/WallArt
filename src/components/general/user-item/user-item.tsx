@@ -1,15 +1,16 @@
 import { useUser } from '@clerk/nextjs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-const UserItem = () => {
-  const user = useUser();
+type UsetItemProps = {
+  src: string;
+  alt: string;
+};
+const UserItem = ({ src, alt }: UsetItemProps) => {
   return (
-    <div>
-      <Avatar>
-        <AvatarImage src={user.user?.imageUrl} />
-        <AvatarFallback>{user.user?.username}</AvatarFallback>
-      </Avatar>
-    </div>
+    <Avatar>
+      <AvatarImage src={src} />
+      <AvatarFallback>{alt}</AvatarFallback>
+    </Avatar>
   );
 };
 

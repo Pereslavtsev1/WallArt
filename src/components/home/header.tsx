@@ -1,8 +1,8 @@
 'use client';
-import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
+import { SignedIn, SignedOut, useAuth, useUser } from '@clerk/nextjs';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import UserItem from '../general/user-item/user-item';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -11,7 +11,10 @@ import { Skeleton } from '../ui/skeleton';
 const Header = () => {
   const router = useRouter();
   const { isLoaded } = useAuth();
-
+  const { user } = useUser();
+  if (!user) {
+    redirect('/sign-in');
+  }
   return (
     <header className='flex items-center justify-between gap-4 py-4'>
       <div className='flex w-1/6'>
@@ -51,7 +54,10 @@ const Header = () => {
                 variant='ghost'
                 onClick={() => router.push('/settings')}
               >
-                <UserItem />
+                <UserItem
+                  src={user.imageUrl}
+                  alt={user.username || 'User icon'}
+                />
               </Button>
             </SignedIn>
           </>

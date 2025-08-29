@@ -1,33 +1,47 @@
+import type { WallpaperWithUser } from '@/db/schema';
+import { buildImageUrl } from '@/utils/functions';
 import Image from 'next/image';
 import { use } from 'react';
-import type { Wallpaper } from '@/db/schema';
-import { buildImageUrl } from '@/utils/functions';
-import { Card, CardDescription, CardTitle } from '../ui/card';
+import { Card, CardContent } from '../ui/card';
+import { PixelImage } from '../magicui/pixel-image';
 
-const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
+const WallpaperList = ({
+  promise,
+}: {
+  promise: Promise<WallpaperWithUser[]>;
+}) => {
   const wallpapers = use(promise);
+  console.log(wallpapers);
 
   return (
     <>
       {wallpapers.map((wallpaper) => (
-        <Card
-          key={wallpaper.id}
-          className='w-full relative overflow-hidden rounded-xl mb-4 bg-background border-none group'
-          style={{ aspectRatio: `${wallpaper.width} / ${wallpaper.height}` }}
-        >
-          <Image
-            src={buildImageUrl(wallpaper.fileKey)}
-            alt={wallpaper.title}
-            fill
-            style={{ objectFit: 'cover' }}
-          />
-          <div className='absolute bottom-0 left-0 right-0 pb-10 px-4 bg-gradient-to-t from-background via-background/50 to-transparent'>
-            <CardTitle className=''>{wallpaper.title}</CardTitle>
-            <CardDescription className='line-clamp-2 truncate'>
-              {wallpaper.description}
-            </CardDescription>
-          </div>
-        </Card>
+        <div key={wallpaper.id}>
+          <Card className='w-full relative overflow-hidden rounded-xl mb-4 bg-background border-none group transition-all duration-300'>
+            <CardContent
+              style={{
+                aspectRatio: `${wallpaper.width} / ${wallpaper.height}`,
+              }}
+            >
+              <Image
+                src={buildImageUrl(wallpaper.fileKey)}
+                alt={''}
+                fill
+                objectFit='cover'
+              />
+            </CardContent>
+          </Card>
+
+          <Card className='w-full relative overflow-hidden rounded-xl mb-4 bg-background border-none group transition-all duration-300'>
+            <CardContent
+              style={{
+                aspectRatio: `${wallpaper.width} / ${wallpaper.height}`,
+              }}
+            >
+              <PixelImage src={buildImageUrl(wallpaper.fileKey)} />
+            </CardContent>
+          </Card>
+        </div>
       ))}
     </>
   );

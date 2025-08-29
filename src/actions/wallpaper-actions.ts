@@ -1,7 +1,7 @@
 'use server';
-import { AnyColumn, asc, desc, eq, SQLWrapper } from 'drizzle-orm';
+import { type AnyColumn, asc, desc, eq, type SQLWrapper } from 'drizzle-orm';
 import { db } from '@/db';
-import { usersTable, type Wallpaper, wallpapersTable } from '@/db/schema';
+import { type Wallpaper, wallpapersTable } from '@/db/schema';
 
 export async function createWallpaper(wallpaper: Wallpaper) {
   try {
@@ -48,7 +48,7 @@ export async function findAllWallpapers({
 }: FindAllWallpapersProps) {
   return await db.query.wallpapersTable.findMany({
     with: {
-      users: true,
+      user: true,
     },
     offset,
     limit,

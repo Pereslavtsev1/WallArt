@@ -57,74 +57,44 @@ export const collectionsToWallpapersTable = pgTable(
   },
 );
 
-export const wallpapersToTagsTable = pgTable('wallpapers_to_tags', {
-  wallpaperId: uuid('wallpaper_id')
-    .notNull()
-    .references(() => wallpapersTable.id),
-  tagId: uuid('tag_id')
-    .notNull()
-    .references(() => tagsTable.id),
-});
-
-export const wallpapersToUsersTable = pgTable('wallpapers_to_users', {
-  wallpaperId: uuid('wallpaper_id')
-    .notNull()
-    .references(() => wallpapersTable.id),
-  userId: varchar('user_id')
-    .notNull()
-    .references(() => usersTable.id),
-});
-
 /** ------------------- Relations ------------------- */
 
-export const collectionsRelations = relations(collectionsTable, ({ many }) => ({
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  collections: many(collectionsTable),
   wallpapers: many(wallpapersTable),
 }));
 
-export const wallpapersRelations = relations(wallpapersTable, ({ many }) => ({
-  tags: many(tagsTable),
-  users: many(usersTable),
-}));
-
-export const collectionsToWallpapersRelations = relations(
+export const collectionsRelations = relations(
+  collectionsTable,
+  ({ many, one }) => ({
+    user: one(usersTable, {
+      fields: [collectionsTable.userId],
+      references: [usersTable.id],
+    }),
+    wallpapers: many(collectionsToWallpapersTable),
+  }),
+);
+export const collectionRelations = relations(
   collectionsToWallpapersTable,
   ({ one }) => ({
-    collection: one(collectionsTable, {
-      fields: [collectionsToWallpapersTable.collectionId],
-      references: [collectionsTable.id],
-    }),
     wallpaper: one(wallpapersTable, {
       fields: [collectionsToWallpapersTable.wallpaperId],
       references: [wallpapersTable.id],
     }),
-  }),
-);
-
-export const wallpapersToTagsRelations = relations(
-  wallpapersToTagsTable,
-  ({ one }) => ({
-    wallpaper: one(wallpapersTable, {
-      fields: [wallpapersToTagsTable.wallpaperId],
-      references: [wallpapersTable.id],
-    }),
-    tag: one(tagsTable, {
-      fields: [wallpapersToTagsTable.tagId],
-      references: [tagsTable.id],
+    collection: one(collectionsTable, {
+      fields: [collectionsToWallpapersTable.collectionId],
+      references: [collectionsTable.id],
     }),
   }),
 );
-
-export const wallpapersToUsersRelations = relations(
-  wallpapersToUsersTable,
-  ({ one }) => ({
-    wallpaper: one(wallpapersTable, {
-      fields: [wallpapersToUsersTable.wallpaperId],
-      references: [wallpapersTable.id],
-    }),
+export const wallpapersRelations = relations(
+  wallpapersTable,
+  ({ one, many }) => ({
     user: one(usersTable, {
-      fields: [wallpapersToUsersTable.userId],
+      fields: [wallpapersTable.userId],
       references: [usersTable.id],
     }),
+    collectionsToWallpapers: many(collectionsToWallpapersTable),
   }),
 );
 
@@ -134,8 +104,8 @@ export type User = typeof usersTable.$inferInsert;
 export type Tag = typeof tagsTable.$inferInsert;
 export type Wallpaper = typeof wallpapersTable.$inferInsert;
 export type Collection = typeof collectionsTable.$inferInsert;
+export type UsersRelations = typeof usersRelations;
 
-export type UserSelect = typeof usersTable.$inferSelect;
-export type TagSelect = typeof tagsTable.$inferSelect;
-export type WallpaperSelect = typeof wallpapersTable.$inferSelect;
-export type CollectionSelect = typeof collectionsTable.$inferSelect;
+export type WallpaperWithUser = typeof wallpapersTable.$inferSelect & {
+  user: typeof usersTable.$inferSelect;
+};
