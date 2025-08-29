@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
           ? evt.data.username
           : evt.data.email_addresses[0].email_address,
         createdAt: new Date(evt.data.created_at),
+        imageUrl: evt.data.image_url,
       };
       const promise = createUser(user);
       const promise2 = createCollection({

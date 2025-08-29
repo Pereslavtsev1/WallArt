@@ -47,6 +47,9 @@ export async function findAllWallpapers({
   orderByField,
 }: FindAllWallpapersProps) {
   return await db.query.wallpapersTable.findMany({
+    with: {
+      users: true,
+    },
     offset,
     limit,
     orderBy: () => [
