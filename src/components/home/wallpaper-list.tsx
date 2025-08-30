@@ -1,14 +1,14 @@
 'use client';
+import { Heart, PlusIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { use } from 'react';
 import type { WallpaperWithUser } from '@/db/schema';
 import { buildImageUrl } from '@/utils/functions';
-import { Heart, PlusIcon } from 'lucide-react';
-import { use } from 'react';
 import UserItem from '../general/user-item/user-item';
 import { BlurFade } from '../magicui/blur-fade';
 import { PixelImage } from '../magicui/pixel-image';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
-import { useRouter } from 'next/navigation';
 
 const WallpaperList = ({
   promise,

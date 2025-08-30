@@ -1,7 +1,7 @@
 'use client';
+import type { Tag } from '@/db/schema';
 import gsap from 'gsap';
 import { use, useEffect, useRef, useState } from 'react';
-import type { Tag } from '@/db/schema';
 import { Button } from '../ui/button';
 
 const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
@@ -12,7 +12,6 @@ const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
   const handleWheel = (e: React.WheelEvent) => {
     if (!containerRef.current) return;
     e.preventDefault();
-
     gsap.to(containerRef.current, {
       scrollLeft: containerRef.current.scrollLeft + e.deltaY * 2,
       duration: 0.3,
@@ -46,7 +45,7 @@ const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
       <div
         ref={containerRef}
         onWheel={handleWheel}
-        className='overflow-x-auto overflow-y-hidden flex gap-x-2 py-4 cursor-pointer scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+        className='overflow-x-auto overscroll-contain overflow-y-hidden flex gap-x-2 py-4 cursor-pointer scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
       >
         {/* TODO: Change tags in db              */}
         {tags.map((tag) => (

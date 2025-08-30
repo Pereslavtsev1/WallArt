@@ -1,8 +1,8 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useEffect, useMemo, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 type Grid = {
   rows: number;
@@ -40,34 +40,43 @@ export const PixelImage = ({
 }: PixelImageProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [showColor, setShowColor] = useState(false);
+  const [pixelDelays, setPixelDelays] = useState<number[]>([]);
 
   const MIN_GRID = 1;
   const MAX_GRID = 16;
 
   const { rows, cols } = useMemo(() => {
-    const isValidGrid = (grid?: Grid) => {
-      if (!grid) return false;
-      const { rows, cols } = grid;
+    const isValidGrid = (g?: Grid) => {
+      if (!g) return false;
+      const { rows: r, cols: c } = g;
       return (
-        Number.isInteger(rows) &&
-        Number.isInteger(cols) &&
-        rows >= MIN_GRID &&
-        cols >= MIN_GRID &&
-        rows <= MAX_GRID &&
-        cols <= MAX_GRID
+        Number.isInteger(r) &&
+        Number.isInteger(c) &&
+        r >= MIN_GRID &&
+        c >= MIN_GRID &&
+        r <= MAX_GRID &&
+        c <= MAX_GRID
       );
     };
 
-    return isValidGrid(customGrid) ? customGrid! : DEFAULT_GRIDS[grid];
+    return isValidGrid(customGrid) ? customGrid : DEFAULT_GRIDS[grid];
   }, [customGrid, grid]);
 
   useEffect(() => {
+    // Generate random delays only on the client after mount
+    const total = rows * cols;
+    const delays = Array.from(
+      { length: total },
+      () => Math.random() * maxAnimationDelay,
+    );
+    setPixelDelays(delays);
+
     setIsVisible(true);
     const colorTimeout = setTimeout(() => {
       setShowColor(true);
     }, colorRevealDelay);
     return () => clearTimeout(colorTimeout);
-  }, [colorRevealDelay]);
+  }, [colorRevealDelay, rows, cols, maxAnimationDelay]);
 
   const pieces = useMemo(() => {
     const total = rows * cols;
@@ -82,14 +91,11 @@ export const PixelImage = ({
         ${col * (100 / cols)}% ${(row + 1) * (100 / rows)}%
       )`;
 
-      const delay = Math.random() * maxAnimationDelay;
       return {
         clipPath,
-        delay,
       };
     });
-  }, [rows, cols, maxAnimationDelay]);
-  console.log(pieces);
+  }, [rows, cols]);
   return (
     <>
       {pieces.map((piece, index) => (
@@ -101,7 +107,7 @@ export const PixelImage = ({
           )}
           style={{
             clipPath: !showColor ? piece.clipPath : '',
-            transitionDelay: `${piece.delay}ms`,
+            transitionDelay: `${pixelDelays[index] || 0}ms`,
             transitionDuration: `${pixelFadeInDuration}ms`,
           }}
         >

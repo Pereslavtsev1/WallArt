@@ -1,27 +1,22 @@
 'use client';
-import { SignedIn, SignedOut, useAuth, useUser } from '@clerk/nextjs';
+
+import { useUser } from '@clerk/nextjs';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { redirect, useRouter } from 'next/navigation';
 import UserItem from '../general/user-item/user-item';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Skeleton } from '../ui/skeleton';
+import { Logo } from './logo';
 
 const Header = () => {
-  const router = useRouter();
-  const { isLoaded } = useAuth();
-  const { user } = useUser();
-  if (!user) {
-    redirect('/sign-in');
-  }
+  const { user, isLoaded, isSignedIn } = useUser();
+
   return (
-    <header className='flex items-center justify-between gap-4 py-4'>
-      <div className='flex w-1/12'>
-        <Link href={'/'} className='font-bold text-lg'>
-          WallArt
-        </Link>
-      </div>
+    <header className='py-2 flex items-center justify-between'>
+      <Link href='/' className='font-semibold text-lg'>
+        WallArt
+      </Link>
       <div className='max-w-2xl mx-8 w-full'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4' />
@@ -33,34 +28,24 @@ const Header = () => {
           />
         </div>
       </div>
-      <div className='flex w-1/12 justify-end'>
+      <div className='w-20 justify-end flex'>
         {!isLoaded ? (
-          <div className='flex gap-x-2'>
-            <Skeleton className='w-[4.5rem] h-8' />
-          </div>
+          <Skeleton className='h-9 w-9 rounded-full' />
+        ) : !isSignedIn ? (
+          <Link href='/sign-in'>
+            <Button variant='default' className='h-8.5 w-20' asChild>
+              <span className='font-semibold'>Login</span>
+            </Button>
+          </Link>
         ) : (
-          <>
-            <SignedOut>
-              <Button
-                className='font-semibold text-sm h-8'
-                onClick={() => router.push('/sign-in')}
-              >
-                Login
-              </Button>
-            </SignedOut>
-            <SignedIn>
-              <Button
-                size='icon'
-                variant='ghost'
-                onClick={() => router.push('/settings')}
-              >
-                <UserItem
-                  src={user.imageUrl}
-                  alt={user.username || 'User icon'}
-                />
-              </Button>
-            </SignedIn>
-          </>
+          <Link href={'/settings/profile'}>
+            <Button size='icon' variant='ghost' asChild>
+              <UserItem
+                src={user.imageUrl}
+                alt={user.username || 'User Profile'}
+              />
+            </Button>
+          </Link>
         )}
       </div>
     </header>

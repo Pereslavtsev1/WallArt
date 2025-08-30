@@ -1,4 +1,5 @@
 import { relations } from 'drizzle-orm';
+
 import {
   integer,
   pgTable,
@@ -59,6 +60,15 @@ export const collectionsToWallpapersTable = pgTable(
   },
 );
 
+export const wallpapersToTagsTable = pgTable('wallpapers_to_tags', {
+  wallpaperId: uuid('wallpaper_id')
+    .notNull()
+    .references(() => wallpapersTable.id),
+  tagId: uuid('tag_id')
+    .notNull()
+    .references(() => tagsTable.id),
+});
+
 /** ------------------- Relations ------------------- */
 
 export const usersRelations = relations(usersTable, ({ many }) => ({
@@ -73,7 +83,9 @@ export const collectionsRelations = relations(
       fields: [collectionsTable.userId],
       references: [usersTable.id],
     }),
-    wallpapers: many(collectionsToWallpapersTable),
+    wallpapers: many(collectionsToWallpapersTable, {
+      relationName: 'tag',
+    }),
   }),
 );
 export const collectionRelations = relations(
@@ -96,7 +108,25 @@ export const wallpapersRelations = relations(
       fields: [wallpapersTable.userId],
       references: [usersTable.id],
     }),
-    collectionsToWallpapers: many(collectionsToWallpapersTable),
+    collections: many(collectionsToWallpapersTable),
+    tags: many(wallpapersToTagsTable),
+  }),
+);
+export const tagsRelations = relations(tagsTable, ({ many }) => ({
+  wallpapers: many(wallpapersToTagsTable),
+}));
+
+export const wallpapersToTagsRelations = relations(
+  wallpapersToTagsTable,
+  ({ one }) => ({
+    wallpaper: one(wallpapersTable, {
+      fields: [wallpapersToTagsTable.wallpaperId],
+      references: [wallpapersTable.id],
+    }),
+    tag: one(tagsTable, {
+      fields: [wallpapersToTagsTable.tagId],
+      references: [tagsTable.id],
+    }),
   }),
 );
 

@@ -1,6 +1,6 @@
+import { Suspense } from 'react';
 import { findAllTags } from '@/actions/tag-actions';
 import { findAllWallpapers } from '@/actions/wallpaper-actions';
-import Header from '@/components/home/header';
 import Tags from '@/components/home/tags-list';
 import WallpaperList from '@/components/home/wallpaper-list';
 import { wallpapersTable } from '@/db/schema';
@@ -15,12 +15,11 @@ export default async function Home() {
   });
   return (
     <div className='max-w-7xl mx-auto'>
-      <Header />
-      <div>
-        <Tags promise={tags} />
-      </div>
+      <Tags promise={tags} />
       <div className='columns-1 sm:columns-2 lg:columns-3 gap-4'>
-        <WallpaperList promise={wallpapers} />
+        <Suspense>
+          <WallpaperList promise={wallpapers} />
+        </Suspense>
       </div>
     </div>
   );
