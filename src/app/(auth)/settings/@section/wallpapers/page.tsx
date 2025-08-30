@@ -6,6 +6,7 @@ import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-l
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 export default async function WallpapersSection() {
   const { userId, redirectToSignIn } = await auth();
@@ -28,7 +29,7 @@ export default async function WallpapersSection() {
         <AddWallpaperButton />
       </SettingsSection.Header>
       <SettingsSection.Content>
-        <div className='grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-2 xl:grid-cols-3'>
+        <div className='columns-1 md:columns-2 xl:columns-3 gap-4'>
           <Suspense fallback={<WallpaperListSkeleton />}>
             <WallpaperList promise={wallpapers} />
           </Suspense>
@@ -40,8 +41,11 @@ export default async function WallpapersSection() {
 const WallpaperListSkeleton = () => {
   return (
     <>
-      {[...Array(9)].map(() => (
-        <Skeleton key={crypto.randomUUID()} className='h-80' />
+      {[...Array(9)].map((_, index) => (
+        <Skeleton
+          key={crypto.randomUUID()}
+          className={cn('mb-4', index % 2 === 0 ? 'h-60' : 'h-80')}
+        />
       ))}
     </>
   );

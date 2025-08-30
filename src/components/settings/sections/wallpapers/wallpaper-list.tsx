@@ -1,6 +1,6 @@
 import { EyeIcon, ForwardIcon } from 'lucide-react';
+import Image from 'next/image';
 import { use } from 'react';
-import ImageCard from '@/components/general/image-card/image-card';
 import { Button } from '@/components/ui/button';
 import type { Wallpaper } from '@/db/schema';
 import { buildImageUrl } from '@/utils/functions';
@@ -12,26 +12,40 @@ const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
   return (
     <>
       {wallpapers.map((wallpaper) => (
-        <ImageCard className='bg-background' key={wallpaper.id}>
-          <ImageCard.Image
-            src={buildImageUrl(wallpaper.fileKey)}
-            alt='Description'
-          />
-          <ImageCard.Info
-            title={wallpaper.title}
-            description={wallpaper.description}
-          />
-          <ImageCard.Actions>
+        <div
+          className='relative flex flex-col overflow-hidden rounded-lg border bg-background shadow-sm mb-4'
+          key={wallpaper.id}
+        >
+          <div
+            className='relative'
+            style={{ aspectRatio: `${wallpaper.width} / ${wallpaper.height}` }}
+          >
+            <Image
+              src={buildImageUrl(wallpaper.fileKey)}
+              alt='Description'
+              fill
+              objectFit='cover'
+            />
+          </div>
+          <div className='flex-1 px-4 py-4'>
+            <h3 className='text-lg font-semibold'>{wallpaper.title}</h3>
+            {wallpaper.description && (
+              <p className='line-clamp-2 text-sm font-semibold text-muted-foreground'>
+                {wallpaper.description}
+              </p>
+            )}
+          </div>
+          <div className='flex items-center space-x-2 px-4 pb-4'>
             <Button className='font-semibold'>
               <EyeIcon className='mt-0.5 size-4' />
               View
             </Button>
-            <Button variant='secondary' className='font-semibold'>
+            <Button variant='secondary'>
               <ForwardIcon />
               Share
             </Button>
-          </ImageCard.Actions>
-        </ImageCard>
+          </div>
+        </div>
       ))}
     </>
   );

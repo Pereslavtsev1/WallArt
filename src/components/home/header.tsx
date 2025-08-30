@@ -17,7 +17,7 @@ const Header = () => {
   }
   return (
     <header className='flex items-center justify-between gap-4 py-4'>
-      <div className='flex w-1/6'>
+      <div className='flex w-1/12'>
         <Link href={'/'} className='font-bold text-lg'>
           WallArt
         </Link>
@@ -29,11 +29,11 @@ const Header = () => {
             type='text'
             placeholder='Search for wallpapers...'
             variant='ghost'
-            className='pl-10'
+            className='pl-10 placeholder:text-xs text-xs sm:placeholder:text-sm sm:text-sm font-semibold'
           />
         </div>
       </div>
-      <div className='flex w-1/6 justify-end'>
+      <div className='flex w-1/12 justify-end'>
         {!isLoaded ? (
           <div className='flex gap-x-2'>
             <Skeleton className='w-[4.5rem] h-8' />
