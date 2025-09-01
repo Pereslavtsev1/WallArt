@@ -1,5 +1,23 @@
 'use client';
 
+import {
+  createWallpaper,
+  createWallpaperWithExistingTags,
+} from '@/actions/wallpaper-actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  MultiSelect,
+  MultiSelectContent,
+  MultiSelectGroup,
+  MultiSelectItem,
+  MultiSelectTrigger,
+  MultiSelectValue,
+} from '@/components/ui/multi-select';
+import { Textarea } from '@/components/ui/textarea';
+import { Tag } from '@/db/schema';
+import S3Service from '@/services/S3-service';
+import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
 import { useAuth } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@radix-ui/react-label';
@@ -8,12 +26,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
-import { createWallpaper } from '@/actions/wallpaper-actions';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import S3Service from '@/services/S3-service';
-import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
 import Dropzone from '../dropzone/dropzone-input';
 import { SelectedImagePreview } from '../selected-image-preview/selected-image-preview';
 import ImageUploadDialog from './image-upload';
@@ -37,13 +49,15 @@ const schema = z.object({
   }),
 });
 
-const WallpaperUpload = () => {
+const WallpaperUpload = ({ tags }: { tags: Tag[] }) => {
   const { open, toggle } = useUploadWallpaperStore();
   const [file, setFile] = useState<UploadFile>();
   const { userId } = useAuth();
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const {
     register,
     handleSubmit,
+
     formState: { errors, isSubmitting },
     setValue,
     reset,
@@ -51,7 +65,6 @@ const WallpaperUpload = () => {
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
-
   const onFileSelect = useCallback(
     (acceptedFile: File) => {
       const previewUrl = URL.createObjectURL(acceptedFile);
@@ -92,13 +105,14 @@ const WallpaperUpload = () => {
     try {
       const key = await S3Service.uploadFile(data.file);
       if (key) {
-        const res = await createWallpaper({
-          title: data.title,
-          description: data.description,
-          userId: userId,
-          fileKey: key,
+        const res = await createWallpaperWithExistingTags({
           width: file.width,
           height: file.height,
+          title: data.title,
+          userId: userId,
+          fileKey: key,
+          description: data.description,
+          tags: selectedTags,
         });
         if (res.success) {
           toast.success('Wallpaper Uploaded', {
@@ -131,8 +145,19 @@ const WallpaperUpload = () => {
     }
   };
 
+  const handleDialogChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      reset({ title: '', description: '', file: undefined });
+      setFile(undefined);
+    }
+    toggle();
+  };
   return (
-    <ImageUploadDialog open={open} className='ring-0' onOpenChange={toggle}>
+    <ImageUploadDialog
+      open={open}
+      className='ring-0'
+      onOpenChange={handleDialogChange}
+    >
       <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
         <ImageUploadDialog.Header
           title='Upload Wallpaper'
@@ -153,6 +178,33 @@ const WallpaperUpload = () => {
                 {errors.title.message}
               </p>
             )}
+          </div>
+
+          <div className='flex flex-col gap-y-2'>
+            <Label className='text-sm font-semibold'>Tags</Label>
+            <MultiSelect>
+              <MultiSelectTrigger className='w-full dark:bg-background dark:hover:bg-background'>
+                <MultiSelectValue
+                  overflowBehavior={'wrap'}
+                  className='font-semibold text-muted-foreground'
+                />
+              </MultiSelectTrigger>
+              <MultiSelectContent className='bg-background'>
+                <MultiSelectGroup className='bg-background font-semibold text-muted-foreground text-xs'>
+                  {tags.map((tag) => (
+                    <MultiSelectItem
+                      key={tag.id}
+                      value={tag.name}
+                      onSelect={() => {
+                        setSelectedTags((prev) => [...prev, tag]);
+                      }}
+                    >
+                      {tag.name}
+                    </MultiSelectItem>
+                  ))}
+                </MultiSelectGroup>
+              </MultiSelectContent>
+            </MultiSelect>
           </div>
 
           <div className='flex flex-col gap-y-2'>
@@ -197,18 +249,6 @@ const WallpaperUpload = () => {
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Uploading...' : 'Upload'}
-          </Button>
-          <Button
-            variant='outline'
-            className='font-semibold'
-            onClick={() => {
-              reset();
-              clearErrors();
-              setFile(undefined);
-              toggle();
-            }}
-          >
-            Cancel
           </Button>
         </ImageUploadDialog.Footer>
       </form>

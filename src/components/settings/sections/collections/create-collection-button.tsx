@@ -1,10 +1,10 @@
 'use client';
-import { PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
+import { useCreateCollectionStore } from '@/stores/create-collection-store';
+import { PlusIcon } from 'lucide-react';
 
 const CreateCollectionButton = () => {
-  const { toggle } = useUploadWallpaperStore();
+  const { toggle } = useCreateCollectionStore();
   return (
     <Button className='font-semibold' onClick={() => toggle()}>
       <PlusIcon />

@@ -1,12 +1,11 @@
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
 import { findAllWallpapersByUserId } from '@/actions/wallpaper-actions';
+import { WallpaperListSkeleton } from '@/components/general/skeletons/wallpaper-list-skeleton';
 import SettingsSection from '@/components/settings/sections/section';
+import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
 import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
-import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 
 export default async function WallpapersSection() {
   const { userId, redirectToSignIn } = await auth();
@@ -29,7 +28,7 @@ export default async function WallpapersSection() {
         <AddWallpaperButton />
       </SettingsSection.Header>
       <SettingsSection.Content>
-        <div className='columns-1 md:columns-2 xl:columns-3 gap-4'>
+        <div className='columns-1 lg:columns-2 gap-4'>
           <Suspense fallback={<WallpaperListSkeleton />}>
             <WallpaperList promise={wallpapers} />
           </Suspense>
@@ -38,15 +37,3 @@ export default async function WallpapersSection() {
     </SettingsSection>
   );
 }
-const WallpaperListSkeleton = () => {
-  return (
-    <>
-      {[...Array(9)].map((_, index) => (
-        <Skeleton
-          key={crypto.randomUUID()}
-          className={cn('mb-4', index % 2 === 0 ? 'h-60' : 'h-80')}
-        />
-      ))}
-    </>
-  );
-};

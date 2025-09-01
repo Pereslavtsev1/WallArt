@@ -1,6 +1,5 @@
 'use client';
 import CreateCollection from '@/components/general/modals/create-collection';
-import WallpaperUpload from '@/components/general/modals/wallpaper-upload';
 import SettingsSidebar from '@/components/settings/sidebar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -26,7 +25,6 @@ export default function SettingsLayout({
       </div>
 
       <CreateCollection />
-      <WallpaperUpload />
     </SidebarProvider>
   );
 }

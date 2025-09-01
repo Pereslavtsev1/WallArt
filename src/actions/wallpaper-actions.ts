@@ -1,7 +1,12 @@
 'use server';
 import { type AnyColumn, asc, desc, eq, type SQLWrapper } from 'drizzle-orm';
 import { db } from '@/db';
-import { type Wallpaper, wallpapersTable } from '@/db/schema';
+import {
+  type Tag,
+  type Wallpaper,
+  wallpapersTable,
+  wallpapersToTagsTable,
+} from '@/db/schema';
 
 export async function createWallpaper(wallpaper: Wallpaper) {
   try {
@@ -65,4 +70,41 @@ export async function findAllWallpapers({
       orderDirection === 'asc' ? asc(orderByField) : desc(orderByField),
     ],
   });
+}
+export async function createWallpaperWithExistingTags(
+  data: Wallpaper & {
+    tags: Tag[];
+  },
+) {
+  try {
+    const result = await db.transaction(async (tx) => {
+      const wallpaper = await tx
+        .insert(wallpapersTable)
+        .values({
+          ...data,
+        })
+        .returning();
+
+      const createdWallpaper = wallpaper[0];
+      const wallpaperId = createdWallpaper.id;
+
+      if (data.tags && data.tags.length > 0) {
+        const records = data.tags
+          .filter((tag) => tag.id !== undefined) // Filter out tags with undefined IDs
+          .map(({ id: tagId }) => ({
+            wallpaperId,
+            tagId: tagId as string,
+          }));
+
+        if (records.length > 0) {
+          await tx.insert(wallpapersToTagsTable).values(records);
+        }
+      }
+      return createdWallpaper;
+    });
+    return { success: true, data: result };
+  } catch (error) {
+    console.error('Error creating wallpaper with existing tags:', error);
+    return { success: false, error: 'Failed to create wallpaper with tags.' };
+  }
 }

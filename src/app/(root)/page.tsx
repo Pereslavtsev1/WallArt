@@ -1,9 +1,9 @@
-import { Suspense } from 'react';
 import { findAllTags } from '@/actions/tag-actions';
 import { findAllWallpapers } from '@/actions/wallpaper-actions';
-import Tags from '@/components/home/tags-list';
+import TagsCarousel from '@/components/home/tags-carousel';
 import WallpaperList from '@/components/home/wallpaper-list';
 import { wallpapersTable } from '@/db/schema';
+import { Suspense } from 'react';
 
 export default async function Home() {
   const tags = findAllTags();
@@ -15,7 +15,9 @@ export default async function Home() {
   });
   return (
     <div className='max-w-7xl mx-auto'>
-      <Tags promise={tags} />
+      <Suspense>
+        <TagsCarousel promise={tags} />
+      </Suspense>
       <div className='columns-1 sm:columns-2 lg:columns-3 gap-4'>
         <Suspense>
           <WallpaperList promise={wallpapers} />

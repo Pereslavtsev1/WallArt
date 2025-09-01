@@ -1,4 +1,11 @@
-import { DownloadIcon, Heart, PlusIcon, ShareIcon } from 'lucide-react';
+import {
+  CalendarIcon,
+  DownloadIcon,
+  ForwardIcon,
+  Heart,
+  PlusIcon,
+  ScalingIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -7,6 +14,7 @@ import UserItem from '@/components/general/user-item/user-item';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { buildImageUrl } from '@/utils/functions';
+import DownloadButton from '@/components/general/download-button';
 
 export default async function Page({
   params,
@@ -54,7 +62,7 @@ export default async function Page({
         </section>
         <div className='space-y-6'>
           <section
-            className='relative'
+            className='relative max-h-[66vh] mx-auto'
             style={{
               aspectRatio: `${wallpaper.width} / ${wallpaper.height}`,
             }}
@@ -79,24 +87,30 @@ export default async function Page({
                 </p>
               </div>
               <div className='space-x-2'>
-                <Button className='font-semibold'>
-                  <ShareIcon />
+                <DownloadButton
+                  fileKey={wallpaper.fileKey}
+                  fileName={wallpaper.title}
+                />
+
+                <Button variant='secondary' className='font-semibold'>
+                  <ForwardIcon />
                   Share
-                </Button>
-                <Button className='font-semibold'>
-                  <DownloadIcon />
-                  Download
                 </Button>
               </div>
             </div>
             <div>
-              <p className='text-muted-foreground text-xs font-semibold'>
-                Published on: {wallpaper.createdAt.toDateString()}
-              </p>
-
-              <p className='text-muted-foreground text-xs font-semibold'>
-                Resolution: {wallpaper.width}x{wallpaper.height}
-              </p>
+              <div className='flex gap-x-1 items-center text-muted-foreground'>
+                <CalendarIcon className='size-3.5' />
+                <p className='text-xs font-semibold'>
+                  Published on: {wallpaper.createdAt.toDateString()}
+                </p>
+              </div>
+              <div className='text-muted-foreground flex gap-x-1 items-center'>
+                <ScalingIcon className='size-3.5' />
+                <p className='text-xs font-semibold'>
+                  Resolution: {wallpaper.width}x{wallpaper.height}
+                </p>
+              </div>
             </div>
           </section>
 
@@ -107,7 +121,7 @@ export default async function Page({
               </h3>
               <div className='flex flex-wrap gap-2'>
                 {wallpaper.tags.map((tag) => (
-                  <div key={tag.tag.id}>{tag.tag.name}</div>
+                  <Badge key={tag.tagId}>{tag.tag.name}</Badge>
                 ))}
               </div>
             </div>

@@ -18,6 +18,7 @@ const WallpaperList = ({
   const wallpapers = use(promise);
   console.log(wallpapers);
   const router = useRouter();
+  const grids = ['6x4', '8x8', '8x3', '4x6', '3x8'];
 
   return (
     <>
@@ -32,7 +33,10 @@ const WallpaperList = ({
                 aspectRatio: `${wallpaper.width} / ${wallpaper.height}`,
               }}
             >
-              <PixelImage src={buildImageUrl(wallpaper.fileKey)} />
+              <PixelImage
+                grid={grids[grids.length % index]}
+                src={buildImageUrl(wallpaper.fileKey)}
+              />
               <div className='absolute top-3 right-4 flex gap-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
                 <Button
                   size='icon'

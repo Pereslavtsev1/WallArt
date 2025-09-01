@@ -1,8 +1,13 @@
-import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { S3 } from '@/utils/S3';
+import { headers } from 'next/headers';
 
 const uploeadRequestSchema = z.object({
   key: z.string(),
@@ -79,6 +84,36 @@ export async function DELETE(request: Request) {
     console.error('Error deleting object from S3:', error);
     return NextResponse.json(
       { error: 'Failed to delete object' },
+      { status: 500 },
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  const key = request.nextUrl.searchParams.get('key');
+
+  if (!key) {
+    return NextResponse.json({ error: 'No key provided' }, { status: 400 });
+  }
+
+  console.log(key);
+  try {
+    const command = new GetObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+      ResponseContentDisposition: `attachment; filename="${key}"`,
+    });
+
+    const presignedUrl = await getSignedUrl(S3, command, {
+      expiresIn: 360,
+    });
+    console.log(presignedUrl);
+
+    return NextResponse.json({ presignedUrl });
+  } catch (error) {
+    console.error('Error generating presigned URL:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate download URL' },
       { status: 500 },
     );
   }

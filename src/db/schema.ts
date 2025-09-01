@@ -19,7 +19,7 @@ export const usersTable = pgTable('users_table', {
 });
 
 export const tagsTable = pgTable('tags_table', {
-  id: uuid('id').primaryKey().defaultRandom(),
+  id: uuid('id').notNull().primaryKey().defaultRandom(),
   name: varchar('name').notNull().unique(),
 });
 
