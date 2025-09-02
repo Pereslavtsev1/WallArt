@@ -1,5 +1,5 @@
 {
-  "id": "c0982ed6-7939-45b4-bc68-bfc207b9282d",
+  "id": "b7ed7f68-bcb0-4fbe-bab1-5cd7bc5aba24",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -159,6 +159,25 @@
           "primaryKey": true,
           "notNull": true
         },
+        "first_name": {
+          "name": "first_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_name": {
+          "name": "last_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "public": {
+          "name": "public",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "username": {
           "name": "username",
           "type": "varchar",
@@ -241,7 +260,7 @@
           "name": "user_id",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "file_key": {
           "name": "file_key",
@@ -276,6 +295,58 @@
           ]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.wallpapers_to_tags": {
+      "name": "wallpapers_to_tags",
+      "schema": "",
+      "columns": {
+        "wallpaper_id": {
+          "name": "wallpaper_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tag_id": {
+          "name": "tag_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk": {
+          "name": "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk",
+          "tableFrom": "wallpapers_to_tags",
+          "tableTo": "wallpapers_table",
+          "columnsFrom": [
+            "wallpaper_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "wallpapers_to_tags_tag_id_tags_table_id_fk": {
+          "name": "wallpapers_to_tags_tag_id_tags_table_id_fk",
+          "tableFrom": "wallpapers_to_tags",
+          "tableTo": "tags_table",
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false

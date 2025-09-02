@@ -1,6 +1,7 @@
 'use client';
 import gsap from 'gsap';
 import { useEffect, useRef, useState } from 'react';
+import type { Tag } from '@/db/schema';
 import TagsList from './tags-list';
 
 const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {

@@ -45,8 +45,8 @@ export const PixelImage = ({
   const MIN_GRID = 1;
   const MAX_GRID = 16;
 
-  const { rows, cols } = useMemo(() => {
-    const isValidGrid = (g?: Grid) => {
+  const { rows, cols } = useMemo<Grid>(() => {
+    const isValidGrid = (g: Grid | undefined): g is Grid => {
       if (!g) return false;
       const { rows: r, cols: c } = g;
       return (
@@ -59,7 +59,10 @@ export const PixelImage = ({
       );
     };
 
-    return isValidGrid(customGrid) ? customGrid : DEFAULT_GRIDS[grid];
+    if (isValidGrid(customGrid)) {
+      return customGrid;
+    }
+    return DEFAULT_GRIDS[grid];
   }, [customGrid, grid]);
 
   useEffect(() => {
@@ -92,6 +95,8 @@ export const PixelImage = ({
       )`;
 
       return {
+        row,
+        col,
         clipPath,
       };
     });
@@ -100,7 +105,7 @@ export const PixelImage = ({
     <>
       {pieces.map((piece, index) => (
         <div
-          key={index}
+          key={`${piece.row}-${piece.col}`}
           className={cn(
             'absolute inset-0 transition-all ease-out',
             isVisible ? 'opacity-100' : 'opacity-0',

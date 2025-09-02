@@ -19,6 +19,9 @@ CREATE TABLE "tags_table" (
 --> statement-breakpoint
 CREATE TABLE "users_table" (
 	"id" varchar PRIMARY KEY NOT NULL,
+	"first_name" varchar,
+	"last_name" varchar,
+	"public" boolean DEFAULT false NOT NULL,
 	"username" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"image_url" text NOT NULL,
@@ -32,12 +35,19 @@ CREATE TABLE "wallpapers_table" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"width" integer NOT NULL,
 	"height" integer NOT NULL,
-	"user_id" varchar,
+	"user_id" varchar NOT NULL,
 	"file_key" varchar NOT NULL,
 	CONSTRAINT "wallpapers_table_file_key_unique" UNIQUE("file_key")
+);
+--> statement-breakpoint
+CREATE TABLE "wallpapers_to_tags" (
+	"wallpaper_id" uuid NOT NULL,
+	"tag_id" uuid NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "collections_table" ADD CONSTRAINT "collections_table_user_id_users_table_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users_table"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "collections_to_wallpapers" ADD CONSTRAINT "collections_to_wallpapers_wallpaper_id_wallpapers_table_id_fk" FOREIGN KEY ("wallpaper_id") REFERENCES "public"."wallpapers_table"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "collections_to_wallpapers" ADD CONSTRAINT "collections_to_wallpapers_collection_id_collections_table_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collections_table"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "wallpapers_table" ADD CONSTRAINT "wallpapers_table_user_id_users_table_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users_table"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "wallpapers_table" ADD CONSTRAINT "wallpapers_table_user_id_users_table_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users_table"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "wallpapers_to_tags" ADD CONSTRAINT "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk" FOREIGN KEY ("wallpaper_id") REFERENCES "public"."wallpapers_table"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "wallpapers_to_tags" ADD CONSTRAINT "wallpapers_to_tags_tag_id_tags_table_id_fk" FOREIGN KEY ("tag_id") REFERENCES "public"."tags_table"("id") ON DELETE no action ON UPDATE no action;

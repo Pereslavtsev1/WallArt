@@ -7,7 +7,6 @@ import UserItem from '../general/user-item/user-item';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Skeleton } from '../ui/skeleton';
-import { Logo } from './logo';
 
 const Header = () => {
   const { user, isLoaded, isSignedIn } = useUser();
