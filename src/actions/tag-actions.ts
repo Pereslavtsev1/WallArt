@@ -1,4 +1,6 @@
 import { db } from '@/db';
+import { wallpapersToTagsTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function findAllTags() {
   try {
@@ -9,12 +11,17 @@ export async function findAllTags() {
   }
 }
 
-// export async function findAllTags() {
-//   try {
-//     const result = await db.query.tagsTable.findMany();
-//     return { success: true, data: result };
-//   } catch (error) {
-//     console.error('Failed to retrieve all tags:', error);
-//     return { success: false, error: 'Failed to retrieve tags.' };
-//   }
-// }
+export async function findTagsByWallpaperId(id: string) {
+  try {
+    const wallpaperTags = await db.query.wallpapersToTagsTable.findMany({
+      where: eq(wallpapersToTagsTable.wallpaperId, id),
+      with: {
+        tag: true,
+      },
+    });
+    return wallpaperTags.map((wt) => wt.tag);
+  } catch (error) {
+    console.error('Failed to retrieve tags by wallpaper ID:', error);
+    throw new Error('Failed to retrieve tags by wallpaper ID.');
+  }
+}

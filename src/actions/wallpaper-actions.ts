@@ -26,24 +26,16 @@ export async function findAllWallpapersByUserId(userId: string) {
     where: eq(wallpapersTable.userId, userId),
   });
 }
-export async function findWallpaperWithTagsAndUserById(id: string) {
+export async function findWallpaperById(id: string) {
   try {
-    const result = await db.query.wallpapersTable.findFirst({
+    return await db.query.wallpapersTable.findFirst({
       with: {
         user: true,
-        tags: {
-          with: {
-            tag: true,
-          },
-        },
       },
       where: eq(wallpapersTable.id, id),
     });
-
-    return { success: true, data: result };
   } catch (error) {
     console.error('Error finding wallpaper:', error);
-    return { success: false, error: 'Failed to find wallpaper.' };
   }
 }
 
