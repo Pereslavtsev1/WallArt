@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
           : evt.data.email_addresses[0].email_address,
         createdAt: new Date(evt.data.created_at),
         imageUrl: evt.data.image_url,
+        firstName: evt.data.first_name,
+        lastName: evt.data.last_name,
       };
       await createUserAndCollection(user);
     }

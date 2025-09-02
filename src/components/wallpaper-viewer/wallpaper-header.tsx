@@ -13,10 +13,7 @@ export default function WallpaperHeader({
 }) {
   return (
     <section className='flex items-center justify-between'>
-      <Link
-        href={`/profile/${user.username}`}
-        className='flex items-center gap-x-3'
-      >
+      <Link href={`/profile/${user.id}`} className='flex items-center gap-x-3'>
         <UserItem src={user.imageUrl} alt={user.username} />
         <div className='space-y-0.5'>
           <p className='text-muted-foreground font-semibold text-sm truncate'>

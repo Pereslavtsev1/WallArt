@@ -10,7 +10,6 @@ export default function WallpaperTags({
   const tags = use(promise);
 
   if (!tags.length) return null;
-
   return (
     <div className='space-y-3'>
       <h3 className='text-sm font-semibold text-muted-foreground uppercase tracking-wide'>

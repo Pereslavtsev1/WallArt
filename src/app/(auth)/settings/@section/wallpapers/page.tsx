@@ -1,10 +1,10 @@
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
 import { findAllWallpapersByUserId } from '@/actions/wallpaper-actions';
-import { WallpaperListSkeleton } from '@/components/general/skeletons/wallpaper-list-skeleton';
 import SettingsSection from '@/components/settings/sections/section';
 import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
 import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
+import { WallpaperListSkeleton } from '@/components/skeletons/wallpaper-list-skeleton';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 
 export default async function WallpapersSection() {

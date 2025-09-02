@@ -2,6 +2,7 @@
 
 import { db } from '@/db';
 import { collectionsTable, type User, usersTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function createUser(user: User) {
   try {
@@ -38,4 +39,22 @@ export async function createUserAndCollection(user: User) {
       description: 'My favorite wallpapers',
     });
   });
+}
+export async function findUserWithCollectionsAndWallpaperByUserId(
+  userId: string,
+) {
+  try {
+    return await db.query.usersTable.findFirst({
+      where: eq(usersTable.id, userId),
+      with: {
+        wallpapers: true,
+        collections: true,
+      },
+    });
+  } catch (error) {
+    console.error(
+      'Failed to find user with collections and wallpapers:',
+      error,
+    );
+  }
 }

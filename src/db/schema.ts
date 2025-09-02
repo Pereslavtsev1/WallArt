@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 
 import {
+  boolean,
   integer,
   pgTable,
   text,
@@ -13,6 +14,9 @@ import {
 
 export const usersTable = pgTable('users_table', {
   id: varchar('id').primaryKey(),
+  firstName: varchar('first_name'),
+  lastName: varchar('last_name'),
+  publicProfile: boolean('public').notNull().default(false),
   username: varchar('username').notNull().unique(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   imageUrl: text('image_url').notNull(),
