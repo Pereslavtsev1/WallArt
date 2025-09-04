@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { findWallpaperById } from '@/actions/wallpaper-actions';
-import WallpaperView from '@/components/wallpaper-viewer/wallpaper-view';
 import WallpaperViewSkeleton from '@/components/skeletons/wallpaper-view-skeleton';
+import WallpaperView from '@/components/wallpaper-viewer/wallpaper-view';
 
 export default async function Page({
   params,

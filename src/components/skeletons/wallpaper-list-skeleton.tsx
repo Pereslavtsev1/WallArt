@@ -4,10 +4,10 @@ import { cn } from '@/lib/utils';
 export const WallpaperListSkeleton = () => {
   return (
     <>
-      {[...Array(9)].map((_, index) => (
+      {[...Array(14)].map((_, index) => (
         <Skeleton
           key={crypto.randomUUID()}
-          className={cn('mb-4', index % 2 === 0 ? 'h-60' : 'h-80')}
+          className={cn('mb-4', index % 2 === 0 ? 'h-72' : 'h-80')}
         />
       ))}
     </>

@@ -20,7 +20,7 @@ const WallpaperView = ({
   if (!wallpaper) notFound();
   return (
     <div className='space-y-3 py-6 px-2'>
-      <WallpaperHeader user={wallpaper.user} title={wallpaper.title} />
+      <WallpaperHeader user={wallpaper.user} />
       <div className='space-y-6'>
         <section
           className='relative max-h-[66vh] mx-auto'

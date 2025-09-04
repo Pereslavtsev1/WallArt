@@ -17,7 +17,11 @@ export default function WallpaperTags({
       </h3>
       <div className='flex flex-wrap gap-2'>
         {tags.map((tag) => (
-          <Badge variant='secondary' className='font-semibold' key={tag.id}>
+          <Badge
+            variant='secondary'
+            className='font-semibold px-3 py-1'
+            key={tag.id}
+          >
             {tag.name}
           </Badge>
         ))}

@@ -15,18 +15,22 @@ export async function createCollection(collection: Collection) {
     return { success: false, error: 'Failed to create wallpaper.' };
   }
 }
-export async function findCollectionById(userId: string) {
+export async function findCollectionWithWallpaperById(id: string) {
   try {
     const result = await db.query.collectionsTable.findFirst({
-      where: eq(collectionsTable.userId, userId),
+      where: eq(collectionsTable.id, id),
       with: {
         wallpapers: true,
       },
     });
-    return { suscess: true, data: result };
+
+    if (!result) {
+      return;
+    }
+
+    return result;
   } catch (error) {
-    console.error('Error creating wallpaper:', error);
-    return { success: false, error: 'Failed to create wallpaper.' };
+    console.error('Error finding collection with wallpaper:', error);
   }
 }
 export async function findAllCollectionsByUserId1(userId: string) {

@@ -1,5 +1,3 @@
--- Custom SQL migration file, put your code below! --
--- Insert default wallpaper tags (ignore duplicates if re-run)
 INSERT INTO "tags_table" ("name") VALUES
     -- Styles
     ('Abstract'),

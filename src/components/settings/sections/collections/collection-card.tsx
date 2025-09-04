@@ -1,57 +1,50 @@
-import type { ElementType, ReactNode } from 'react';
+import { ImagesIcon } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
-interface CollectionCardRootProps {
-  children: ReactNode;
-}
-
-const CollectionCardRoot = ({ children }: CollectionCardRootProps) => {
-  return (
-    <div className='p-2 border rounded-2xl bg-border/10'>
-      <div className='rounded-2xl p-6 bg-background'>
-        <div>{children}</div>
-      </div>
-    </div>
-  );
-};
-
-interface CollectionCardIconProps {
-  icon: ElementType;
-}
-
-const CollectionCardIcon = ({ icon: Icon }: CollectionCardIconProps) => {
-  return (
-    <div className='bg-neutral-900 size-10 flex items-center justify-center rounded-full mb-4'>
-      <Icon className='size-5' />
-    </div>
-  );
-};
-
-interface CollectionCardTitleProps {
-  children: ReactNode;
-}
-
-const CollectionCardTitle = ({ children }: CollectionCardTitleProps) => {
-  return <h2 className='font-semibold text-lg mb-2 truncate'>{children}</h2>;
-};
-
-interface CollectionCardDescriptionProps {
-  children: ReactNode;
-}
-
-const CollectionCardDescription = ({
+type CollectionCardChild =
+  | React.ReactElement<typeof CollectionIcon>
+  | React.ReactElement<typeof CollectionInfo>;
+const CollectionCard = ({
   children,
-}: CollectionCardDescriptionProps) => {
+  className,
+  onClick,
+}: {
+  children?: CollectionCardChild | CollectionCardChild[];
+  className?: string;
+  onClick?: () => void;
+}) => {
   return (
-    <p className='text-muted-foreground font-semibold text-sm truncate'>
-      {children}
-    </p>
+    <Card
+      className={`p-2 border rounded-2xl bg-border/10 break-inside-avoid ${className}`}
+      onClick={onClick}
+    >
+      <div className='rounded-2xl p-6 bg-background'>{children}</div>
+    </Card>
   );
 };
 
-const CollectionCard = Object.assign(CollectionCardRoot, {
-  Icon: CollectionCardIcon,
-  Title: CollectionCardTitle,
-  Description: CollectionCardDescription,
-});
+interface CollectionIconProps {
+  className?: string;
+}
+
+export const CollectionIcon = ({ className }: CollectionIconProps) => {
+  return (
+    <div
+      className={`bg-neutral-900 size-10 flex items-center justify-center rounded-full mb-4 ${className}`}
+    >
+      <ImagesIcon className='size-5' />
+    </div>
+  );
+};
+
+export const CollectionInfo = ({
+  children,
+  className,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) => {
+  return <div className={`space-y-2 ${className}`}>{children}</div>;
+};
 
 export default CollectionCard;

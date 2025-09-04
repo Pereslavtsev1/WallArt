@@ -23,6 +23,7 @@ CREATE TABLE "users_table" (
 	"last_name" varchar,
 	"public" boolean DEFAULT false NOT NULL,
 	"username" varchar NOT NULL,
+	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"image_url" text NOT NULL,
 	CONSTRAINT "users_table_username_unique" UNIQUE("username")

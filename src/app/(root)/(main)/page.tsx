@@ -1,10 +1,10 @@
+import { Suspense } from 'react';
 import { findAllTags } from '@/actions/tag-actions';
 import { findAllWallpapers } from '@/actions/wallpaper-actions';
 import TagsCarousel from '@/components/home/tags-carousel';
 import WallpaperList from '@/components/home/wallpaper-list';
 import { WallpaperListSkeleton } from '@/components/skeletons/wallpaper-list-skeleton';
 import { wallpapersTable } from '@/db/schema';
-import { Suspense } from 'react';
 
 export default async function Home() {
   const tags = findAllTags();

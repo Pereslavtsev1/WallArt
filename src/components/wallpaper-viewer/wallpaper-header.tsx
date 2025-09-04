@@ -4,22 +4,22 @@ import UserItem from '@/components/general/user-item/user-item';
 import { Button } from '@/components/ui/button';
 import type { User } from '@/db/schema';
 
-export default function WallpaperHeader({
-  user,
-  title,
-}: {
-  user: User;
-  title: string;
-}) {
+export default function WallpaperHeader({ user }: { user: User }) {
+  const hasFullName = user.firstName && user.lastName;
+
   return (
     <section className='flex items-center justify-between'>
       <Link href={`/profile/${user.id}`} className='flex items-center gap-x-3'>
         <UserItem src={user.imageUrl} alt={user.username} />
         <div className='space-y-0.5'>
-          <p className='text-muted-foreground font-semibold text-sm truncate'>
-            {user.username}
+          <p className='font-semibold text-sm truncate'>
+            {hasFullName ? `${user.firstName} ${user.lastName}` : user.username}
           </p>
-          <p className='text-xs font-semibold truncate'>{title}</p>
+          {hasFullName && (
+            <p className='text-xs text-muted-foreground font-semibold truncate'>
+              {user.username}
+            </p>
+          )}
         </div>
       </Link>
       <div className='flex items-center gap-x-2'>

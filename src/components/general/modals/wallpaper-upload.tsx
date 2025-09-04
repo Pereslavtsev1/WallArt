@@ -179,7 +179,7 @@ const WallpaperUpload = ({ tags }: { tags: Tag[] }) => {
               </p>
             )}
           </div>
-
+          {/* FIXME: fix bug with scroll */}
           <div className='flex flex-col gap-y-2'>
             <Label className='text-sm font-semibold'>Tags</Label>
             <MultiSelect>

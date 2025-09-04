@@ -18,6 +18,7 @@ export const usersTable = pgTable('users_table', {
   lastName: varchar('last_name'),
   publicProfile: boolean('public').notNull().default(false),
   username: varchar('username').notNull().unique(),
+  description: text('description'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   imageUrl: text('image_url').notNull(),
 });
@@ -80,18 +81,9 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
   wallpapers: many(wallpapersTable),
 }));
 
-export const collectionsRelations = relations(
-  collectionsTable,
-  ({ many, one }) => ({
-    user: one(usersTable, {
-      fields: [collectionsTable.userId],
-      references: [usersTable.id],
-    }),
-    wallpapers: many(collectionsToWallpapersTable, {
-      relationName: 'tag',
-    }),
-  }),
-);
+export const collectionsRelations = relations(collectionsTable, ({ many }) => ({
+  wallpapers: many(collectionsToWallpapersTable),
+}));
 export const collectionRelations = relations(
   collectionsToWallpapersTable,
   ({ one }) => ({
@@ -142,6 +134,17 @@ export type Wallpaper = typeof wallpapersTable.$inferInsert;
 export type Collection = typeof collectionsTable.$inferInsert;
 export type UsersRelations = typeof usersRelations;
 
-export type WallpaperWithUser = Wallpaper & {
+export type CollectionSelect = typeof collectionsTable.$inferSelect;
+export type wallpaperSelect = typeof usersTable.$inferSelect;
+export type UserSelect = typeof usersTable.$inferSelect;
+export type WallpaperWithUser = wallpaperSelect & {
   user: User;
+};
+
+export type UserWithWallpapersAndCollections = UserSelect & {
+  wallpapers: Wallpaper[];
+  collections: Collection[];
+};
+export type CollectionWithWallpapers = CollectionSelect & {
+  wallpapers: wallpaperSelect[];
 };

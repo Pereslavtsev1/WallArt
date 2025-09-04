@@ -24,3 +24,10 @@ export const getStatusIcon = (file: UploadFile) => {
 export const buildImageUrl = (key: string) => {
   return `https://t3.storage.dev/wall-art/${key}`;
 };
+export const formantDate = (data: Date) => {
+  return data.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};

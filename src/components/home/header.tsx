@@ -38,7 +38,12 @@ const Header = () => {
           </Link>
         ) : (
           <Link href={'/settings/profile'}>
-            <Button size='icon' variant='ghost' asChild>
+            <Button
+              size='icon'
+              variant='ghost'
+              asChild
+              className='rounded-full'
+            >
               <UserItem
                 src={user.imageUrl}
                 alt={user.username || 'User Profile'}

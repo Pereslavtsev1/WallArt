@@ -1,20 +1,31 @@
 'use client';
-import { ImagesIcon } from 'lucide-react';
 import { use } from 'react';
+import { CardDescription, CardTitle } from '@/components/ui/card';
 import type { Collection } from '@/db/schema';
-import CollectionCard from './collection-card';
+import CollectionCard, {
+  CollectionIcon,
+  CollectionInfo,
+} from './collection-card';
+import { useRouter } from 'next/navigation';
 
 const CollectionsList = ({ promise }: { promise: Promise<Collection[]> }) => {
   const collections = use(promise);
+  const router = useRouter();
   return (
     <>
-      {collections.map((c) => (
-        <CollectionCard key={c.id}>
-          <CollectionCard.Icon icon={ImagesIcon} />
-          <CollectionCard.Title>{c.title}</CollectionCard.Title>
-          <CollectionCard.Description>
-            {c.description}
-          </CollectionCard.Description>
+      {collections.map((collection) => (
+        <CollectionCard
+          key={collection.id}
+          onClick={() => router.push(`/collection/${collection.id}`)}
+        >
+          <CollectionIcon />
+
+          <CollectionInfo>
+            <CardTitle>{collection.title}</CardTitle>
+            <CardDescription className='font-semibold text-xs'>
+              {collection.description}{' '}
+            </CardDescription>
+          </CollectionInfo>
         </CollectionCard>
       ))}
     </>

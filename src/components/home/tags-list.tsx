@@ -1,7 +1,6 @@
 'use client';
+import { use } from 'react';
 import type { Tag } from '@/db/schema';
-import gsap from 'gsap';
-import { use, useEffect, useRef, useState } from 'react';
 import { Button } from '../ui/button';
 
 const TagsList = ({ promise }: { promise: Promise<Tag[]> }) => {
@@ -9,7 +8,6 @@ const TagsList = ({ promise }: { promise: Promise<Tag[]> }) => {
 
   return (
     <>
-      {/* TODO: Change tags in db              */}
       {tags.map((tag) => (
         <Button
           key={tag.id}
