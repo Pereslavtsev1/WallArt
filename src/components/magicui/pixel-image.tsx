@@ -27,6 +27,7 @@ interface PixelImageProps {
   pixelFadeInDuration?: number; // in ms
   maxAnimationDelay?: number; // in ms
   colorRevealDelay?: number; // in ms
+  className?: string;
 }
 
 export const PixelImage = ({
@@ -37,6 +38,7 @@ export const PixelImage = ({
   maxAnimationDelay = 1200,
   colorRevealDelay = 1300,
   customGrid,
+  className,
 }: PixelImageProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [showColor, setShowColor] = useState(false);
@@ -120,10 +122,10 @@ export const PixelImage = ({
             src={src}
             alt={''}
             fill
-            objectFit='cover'
             className={cn(
-              'select-none',
+              `select-none object-cover`,
               grayscaleAnimation && (showColor ? 'grayscale-0' : 'grayscale'),
+              className,
             )}
             style={{
               transition: grayscaleAnimation

@@ -1,67 +1,98 @@
-import { Heart, PlusIcon } from 'lucide-react';
-import type { WallpaperWithUser } from '@/db/schema';
-import { buildImageUrl } from '@/utils/functions';
-import UserItem from '../general/user-item/user-item';
-import { PixelImage } from '../magicui/pixel-image';
-import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
+import type { ReactNode } from 'react';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '../ui/card';
 
-interface WallpaperCardProps {
-  wallpaper: WallpaperWithUser;
+type WallpaperCardProps = {
+  children?: ReactNode;
   className?: string;
   onClick?: () => void;
-}
-
-const WallpaperCard = ({
-  wallpaper,
+};
+export const WallpaperCard = ({
   className,
   onClick,
+  children,
 }: WallpaperCardProps) => {
   return (
     <Card
-      className={`w-full relative overflow-hidden mb-4 bg-background border-none ring-1 ring-background group transition-all duration-300 ${className || ''}`}
+      className={`p-0 relative overflow-hidden mb-4 bg-background border-none ring-1 ring-background group transition-all duration-300 ${className}`}
+      onClick={onClick}
     >
-      <CardContent
-        style={{
-          aspectRatio: `${wallpaper.width} / ${wallpaper.height}`,
-        }}
-        onClick={onClick}
-      >
-        <PixelImage src={buildImageUrl(wallpaper.fileKey)} />
-        <div className='absolute top-3 right-4 flex gap-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-          <Button
-            size='icon'
-            variant='secondary'
-            className='bg-foreground/20 hover:bg-foreground/30'
-          >
-            <Heart className='text-foreground' />
-          </Button>
-          <Button
-            size='icon'
-            variant='secondary'
-            className='bg-foreground/20 hover:bg-foreground/30'
-          >
-            <PlusIcon className='text-foreground size-5' />
-          </Button>
-        </div>
-        <div className='absolute bottom-0 left-0 right-0 p-4 group-hover:bg-gradient-to-t group-hover:from-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300'>
-          <div className='flex items-center gap-3'>
-            <UserItem src={wallpaper.user.imageUrl} alt={wallpaper.title} />
-            <div className='space-y-0.5'>
-              <p className='text-white font-semibold text-sm truncate'>
-                {wallpaper.user.firstName && wallpaper.user.lastName
-                  ? `${wallpaper.user.firstName} ${wallpaper.user.lastName}`
-                  : wallpaper.user.username}
-              </p>
-              <p className='text-xs text-muted-foreground truncate font-semibold'>
-                {wallpaper.user.username}
-              </p>
-            </div>
-          </div>
-        </div>
-      </CardContent>
+      {children}
     </Card>
   );
 };
 
-export default WallpaperCard;
+type WallpaperCardContentProps = {
+  children?: ReactNode;
+  className?: string;
+};
+export const WallpaperCardContent = ({
+  className,
+  children,
+}: WallpaperCardContentProps) => {
+  return <CardContent className={`p-0 ${className}`}>{children}</CardContent>;
+};
+
+type WallpaperCardImageProps = {
+  height: number;
+  width: number;
+  className?: string;
+  children: ReactNode;
+};
+export const WallpaperCardImage = ({
+  className,
+  width,
+  height,
+  children,
+}: WallpaperCardImageProps) => {
+  return (
+    <div
+      className={`relative ${className}`}
+      style={{
+        aspectRatio: `${width} / ${height}`,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+type WallpaperCardActionsProps = {
+  children?: ReactNode;
+  className?: string;
+};
+export const WallpaperCardActions = ({
+  className,
+  children,
+}: WallpaperCardActionsProps) => {
+  return (
+    <CardAction className={`flex gap-x-2 ${className}`}>{children}</CardAction>
+  );
+};
+
+type WallpaperCardFooterProps = {
+  children?: ReactNode;
+  className?: string;
+};
+export const WallpaperCardFoooter = ({
+  className,
+  children,
+}: WallpaperCardFooterProps) => {
+  return <CardFooter className={className}>{children}</CardFooter>;
+};
+
+type WallpaperCardHeaderProps = {
+  children?: ReactNode;
+  className?: string;
+};
+export const WallpaperCardHeader = ({
+  className,
+  children,
+}: WallpaperCardHeaderProps) => {
+  return <CardHeader className={className}>{children}</CardHeader>;
+};

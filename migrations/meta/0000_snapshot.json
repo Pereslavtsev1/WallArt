@@ -1,9 +1,61 @@
 {
-  "id": "b7921cb7-d2f2-4c54-8ba5-31ab15842f59",
+  "id": "1ece4ce7-205e-4b0d-b428-9c6c9a1310e3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.collection_to_wallpapers_table": {
+      "name": "collection_to_wallpapers_table",
+      "schema": "",
+      "columns": {
+        "collection_id": {
+          "name": "collection_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wallpaper_id": {
+          "name": "wallpaper_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "collection_to_wallpapers_table_collection_id_collections_table_id_fk": {
+          "name": "collection_to_wallpapers_table_collection_id_collections_table_id_fk",
+          "tableFrom": "collection_to_wallpapers_table",
+          "tableTo": "collections_table",
+          "columnsFrom": [
+            "collection_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "collection_to_wallpapers_table_wallpaper_id_wallpapers_table_id_fk": {
+          "name": "collection_to_wallpapers_table_wallpaper_id_wallpapers_table_id_fk",
+          "tableFrom": "collection_to_wallpapers_table",
+          "tableTo": "wallpapers_table",
+          "columnsFrom": [
+            "wallpaper_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.collections_table": {
       "name": "collections_table",
       "schema": "",
@@ -49,58 +101,6 @@
           "tableTo": "users_table",
           "columnsFrom": [
             "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.collections_to_wallpapers": {
-      "name": "collections_to_wallpapers",
-      "schema": "",
-      "columns": {
-        "wallpaper_id": {
-          "name": "wallpaper_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "collection_id": {
-          "name": "collection_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "collections_to_wallpapers_wallpaper_id_wallpapers_table_id_fk": {
-          "name": "collections_to_wallpapers_wallpaper_id_wallpapers_table_id_fk",
-          "tableFrom": "collections_to_wallpapers",
-          "tableTo": "wallpapers_table",
-          "columnsFrom": [
-            "wallpaper_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "collections_to_wallpapers_collection_id_collections_table_id_fk": {
-          "name": "collections_to_wallpapers_collection_id_collections_table_id_fk",
-          "tableFrom": "collections_to_wallpapers",
-          "tableTo": "collections_table",
-          "columnsFrom": [
-            "collection_id"
           ],
           "columnsTo": [
             "id"
@@ -305,8 +305,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.wallpapers_to_tags": {
-      "name": "wallpapers_to_tags",
+    "public.wallpapers_to_tags_table": {
+      "name": "wallpapers_to_tags_table",
       "schema": "",
       "columns": {
         "wallpaper_id": {
@@ -324,9 +324,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk": {
-          "name": "wallpapers_to_tags_wallpaper_id_wallpapers_table_id_fk",
-          "tableFrom": "wallpapers_to_tags",
+        "wallpapers_to_tags_table_wallpaper_id_wallpapers_table_id_fk": {
+          "name": "wallpapers_to_tags_table_wallpaper_id_wallpapers_table_id_fk",
+          "tableFrom": "wallpapers_to_tags_table",
           "tableTo": "wallpapers_table",
           "columnsFrom": [
             "wallpaper_id"
@@ -337,9 +337,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "wallpapers_to_tags_tag_id_tags_table_id_fk": {
-          "name": "wallpapers_to_tags_tag_id_tags_table_id_fk",
-          "tableFrom": "wallpapers_to_tags",
+        "wallpapers_to_tags_table_tag_id_tags_table_id_fk": {
+          "name": "wallpapers_to_tags_table_tag_id_tags_table_id_fk",
+          "tableFrom": "wallpapers_to_tags_table",
           "tableTo": "tags_table",
           "columnsFrom": [
             "tag_id"

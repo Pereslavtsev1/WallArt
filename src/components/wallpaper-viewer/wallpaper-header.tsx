@@ -1,10 +1,11 @@
+'use server';
 import { Heart, PlusIcon } from 'lucide-react';
 import Link from 'next/link';
 import UserItem from '@/components/general/user-item/user-item';
 import { Button } from '@/components/ui/button';
 import type { User } from '@/db/schema';
 
-export default function WallpaperHeader({ user }: { user: User }) {
+export default async function WallpaperHeader({ user }: { user: User }) {
   const hasFullName = user.firstName && user.lastName;
 
   return (

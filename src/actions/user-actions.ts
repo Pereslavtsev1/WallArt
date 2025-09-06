@@ -47,8 +47,8 @@ export async function findUserWithCollectionsAndWallpaperByUserId(
     return await db.query.usersTable.findFirst({
       where: eq(usersTable.id, userId),
       with: {
-        wallpapers: true,
         collections: true,
+        wallpapers: true,
       },
     });
   } catch (error) {

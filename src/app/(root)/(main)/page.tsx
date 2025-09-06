@@ -1,3 +1,4 @@
+'use server';
 import { Suspense } from 'react';
 import { findAllTags } from '@/actions/tag-actions';
 import { findAllWallpapers } from '@/actions/wallpaper-actions';
@@ -15,15 +16,15 @@ export default async function Home() {
     offset: 0,
   });
   return (
-    <div className='max-w-7xl mx-auto'>
+    <>
       <Suspense>
         <TagsCarousel promise={tags} />
       </Suspense>
-      <div className='columns-1 sm:columns-2 lg:columns-3 gap-4'>
+      <div className='columns-1 sm:columns-2 lg:columns-3 gap-x-2'>
         <Suspense fallback={<WallpaperListSkeleton />}>
           <WallpaperList promise={wallpapers} />
         </Suspense>
       </div>
-    </div>
+    </>
   );
 }

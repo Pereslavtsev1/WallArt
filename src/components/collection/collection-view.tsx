@@ -1,6 +1,6 @@
+import { notFound } from 'next/navigation';
 import { use } from 'react';
 import type { CollectionWithWallpapers } from '@/db/schema';
-import { notFound } from 'next/navigation';
 
 type CollectionsViewProps = {
   promise: Promise<CollectionWithWallpapers | undefined>;
