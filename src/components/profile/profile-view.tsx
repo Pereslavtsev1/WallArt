@@ -6,14 +6,7 @@ import type { UserWithWallpapersAndCollections } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { formantDate } from '@/utils/functions';
 import UserItem from '../general/user-item/user-item';
-import WallpaperCard from '../home/wallpaper-card';
-import { BlurFade } from '../magicui/blur-fade';
-import CollectionCard, {
-  CollectionIcon,
-  CollectionInfo,
-} from '../settings/sections/collections/collection-card';
 import { Button } from '../ui/button';
-import { CardDescription, CardTitle } from '../ui/card';
 import { Profile, ProfileContent, ProfileHeader, ProfileTabs } from './profile';
 
 const ProfileView = ({
@@ -75,31 +68,32 @@ const ProfileView = ({
       </ProfileTabs>
       <ProfileContent className='mt-6'>
         <div className='columns-1 sm:columns-2 gap-4'>
-          {selectedTab === 'wallpapers'
-            ? user.wallpapers.map((wallpaper, index) => (
-                <BlurFade key={wallpaper.id} delay={0.25 + index * 0.05}>
-                  <WallpaperCard
-                    wallpaper={{
-                      ...wallpaper,
-                      user: {
-                        ...user,
-                      },
-                    }}
-                  />
-                </BlurFade>
-              ))
-            : user.collections.map((collection) => (
-                <CollectionCard key={collection.id}>
-                  <CollectionIcon />
-
-                  <CollectionInfo>
-                    <CardTitle>{collection.title}</CardTitle>
-                    <CardDescription className='font-semibold text-xs'>
-                      {collection.description}{' '}
-                    </CardDescription>
-                  </CollectionInfo>
-                </CollectionCard>
-              ))}
+          {/* TODO: update this */}
+          {/* {selectedTab === 'wallpapers' */}
+          {/*   ? user.wallpapers.map((wallpaper, index) => ( */}
+          {/*       <BlurFade key={wallpaper.id} delay={0.25 + index * 0.05}> */}
+          {/*         <WallpaperCard */}
+          {/*           wallpaper={{ */}
+          {/*             ...wallpaper, */}
+          {/*             user: { */}
+          {/*               ...user, */}
+          {/*             }, */}
+          {/*           }} */}
+          {/*         /> */}
+          {/*       </BlurFade> */}
+          {/*     )) */}
+          {/*   : user.collections.map((collection) => ( */}
+          {/*       <CollectionCard key={collection.id}> */}
+          {/*         <CollectionIcon /> */}
+          {/**/}
+          {/*         <CollectionInfo> */}
+          {/*           <CardTitle>{collection.title}</CardTitle> */}
+          {/*           <CardDescription className='font-semibold text-xs'> */}
+          {/*             {collection.description}{' '} */}
+          {/*           </CardDescription> */}
+          {/*         </CollectionInfo> */}
+          {/*       </CollectionCard> */}
+          {/*     ))} */}
         </div>
       </ProfileContent>
     </Profile>

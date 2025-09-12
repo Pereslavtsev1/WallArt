@@ -1,5 +1,6 @@
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import type { UploadFile } from '@/components/general/modals/wallpaper-upload';
+import type { User } from '@/db/schema';
 
 export const formatFileSize = (bytes: number) => {
   if (bytes === 0) return '0 Bytes';
@@ -30,4 +31,8 @@ export const formantDate = (data: Date) => {
     month: 'long',
     day: 'numeric',
   });
+};
+
+export const hasFullName = (user: User) => {
+  return user.firstName && user.lastName;
 };

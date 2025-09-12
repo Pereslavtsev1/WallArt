@@ -6,6 +6,7 @@ export const SectionIDs = {
   WALLPAPERS: 'wallpapers',
   GENERAL: 'general',
   APPEARANCE: 'appearance',
+  FAVORITES: 'favorites',
 } as const;
 
 export type SectionID = (typeof SectionIDs)[keyof typeof SectionIDs];

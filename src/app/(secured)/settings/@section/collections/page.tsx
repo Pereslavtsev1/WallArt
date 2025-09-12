@@ -3,12 +3,10 @@ import { Suspense } from 'react';
 import { findAllCollectionsByUserId } from '@/actions/collection-actions';
 import CollectionCard from '@/components/settings/sections/collections/collection-card';
 import CollectionsList from '@/components/settings/sections/collections/collections-list';
-import SettingsSection from '@/components/settings/sections/section';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { CardTitle, CardDescription } from '@/components/ui/card';
-import { PlusIcon } from 'lucide-react';
 import CreateCollectionButton from '@/components/settings/sections/collections/create-collection-button';
+import SettingsSection from '@/components/settings/sections/section';
+import { CardDescription, CardTitle } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 export default async function Collections() {
   const { userId, redirectToSignIn } = await auth();
 
@@ -38,6 +36,7 @@ export default async function Collections() {
     </SettingsSection>
   );
 }
+// TODO: rewrite use skeleton list
 const CollectionSkeletonList = () => {
   return (
     <>

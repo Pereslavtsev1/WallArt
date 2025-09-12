@@ -1,5 +1,5 @@
 'use client';
-import { FoldersIcon, LucideIcon } from 'lucide-react';
+import { FoldersIcon, type LucideIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
 
@@ -14,7 +14,7 @@ export type TabsProps = {
 };
 
 const Tabs = ({ className }: TabsProps) => {
-  const [selectedTab, setSelectedTab] = useState<'wallpapers' | 'collections'>(
+  const [_selectedTab, _setSelectedTab] = useState<'wallpapers' | 'collections'>(
     'wallpapers',
   );
   return (

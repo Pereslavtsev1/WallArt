@@ -1,8 +1,13 @@
 'use server';
 
-import { db } from '@/db';
-import { collectionsTable, type User, usersTable } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { db } from '@/db';
+import {
+  collectionsTable,
+  type User,
+  UserInsert,
+  usersTable,
+} from '@/db/schema';
 
 export async function createUser(user: User) {
   try {
@@ -30,7 +35,7 @@ export async function getUserSessions(userId: string) {
 
   return response.json();
 }
-export async function createUserAndCollection(user: User) {
+export async function createUserAndCollection(user: UserInsert) {
   await db.transaction(async (tx) => {
     await tx.insert(usersTable).values(user);
     await tx.insert(collectionsTable).values({

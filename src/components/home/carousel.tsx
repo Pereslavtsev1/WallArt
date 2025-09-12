@@ -1,10 +1,14 @@
 'use client';
 import gsap from 'gsap';
-import { useEffect, useRef, useState } from 'react';
-import type { Tag } from '@/db/schema';
-import TagsList from './tags-list';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
+const Carousel = ({ children }: { children: ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -19,17 +23,17 @@ const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
     });
   };
 
-  const checkEdges = () => {
+  const checkEdges = useCallback(() => {
     if (!containerRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = containerRef.current;
 
     setAtStart(scrollLeft <= 0);
     setAtEnd(scrollLeft + clientWidth >= scrollWidth - 1);
-  };
+  }, []);
 
   useEffect(() => {
     checkEdges();
-  }, []);
+  }, [checkEdges]);
 
   return (
     <div className='relative'>
@@ -46,10 +50,10 @@ const TagsCarousel = ({ promise }: { promise: Promise<Tag[]> }) => {
         onWheel={handleWheel}
         className='overflow-x-auto overscroll-contain overflow-y-hidden flex gap-x-2 py-4 cursor-pointer scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
       >
-        <TagsList promise={promise} />
+        {children}
       </div>
     </div>
   );
 };
 
-export default TagsCarousel;
+export default Carousel;

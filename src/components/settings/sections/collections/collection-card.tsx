@@ -30,7 +30,7 @@ interface CollectionIconProps {
 export const CollectionIcon = ({ className }: CollectionIconProps) => {
   return (
     <div
-      className={`bg-neutral-900 size-10 flex items-center justify-center rounded-full mb-4 ${className}`}
+      className={`bg-muted size-10 flex items-center justify-center rounded-full mb-4 ${className}`}
     >
       <ImagesIcon className='size-5' />
     </div>

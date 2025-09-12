@@ -1,17 +1,18 @@
+'use client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
-type UsetItemProps = {
+type UserItemProps = {
   src: string;
   alt: string;
   className?: string;
 };
-const UserItem = ({ src, alt, className }: UsetItemProps) => {
+
+export default function UserItem({ src, alt, className }: UserItemProps) {
   return (
-    <Avatar className={`${className}`}>
-      <AvatarImage src={src} />
-      <AvatarFallback>{alt}</AvatarFallback>
+    <Avatar className={cn(className)}>
+      <AvatarImage src={src} alt={alt} />
+      <AvatarFallback>{alt[0]}</AvatarFallback>
     </Avatar>
   );
-};
-
-export default UserItem;
+}

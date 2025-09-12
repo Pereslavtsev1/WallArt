@@ -1,7 +1,7 @@
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { likesTable } from '@/db/schema';
 
@@ -24,31 +24,13 @@ export async function toggleLike(wallpaperId: string) {
             eq(likesTable.userId, userId),
           ),
         );
+      return { success: true, liked: false };
     } else {
       await db.insert(likesTable).values({ userId, wallpaperId });
+      return { success: true, liked: true };
     }
-    return { success: true };
   } catch (error) {
     console.error('Error toggling like:', error);
     return { success: false, error: 'Failed to toggle like' };
-  }
-}
-
-export async function findLikedWallpaperIds(
-  userId: string,
-  wallpapersIds: string[],
-) {
-  try {
-    const result = await db.query.likesTable.findMany({
-      where: and(
-        eq(likesTable.userId, userId),
-        inArray(likesTable.wallpaperId, wallpapersIds),
-      ),
-      columns: { wallpaperId: true },
-    });
-    return result.map((like) => like.wallpaperId);
-  } catch (error) {
-    console.error('Error finding liked wallpapers:', error);
-    throw new Error('Failed to find liked wallpapers.');
   }
 }

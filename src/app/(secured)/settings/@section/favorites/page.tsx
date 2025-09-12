@@ -1,26 +1,22 @@
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
-import { findAllWallpapersByUserId } from '@/actions/wallpaper-actions';
+import { findAllLikedWallpapersByUserId } from '@/actions/wallpaper-actions';
+import WallpaperList from '@/components/home/wallpaper-list';
 import SettingsSection from '@/components/settings/sections/section';
 import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
-import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
 import SkeletonList from '@/components/skeletons/skeleton-list';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 
-export default async function WallpapersSection() {
+export default async function FavoritesPage() {
   const { userId, redirectToSignIn } = await auth();
-
   if (!userId) return redirectToSignIn();
-  console.log(userId);
-
-  const wallpapers = findAllWallpapersByUserId(userId);
-  console.log(wallpapers);
+  const wallpapers = findAllLikedWallpapersByUserId(userId);
 
   return (
     <SettingsSection>
       <SettingsSection.Header className='flex items-center justify-between'>
         <div className='space-y-1.5'>
-          <CardTitle>My wallpaper</CardTitle>
+          <CardTitle>My favorites wallpaper</CardTitle>
           <CardDescription className='text-sm text-muted-foreground'>
             Manage your custom wallpapers.
           </CardDescription>

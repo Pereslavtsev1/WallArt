@@ -1,13 +1,13 @@
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
 import type { NextRequest } from 'next/server';
 import { createUserAndCollection } from '@/actions/user-actions';
-import type { User } from '@/db/schema';
+import type { User, UserInsert } from '@/db/schema';
 export async function POST(req: NextRequest) {
   try {
     const evt = await verifyWebhook(req);
 
     if (evt.type === 'user.created') {
-      const user: User = {
+      const user: UserInsert = {
         id: evt.data.id,
         username: evt.data.username
           ? evt.data.username

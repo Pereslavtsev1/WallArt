@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import type { ReactNode } from 'react';
+import { PixelImage } from '../magicui/pixel-image';
 import {
   Card,
   CardAction,
@@ -10,17 +12,16 @@ import {
 type WallpaperCardProps = {
   children?: ReactNode;
   className?: string;
-  onClick?: () => void;
 };
 export const WallpaperCard = ({
   className,
-  onClick,
   children,
-}: WallpaperCardProps) => {
+  ...props
+}: WallpaperCardProps & React.ComponentProps<'div'>) => {
   return (
     <Card
       className={`p-0 relative overflow-hidden mb-4 bg-background border-none ring-1 ring-background group transition-all duration-300 ${className}`}
-      onClick={onClick}
+      {...props}
     >
       {children}
     </Card>
@@ -42,23 +43,34 @@ type WallpaperCardImageProps = {
   height: number;
   width: number;
   className?: string;
-  children: ReactNode;
+  src: string;
+  alt: string;
+  usePixelImage?: boolean;
 };
 export const WallpaperCardImage = ({
   className,
   width,
   height,
-  children,
+  src,
+  alt,
+  usePixelImage = false,
 }: WallpaperCardImageProps) => {
-  return (
-    <div
-      className={`relative ${className}`}
-      style={{
-        aspectRatio: `${width} / ${height}`,
-      }}
-    >
-      {children}
+  return usePixelImage ? (
+    <div style={{ aspectRatio: width / height }}>
+      <PixelImage
+        src={src}
+        alt={alt}
+        className={`object-cover rounded-2xl ${className}`}
+      />
     </div>
+  ) : (
+    <Image
+      src={src}
+      alt={alt}
+      height={height}
+      width={width}
+      className={`object-cover rounded-2xl ${className}`}
+    />
   );
 };
 
@@ -94,5 +106,9 @@ export const WallpaperCardHeader = ({
   className,
   children,
 }: WallpaperCardHeaderProps) => {
-  return <CardHeader className={className}>{children}</CardHeader>;
+  return (
+    <CardHeader className={`flex items-center justify-between ${className}`}>
+      {children}
+    </CardHeader>
+  );
 };

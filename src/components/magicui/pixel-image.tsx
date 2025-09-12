@@ -28,6 +28,7 @@ interface PixelImageProps {
   maxAnimationDelay?: number; // in ms
   colorRevealDelay?: number; // in ms
   className?: string;
+  alt: string;
 }
 
 export const PixelImage = ({
@@ -39,6 +40,7 @@ export const PixelImage = ({
   colorRevealDelay = 1300,
   customGrid,
   className,
+  alt,
 }: PixelImageProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [showColor, setShowColor] = useState(false);
@@ -120,7 +122,7 @@ export const PixelImage = ({
         >
           <Image
             src={src}
-            alt={''}
+            alt={alt}
             fill
             className={cn(
               `select-none object-cover`,

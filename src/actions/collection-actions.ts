@@ -2,12 +2,12 @@
 import { and, eq } from 'drizzle-orm';
 import { db } from '@/db';
 import {
-  type Collection,
+  type CollectionInsert,
   collectionsTable,
   collectionToWallpapersTable,
 } from '@/db/schema';
 
-export async function createCollection(collection: Collection) {
+export async function createCollection(collection: CollectionInsert) {
   try {
     const result = await db
       .insert(collectionsTable)
@@ -21,7 +21,7 @@ export async function createCollection(collection: Collection) {
 }
 export async function findCollectionWithWallpaperById(id: string) {
   try {
-    const result = await db.query.collectionsTable.findFirst({
+    const collection = await db.query.collectionsTable.findFirst({
       where: eq(collectionsTable.id, id),
       with: {
         wallpapers: {
@@ -32,24 +32,17 @@ export async function findCollectionWithWallpaperById(id: string) {
       },
     });
 
-    if (!result) {
+    if (!collection) {
       return;
     }
 
-    return result;
+    return {
+      ...collection,
+      wallpapers: collection.wallpapers.map((w) => w.wallpaper),
+    };
   } catch (error) {
     console.error('Error finding collection with wallpaper:', error);
-  }
-}
-export async function findAllCollectionsByUserId1(userId: string) {
-  try {
-    const result = await db.query.collectionsTable.findMany({
-      where: eq(collectionsTable.userId, userId),
-    });
-    return { sucss: true, data: result };
-  } catch (error) {
-    console.error('Error finding collections by user id:', error);
-    return { success: false, error: 'Failed to find collections by user id' };
+    throw error;
   }
 }
 
@@ -58,6 +51,7 @@ export async function findAllCollectionsByUserId(userId: string) {
     where: eq(collectionsTable.userId, userId),
   });
 }
+
 export async function addWallpaperToCollection(
   collectionId: string,
   wallpaperId: string,

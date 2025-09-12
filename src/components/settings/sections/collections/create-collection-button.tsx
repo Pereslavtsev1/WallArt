@@ -1,7 +1,7 @@
 'use client';
+import { PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCreateCollectionStore } from '@/stores/create-collection-store';
-import { PlusIcon } from 'lucide-react';
 
 const CreateCollectionButton = () => {
   const { toggle } = useCreateCollectionStore();

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  FolderHeartIcon,
   Folders,
   Home,
   ImageIcon,
@@ -9,7 +10,7 @@ import {
   Shield,
   User,
 } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -53,6 +54,11 @@ const SettingsSidebar = () => {
           section: SectionIDs.WALLPAPERS,
           label: 'Wallpapers',
           icon: ImageIcon,
+        },
+        {
+          section: SectionIDs.FAVORITES,
+          label: 'Favorites',
+          icon: FolderHeartIcon,
         },
       ],
     },

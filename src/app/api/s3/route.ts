@@ -4,10 +4,9 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { S3 } from '@/utils/S3';
-import { headers } from 'next/headers';
 
 const uploeadRequestSchema = z.object({
   key: z.string(),

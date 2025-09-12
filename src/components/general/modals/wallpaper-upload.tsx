@@ -1,9 +1,14 @@
 'use client';
 
-import {
-  createWallpaper,
-  createWallpaperWithExistingTags,
-} from '@/actions/wallpaper-actions';
+import { useAuth } from '@clerk/nextjs';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Label } from '@radix-ui/react-label';
+import { useCallback, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { v4 as uuid } from 'uuid';
+import { z } from 'zod';
+import { createWallpaperWithExistingTags } from '@/actions/wallpaper-actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -15,17 +20,9 @@ import {
   MultiSelectValue,
 } from '@/components/ui/multi-select';
 import { Textarea } from '@/components/ui/textarea';
-import { Tag } from '@/db/schema';
-import S3Service from '@/services/S3-service';
+import type { Tag } from '@/db/schema';
+import { uploadFile } from '@/services/S3-service';
 import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
-import { useAuth } from '@clerk/nextjs';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Label } from '@radix-ui/react-label';
-import { useCallback, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { v4 as uuid } from 'uuid';
-import { z } from 'zod';
 import Dropzone from '../dropzone/dropzone-input';
 import { SelectedImagePreview } from '../selected-image-preview/selected-image-preview';
 import ImageUploadDialog from './image-upload';
@@ -103,7 +100,7 @@ const WallpaperUpload = ({ tags }: { tags: Tag[] }) => {
       return;
     }
     try {
-      const key = await S3Service.uploadFile(data.file);
+      const key = await uploadFile(data.file);
       if (key) {
         const res = await createWallpaperWithExistingTags({
           width: file.width,

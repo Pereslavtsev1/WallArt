@@ -1,4 +1,5 @@
 'use client';
+import { useRouter } from 'next/navigation';
 import { use } from 'react';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import type { Collection } from '@/db/schema';
@@ -6,7 +7,6 @@ import CollectionCard, {
   CollectionIcon,
   CollectionInfo,
 } from './collection-card';
-import { useRouter } from 'next/navigation';
 
 const CollectionsList = ({ promise }: { promise: Promise<Collection[]> }) => {
   const collections = use(promise);

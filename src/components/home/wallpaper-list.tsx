@@ -1,15 +1,13 @@
 'use client';
-import { useAuth } from '@clerk/nextjs';
+
 import { Heart, PlusIcon } from 'lucide-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { use, useEffect, useState } from 'react';
-import { findLikedWallpaperIds, toggleLike } from '@/actions/like-actions';
-import type { WallpaperWithUser } from '@/db/schema';
+import { use, useState, useTransition } from 'react';
+import { toggleLike } from '@/actions/like-actions';
+import type { WallpaperWithUserAndLikeStatus } from '@/db/schema';
 import { cn } from '@/lib/utils';
 import { buildImageUrl } from '@/utils/functions';
 import UserItem from '../general/user-item/user-item';
-import { BlurFade } from '../magicui/blur-fade';
 import { Button } from '../ui/button';
 import {
   WallpaperCard,
@@ -22,102 +20,94 @@ import {
 const WallpaperList = ({
   promise,
 }: {
-  promise: Promise<WallpaperWithUser[]>;
+  promise: Promise<WallpaperWithUserAndLikeStatus[]>;
 }) => {
-  const wallpapers = use(promise);
-  const { userId } = useAuth();
-  console.log(wallpapers);
   const router = useRouter();
-
-  const [likedWallpaperIds, setLikedWallpaperIds] = useState<Set<string>>(
-    new Set(),
-  );
-
-  useEffect(() => {
-    if (userId) {
-      const fetchLiked = async () => {
-        const ids = await findLikedWallpaperIds(
-          userId,
-          wallpapers.map((wallpaper) => wallpaper.id),
-        );
-        setLikedWallpaperIds(new Set(ids));
-      };
-      fetchLiked();
+  const [isPending, startTransition] = useTransition();
+  const data = use(promise);
+  const [wallpapers, setWallpapers] = useState(data);
+  console.log(wallpapers);
+  const [optimisticWallpapers, setOptimisticWallpapers] = useState(wallpapers);
+  const handleLike = async (wallpaper: WallpaperWithUserAndLikeStatus) => {
+    setOptimisticWallpapers((prev) =>
+      prev.map((w) =>
+        w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w,
+      ),
+    );
+    const res = await toggleLike(wallpaper.id);
+    if (res.success && res.liked !== undefined) {
+      setWallpapers((prev) =>
+        prev.map((w) =>
+          w.id === wallpaper.id ? { ...w, isLiked: res.liked } : w,
+        ),
+      );
     } else {
-      setLikedWallpaperIds(new Set());
+      setOptimisticWallpapers((prev) =>
+        prev.map((w) =>
+          w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w,
+        ),
+      );
     }
-  }, [userId, wallpapers]);
+  };
 
-  console.log(likedWallpaperIds);
   return (
     <>
-      {wallpapers.map((wallpaper, index) => (
-        <BlurFade key={wallpaper.id} delay={0.25 + index * 0.05} className=''>
-          <WallpaperCard
-            className='rounded-2xl'
-            onClick={() => router.push(`/wallpaper/${wallpaper.id}`)}
-          >
-            <WallpaperCardContent>
-              <WallpaperCardImage
-                height={wallpaper.height}
-                width={wallpaper.width}
-              >
-                <Image
-                  src={buildImageUrl(wallpaper.fileKey)}
-                  alt=''
-                  height={wallpaper.height}
-                  width={wallpaper.width}
-                  className='object-cover'
-                />
-              </WallpaperCardImage>
-              <WallpaperCardActions className='absolute top-3 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+      {optimisticWallpapers.map((wallpaper) => (
+        <WallpaperCard
+          key={wallpaper.id}
+          className='rounded-2xl'
+          onClick={() => router.push(`/wallpaper/${wallpaper.id}`)}
+        >
+          <WallpaperCardContent>
+            <WallpaperCardImage
+              src={buildImageUrl(wallpaper.fileKey)}
+              usePixelImage
+              alt={wallpaper.title}
+              height={wallpaper.height}
+              width={wallpaper.width}
+              className='object-cover'
+            />
+            <div className='absolute top-3 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+              <WallpaperCardActions>
                 <Button
                   size='icon'
                   variant='secondary'
-                  className='bg-foreground/20 hover:bg-foreground/30'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleLike(wallpaper.id);
-
-                    setLikedWallpaperIds((prev) =>
-                      prev.has(wallpaper.id)
-                        ? new Set([...prev].filter((id) => id !== wallpaper.id))
-                        : new Set(prev).add(wallpaper.id),
-                    );
-                  }}
+                  disabled={isPending}
+                  onClick={(e) =>
+                    startTransition(() => {
+                      e.stopPropagation();
+                      handleLike(wallpaper);
+                    })
+                  }
                 >
                   <Heart
                     className={cn(
-                      'text-foreground',
-                      likedWallpaperIds?.has(wallpaper.id) && 'fill-white',
+                      'transition-colors text-foreground',
+                      wallpaper.isLiked && 'fill-foreground',
                     )}
                   />
                 </Button>
-                <Button
-                  size='icon'
-                  variant='secondary'
-                  className='bg-foreground/20 hover:bg-foreground/30'
-                >
+                <Button size='icon' variant='secondary'>
                   <PlusIcon className='text-foreground size-5' />
                 </Button>
               </WallpaperCardActions>
-            </WallpaperCardContent>
+            </div>
+          </WallpaperCardContent>
 
-            <WallpaperCardFoooter className='absolute bottom-0 left-0 right-0 p-4 group-hover:bg-gradient-to-t group-hover:from-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-x-3 items-center'>
-              <UserItem src={wallpaper.user.imageUrl} alt={wallpaper.title} />
-              <div className='space-y-0.5'>
-                <p className='text-white font-semibold text-sm truncate'>
-                  {wallpaper.user.firstName && wallpaper.user.lastName
-                    ? `${wallpaper.user.firstName} ${wallpaper.user.lastName}`
-                    : wallpaper.user.username}
-                </p>
-                <p className='text-xs text-muted-foreground truncate font-semibold'>
-                  {wallpaper.user.username}
-                </p>
-              </div>
-            </WallpaperCardFoooter>
-          </WallpaperCard>
-        </BlurFade>
+          <WallpaperCardFoooter className='absolute bottom-0 left-0 right-0 p-4 group-hover:bg-gradient-to-t group-hover:from-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-x-3 items-center'>
+            <UserItem src={wallpaper.user.imageUrl} alt={wallpaper.title} />
+            <div className='space-y-0.5'>
+              <p className='text-white font-semibold text-sm truncate'>
+                {wallpaper.user.firstName && wallpaper.user.lastName
+                  ? `${wallpaper.user.firstName} ${wallpaper.user.lastName}`
+                  : wallpaper.user.username}
+              </p>
+              <p className='text-xs text-muted-foreground truncate font-semibold'>
+                {wallpaper.user.username}
+              </p>
+            </div>
+          </WallpaperCardFoooter>
+        </WallpaperCard>
       ))}
     </>
   );

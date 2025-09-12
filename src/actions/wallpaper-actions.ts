@@ -1,9 +1,11 @@
 'use server';
-import { type AnyColumn, asc, desc, eq, type SQLWrapper } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import {
+  likesTable,
   type Tag,
   type Wallpaper,
+  type WallpaperInsert,
   wallpapersTable,
   wallpapersToTagsTable,
 } from '@/db/schema';
@@ -26,45 +28,77 @@ export async function findAllWallpapersByUserId(userId: string) {
     where: eq(wallpapersTable.userId, userId),
   });
 }
-export async function findWallpaperById(id: string) {
+
+export async function findWallpaperById(id: string, userId: string | null) {
   try {
-    return await db.query.wallpapersTable.findFirst({
+    const wallpaper = await db.query.wallpapersTable.findFirst({
       with: {
         user: true,
+        ...(userId !== null
+          ? {
+              likes: { where: eq(likesTable.userId, userId) },
+            }
+          : {}),
       },
       where: eq(wallpapersTable.id, id),
     });
+
+    if (!wallpaper) {
+      return null;
+    }
+
+    const { likes, ...rest } = wallpaper;
+
+    return {
+      ...rest,
+      isLiked: likes.length > 0,
+    };
   } catch (error) {
     console.error('Error finding wallpaper:', error);
+    return null;
   }
 }
 
 type FindAllWallpapersProps = {
   offset: number;
   limit: number;
-  orderByField: AnyColumn | SQLWrapper;
-  orderDirection: 'asc' | 'desc';
 };
 
-export async function findAllWallpapers({
+type FindAllWallpapersWithLikesProps = FindAllWallpapersProps & {
+  userId: string | null;
+};
+
+export async function findAllWallpapersWithLikeStatus({
   offset,
   limit,
-  orderDirection = 'desc',
-  orderByField,
-}: FindAllWallpapersProps) {
-  return await db.query.wallpapersTable.findMany({
+  userId,
+}: FindAllWallpapersWithLikesProps) {
+  const res = await db.query.wallpapersTable.findMany({
     with: {
       user: true,
+      ...(userId !== null
+        ? {
+            likes: { where: eq(likesTable.userId, userId) },
+          }
+        : {}),
     },
     offset,
     limit,
-    orderBy: () => [
-      orderDirection === 'asc' ? asc(orderByField) : desc(orderByField),
-    ],
+  });
+
+  return res.map((w) => {
+    const isLiked = 'likes' in w ? w.likes.length > 0 : false;
+    const { ...rest } = w;
+
+    return {
+      ...rest,
+      isLiked,
+    };
   });
 }
+
 export async function createWallpaperWithExistingTags(
-  data: Wallpaper & {
+  data: WallpaperInsert & {
     tags: Tag[];
   },
 ) {
@@ -99,4 +133,21 @@ export async function createWallpaperWithExistingTags(
     console.error('Error creating wallpaper with existing tags:', error);
     return { success: false, error: 'Failed to create wallpaper with tags.' };
   }
+}
+
+export async function findAllLikedWallpapersByUserId(userId: string) {
+  const wallpapers = await db.query.wallpapersTable.findMany({
+    with: {
+      user: true,
+      likes: {
+        where: eq(likesTable.userId, userId),
+      },
+    },
+    where: eq(likesTable.userId, userId),
+  });
+
+  return wallpapers.map(({ likes, ...wallpaper }) => ({
+    ...wallpaper,
+    isLiked: likes.length > 0,
+  }));
 }

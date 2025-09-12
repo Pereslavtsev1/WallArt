@@ -1,5 +1,4 @@
 import { relations } from 'drizzle-orm';
-
 import {
   boolean,
   integer,
@@ -99,8 +98,20 @@ export const wallpapersRelations = relations(
     }),
     collections: many(collectionToWallpapersTable),
     tags: many(wallpapersToTagsTable),
+    likes: many(likesTable),
   }),
 );
+
+export const likeRelations = relations(likesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [likesTable.userId],
+    references: [usersTable.id],
+  }),
+  wallpaper: one(wallpapersTable, {
+    fields: [likesTable.wallpaperId],
+    references: [wallpapersTable.id],
+  }),
+}));
 
 export const collectionsRelations = relations(
   collectionsTable,
@@ -171,4 +182,12 @@ export type WallpaperWithCollectionsAndTags = Wallpaper & {
 };
 export type WallpaperWithUser = Wallpaper & {
   user: User;
+};
+
+export type LikeInsert = typeof likesTable.$inferInsert;
+export type Like = typeof likesTable.$inferSelect;
+
+export type WallpaperWithUserAndLikeStatus = Wallpaper & {
+  user: User;
+  isLiked: boolean;
 };
