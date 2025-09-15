@@ -3,6 +3,7 @@ import {
   boolean,
   integer,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uuid,
@@ -47,41 +48,46 @@ export const collectionsTable = pgTable('collections_table', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   userId: varchar('user_id')
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
 });
 
-export const likesTable = pgTable('likes_table', {
-  userId: varchar('user_id')
-    .notNull()
-    .references(() => usersTable.id),
-  wallpaperId: uuid('wallpaper_id')
-    .notNull()
-    .references(() => wallpapersTable.id),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+export const likesTable = pgTable(
+  'likes_table',
+  {
+    userId: varchar('user_id')
+      .notNull()
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
+    wallpaperId: uuid('wallpaper_id')
+      .notNull()
+      .references(() => wallpapersTable.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.wallpaperId] })],
+);
 
 /** ------------------- Relations Tables ------------------- */
 
-export const collectionToWallpapersTable = pgTable(
-  'collection_to_wallpapers_table',
-  {
-    collectionId: uuid('collection_id')
-      .notNull()
-      .references(() => collectionsTable.id),
-    wallpaperId: uuid('wallpaper_id')
-      .notNull()
-      .references(() => wallpapersTable.id),
-  },
-);
-
-export const wallpapersToTagsTable = pgTable('wallpapers_to_tags_table', {
+export const collectionToWallpapersTable = pgTable('collection_to_wallpapers_table', {
+  collectionId: uuid('collection_id')
+    .notNull()
+    .references(() => collectionsTable.id),
   wallpaperId: uuid('wallpaper_id')
     .notNull()
     .references(() => wallpapersTable.id),
-  tagId: uuid('tag_id')
-    .notNull()
-    .references(() => tagsTable.id),
 });
+
+export const wallpapersToTagsTable = pgTable(
+  'wallpapers_to_tags_table',
+  {
+    wallpaperId: uuid('wallpaper_id')
+      .notNull()
+      .references(() => wallpapersTable.id),
+    tagId: uuid('tag_id')
+      .notNull()
+      .references(() => tagsTable.id),
+  },
+  (table) => [primaryKey({ columns: [table.wallpaperId, table.tagId] })],
+);
 
 /** ------------------- Relations ------------------- */
 export const usersRelations = relations(usersTable, ({ many }) => ({
@@ -89,18 +95,15 @@ export const usersRelations = relations(usersTable, ({ many }) => ({
   collections: many(collectionsTable),
   likes: many(likesTable),
 }));
-export const wallpapersRelations = relations(
-  wallpapersTable,
-  ({ one, many }) => ({
-    user: one(usersTable, {
-      fields: [wallpapersTable.userId],
-      references: [usersTable.id],
-    }),
-    collections: many(collectionToWallpapersTable),
-    tags: many(wallpapersToTagsTable),
-    likes: many(likesTable),
+export const wallpapersRelations = relations(wallpapersTable, ({ one, many }) => ({
+  user: one(usersTable, {
+    fields: [wallpapersTable.userId],
+    references: [usersTable.id],
   }),
-);
+  collections: many(collectionToWallpapersTable),
+  tags: many(wallpapersToTagsTable),
+  likes: many(likesTable),
+}));
 
 export const likeRelations = relations(likesTable, ({ one }) => ({
   user: one(usersTable, {
@@ -113,47 +116,47 @@ export const likeRelations = relations(likesTable, ({ one }) => ({
   }),
 }));
 
-export const collectionsRelations = relations(
-  collectionsTable,
-  ({ one, many }) => ({
-    user: one(usersTable, {
-      fields: [collectionsTable.userId],
-      references: [usersTable.id],
-    }),
-    wallpapers: many(collectionToWallpapersTable),
+export const collectionsRelations = relations(collectionsTable, ({ one, many }) => ({
+  user: one(usersTable, {
+    fields: [collectionsTable.userId],
+    references: [usersTable.id],
   }),
-);
+  wallpapers: many(collectionToWallpapersTable),
+}));
 
-export const collectionWallpaperRelations = relations(
-  collectionToWallpapersTable,
-  ({ one }) => ({
-    collection: one(collectionsTable, {
-      fields: [collectionToWallpapersTable.collectionId],
-      references: [collectionsTable.id],
-    }),
-    wallpaper: one(wallpapersTable, {
-      fields: [collectionToWallpapersTable.wallpaperId],
-      references: [wallpapersTable.id],
-    }),
+export const collectionWallpaperRelations = relations(collectionToWallpapersTable, ({ one }) => ({
+  collection: one(collectionsTable, {
+    fields: [collectionToWallpapersTable.collectionId],
+    references: [collectionsTable.id],
   }),
-);
+  wallpaper: one(wallpapersTable, {
+    fields: [collectionToWallpapersTable.wallpaperId],
+    references: [wallpapersTable.id],
+  }),
+}));
 
-export const wallpaperTagRelations = relations(
-  wallpapersToTagsTable,
-  ({ one }) => ({
-    wallpaper: one(wallpapersTable, {
-      fields: [wallpapersToTagsTable.wallpaperId],
-      references: [wallpapersTable.id],
-    }),
-    tag: one(tagsTable, {
-      fields: [wallpapersToTagsTable.tagId],
-      references: [tagsTable.id],
-    }),
+export const wallpaperTagRelations = relations(wallpapersToTagsTable, ({ one }) => ({
+  wallpaper: one(wallpapersTable, {
+    fields: [wallpapersToTagsTable.wallpaperId],
+    references: [wallpapersTable.id],
   }),
-);
+  tag: one(tagsTable, {
+    fields: [wallpapersToTagsTable.tagId],
+    references: [tagsTable.id],
+  }),
+}));
 /** ------------------- Types ------------------- */
-export type UserInsert = typeof usersTable.$inferInsert;
+
 export type User = typeof usersTable.$inferSelect;
+export type UserInsert = typeof usersTable.$inferInsert;
+export type UserUpdate = {
+  id: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  imageUrl?: string;
+  description?: string;
+};
 
 export type TagInsert = typeof tagsTable.$inferInsert;
 export type Tag = typeof tagsTable.$inferSelect;
@@ -164,30 +167,28 @@ export type Wallpaper = typeof wallpapersTable.$inferSelect;
 export type CollectionInsert = typeof collectionsTable.$inferInsert;
 export type Collection = typeof collectionsTable.$inferSelect;
 
-export type WallpaperTagSelect = typeof wallpapersToTagsTable.$inferSelect;
-export type CollectionToWallpaperSelect =
-  typeof collectionToWallpapersTable.$inferSelect;
+export type LikeInsert = typeof likesTable.$inferInsert;
+export type Like = typeof likesTable.$inferSelect;
 
-export type UserWithWallpapersAndCollections = User & {
+export type WallpaperTagSelect = typeof wallpapersToTagsTable.$inferSelect;
+export type CollectionToWallpaperSelect = typeof collectionToWallpapersTable.$inferSelect;
+
+type WithUser<T> = T & { user: User };
+type WithTags<T> = T & { tags: Tag[] };
+type WithCollections<T> = T & { collections: Collection[] };
+type WithLikeStatus<T> = T & { isLiked: boolean };
+
+export type UserWithWallpapersAndCollections = WithCollections<User> & {
   wallpapers: Wallpaper[];
-  collections: Collection[];
 };
 
 export type CollectionWithWallpapers = Collection & {
   wallpapers: Wallpaper[];
 };
 
-export type WallpaperWithCollectionsAndTags = Wallpaper & {
-  tags: Tag[];
-};
-export type WallpaperWithUser = Wallpaper & {
-  user: User;
-};
-
-export type LikeInsert = typeof likesTable.$inferInsert;
-export type Like = typeof likesTable.$inferSelect;
-
-export type WallpaperWithUserAndLikeStatus = Wallpaper & {
-  user: User;
-  isLiked: boolean;
-};
+export type WallpaperWithTags = WithTags<Wallpaper>;
+export type WallpaperWithCollections = WithCollections<Wallpaper>;
+export type WallpaperWithUser = WithUser<Wallpaper>;
+export type WallpaperWithUserAndTags = WithUser<WithTags<Wallpaper>>;
+export type WallpaperWithUserAndCollections = WithUser<WithCollections<Wallpaper>>;
+export type WallpaperWithUserAndLikeStatus = WithLikeStatus<WithUser<Wallpaper>>;

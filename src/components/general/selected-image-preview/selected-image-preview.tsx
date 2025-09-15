@@ -1,24 +1,15 @@
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import type { UploadFile } from '@/components/forms/create-wallpaper-form';
 import { Button } from '@/components/ui/button';
 import { formatFileSize, getStatusIcon } from '@/utils/functions';
-import type { UploadFile } from '../modals/wallpaper-upload';
 
 interface SelectedFilePreviewProps {
   file: UploadFile;
   onRemove: () => void;
 }
 
-/**
- * A component to display a preview of a selected file, including its name, size,
- * upload progress, and status. Allows removing the file.
- * @param file The UploadFile object to display.
- * @param onRemove Callback function to execute when the remove button is clicked.
- */
-export const SelectedImagePreview = ({
-  file,
-  onRemove,
-}: SelectedFilePreviewProps) => {
+export const SelectedImagePreview = ({ file, onRemove }: SelectedFilePreviewProps) => {
   return (
     <>
       <h3 className='text-sm font-semibold'>Selected File</h3>
@@ -29,10 +20,7 @@ export const SelectedImagePreview = ({
         >
           <div className='flex min-w-0 flex-1 items-center space-x-3'>
             <Image
-              src={
-                file.previewUrl ||
-                '/placeholder.svg?height=40&width=40&query=file preview'
-              }
+              src={file.previewUrl || '/placeholder.svg?height=40&width=40&query=file preview'}
               alt='Preview'
               width={40}
               height={40}
@@ -40,9 +28,7 @@ export const SelectedImagePreview = ({
             />
             <div className='font-semibold'>
               <p className='max-w-40 truncate text-sm'>{file.file.name}</p>
-              <p className='text-xs text-muted-foreground'>
-                {formatFileSize(file.file.size)}
-              </p>
+              <p className='text-xs text-muted-foreground'>{formatFileSize(file.file.size)}</p>
               {file.uploading && (
                 <div>
                   <div className='h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
@@ -51,15 +37,11 @@ export const SelectedImagePreview = ({
                       style={{ width: `${file.progress}%` }}
                     />
                   </div>
-                  <p className='text-xs text-muted-foreground'>
-                    {file.progress}% uploaded
-                  </p>
+                  <p className='text-xs text-muted-foreground'>{file.progress}% uploaded</p>
                 </div>
               )}
               {file.error && (
-                <p className='text-xs text-red-500'>
-                  Upload failed. Please try again.
-                </p>
+                <p className='text-xs text-red-500'>Upload failed. Please try again.</p>
               )}
             </div>
           </div>

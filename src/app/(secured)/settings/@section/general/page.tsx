@@ -1,6 +1,11 @@
 'use client';
 
-import SettingsSection from '@/components/settings/sections/section';
+import {
+  SettingsSection,
+  SettingsSectionContent,
+  SettingsSectionFooter,
+  SettingsSectionHeader,
+} from '@/components/settings/sections/section';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -8,12 +13,12 @@ import { Switch } from '@/components/ui/switch';
 const General = () => {
   return (
     <SettingsSection>
-      <SettingsSection.Header
+      <SettingsSectionHeader
         title='General Settings'
         description='Manage your general account settings and preferences.'
       />
 
-      <SettingsSection.Content>
+      <SettingsSectionContent>
         <div className='space-y-6'>
           <div className='flex items-center justify-between'>
             <div className='space-y-0.5'>
@@ -25,11 +30,11 @@ const General = () => {
             <Switch />
           </div>
         </div>
-      </SettingsSection.Content>
+      </SettingsSectionContent>
 
-      <SettingsSection.Footer className='justify-end'>
+      <SettingsSectionFooter className='justify-end'>
         <Button className='px-10 font-semibold'>Save Changes</Button>
-      </SettingsSection.Footer>
+      </SettingsSectionFooter>
     </SettingsSection>
   );
 };

@@ -1,3 +1,4 @@
+'use client';
 import type { ReactNode } from 'react';
 import {
   Card,
@@ -8,10 +9,21 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-interface SettingsSectionProps {
-  children: ReactNode;
+type SettingSectionProps = {
+  children?: ReactNode;
   className?: string;
-}
+};
+export const SettingsSection = ({ className, children }: SettingSectionProps) => {
+  return <Card className={`w-full space-y-2 bg-background ${className}`}>{children}</Card>;
+};
+
+type SettingsSectionContentProps = {
+  children?: ReactNode;
+  className?: string;
+};
+export const SettingsSectionContent = ({ className, children }: SettingsSectionContentProps) => {
+  return <CardContent className={`space-y-6 ${className}`}>{children}</CardContent>;
+};
 
 interface SettingsHeaderProps {
   title?: string;
@@ -20,31 +32,13 @@ interface SettingsHeaderProps {
   className?: string;
 }
 
-interface SettingsContentProps {
-  children: ReactNode;
-  className?: string;
-}
-
-interface SettingsFooterProps {
-  children: ReactNode;
-  className?: string;
-}
-
-const SettingsSection = ({ children, className }: SettingsSectionProps) => (
-  <section>
-    <Card className={`${className} w-full space-y-2 bg-background`}>
-      {children}
-    </Card>
-  </section>
-);
-
-const SettingsSectionHeader = ({
+export const SettingsSectionHeader = ({
   title,
   description,
   className,
   children,
 }: SettingsHeaderProps) => (
-  <CardHeader className={`${className} font-semibold`}>
+  <CardHeader className={`font-semibold ${className}`}>
     {children ? (
       children
     ) : (
@@ -56,22 +50,11 @@ const SettingsSectionHeader = ({
   </CardHeader>
 );
 
-const SettingsSectionContent = ({
-  children,
-  className,
-}: SettingsContentProps) => (
-  <CardContent className={`${className} space-y-6`}>{children}</CardContent>
-);
+interface SettingsFooterProps {
+  children: ReactNode;
+  className?: string;
+}
 
-const SettingsSectionFooter = ({
-  children,
-  className,
-}: SettingsFooterProps) => (
+export const SettingsSectionFooter = ({ children, className }: SettingsFooterProps) => (
   <CardFooter className={className}>{children}</CardFooter>
 );
-
-SettingsSection.Header = SettingsSectionHeader;
-SettingsSection.Content = SettingsSectionContent;
-SettingsSection.Footer = SettingsSectionFooter;
-
-export default SettingsSection;

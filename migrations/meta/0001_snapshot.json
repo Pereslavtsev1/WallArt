@@ -1,6 +1,6 @@
 {
-  "id": "d0bcec3c-21c6-449c-a621-617883621b15",
-  "prevId": "1ece4ce7-205e-4b0d-b428-9c6c9a1310e3",
+  "id": "1ab8c963-fe49-4238-b51c-6fc3ff924d5e",
+  "prevId": "3125cae8-25db-4a1e-8a48-cedb44c5da1c",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -106,10 +106,77 @@
             "id"
           ],
           "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.likes_table": {
+      "name": "likes_table",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wallpaper_id": {
+          "name": "wallpaper_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "likes_table_user_id_users_table_id_fk": {
+          "name": "likes_table_user_id_users_table_id_fk",
+          "tableFrom": "likes_table",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "tableTo": "users_table",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        },
+        "likes_table_wallpaper_id_wallpapers_table_id_fk": {
+          "name": "likes_table_wallpaper_id_wallpapers_table_id_fk",
+          "tableFrom": "likes_table",
+          "columnsFrom": [
+            "wallpaper_id"
+          ],
+          "tableTo": "wallpapers_table",
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "likes_table_user_id_wallpaper_id_pk": {
+          "name": "likes_table_user_id_wallpaper_id_pk",
+          "columns": [
+            "user_id",
+            "wallpaper_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -351,7 +418,15 @@
           "onDelete": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "wallpapers_to_tags_table_wallpaper_id_tag_id_pk": {
+          "name": "wallpapers_to_tags_table_wallpaper_id_tag_id_pk",
+          "columns": [
+            "wallpaper_id",
+            "tag_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

@@ -1,18 +1,14 @@
 'use server';
 import { and, eq } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 import { db } from '@/db';
-import {
-  type CollectionInsert,
-  collectionsTable,
-  collectionToWallpapersTable,
-} from '@/db/schema';
+import { type CollectionInsert, collectionsTable, collectionToWallpapersTable } from '@/db/schema';
 
 export async function createCollection(collection: CollectionInsert) {
   try {
-    const result = await db
-      .insert(collectionsTable)
-      .values(collection)
-      .returning();
+    const result = await db.insert(collectionsTable).values(collection).returning();
+    // FIXME: Delete it
+    revalidatePath('/settings/collections');
     return { success: true, data: result[0] };
   } catch (error) {
     console.error('Error creating wallpaper:', error);
@@ -52,10 +48,7 @@ export async function findAllCollectionsByUserId(userId: string) {
   });
 }
 
-export async function addWallpaperToCollection(
-  collectionId: string,
-  wallpaperId: string,
-) {
+export async function addWallpaperToCollection(collectionId: string, wallpaperId: string) {
   try {
     const result = await db
       .insert(collectionToWallpapersTable)
@@ -71,10 +64,7 @@ export async function addWallpaperToCollection(
   }
 }
 
-export async function removeWallpaperFromCollection(
-  collectionId: string,
-  wallpaperId: string,
-) {
+export async function removeWallpaperFromCollection(collectionId: string, wallpaperId: string) {
   try {
     await db
       .delete(collectionToWallpapersTable)

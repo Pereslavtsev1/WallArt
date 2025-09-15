@@ -7,6 +7,7 @@ export default async function ProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id: userId } = await params;
+  console.log(userId);
   const user = findUserWithCollectionsAndWallpaperByUserId(userId);
 
   return <ProfileView promise={user} />;

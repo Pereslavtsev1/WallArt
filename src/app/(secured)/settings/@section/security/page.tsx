@@ -4,7 +4,11 @@ import { Key } from 'lucide-react';
 import { Suspense } from 'react';
 import { getUserSessions } from '@/actions/user-actions';
 import DeviceList from '@/components/settings/sections/device-list';
-import SettingsSection from '@/components/settings/sections/section';
+import {
+  SettingsSection,
+  SettingsSectionContent,
+  SettingsSectionHeader,
+} from '@/components/settings/sections/section';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -16,20 +20,18 @@ export default async function SecuritySection() {
 
   return (
     <SettingsSection>
-      <SettingsSection.Header
+      <SettingsSectionHeader
         title='Security Settings'
         description='Manage your account security and authentication preferences.'
       />
-      <SettingsSection.Content>
+      <SettingsSectionContent>
         <div className='space-y-6'>
           <div className='space-y-4'>
             <div className='flex items-center gap-3 font-semibold'>
               <Key className='h-5 w-5 text-primary' />
               <div className='space-y-1'>
                 <Label className='font-semibold text-base'>Password</Label>
-                <p className='text-muted-foreground text-xs'>
-                  Change your account password.
-                </p>
+                <p className='text-muted-foreground text-xs'>Change your account password.</p>
               </div>
               <Button className='ml-auto font-semibold'>Change</Button>
             </div>
@@ -44,7 +46,7 @@ export default async function SecuritySection() {
             </div>
           </div>
         </div>
-      </SettingsSection.Content>
+      </SettingsSectionContent>
     </SettingsSection>
   );
 }

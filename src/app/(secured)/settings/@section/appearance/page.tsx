@@ -1,7 +1,11 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import SettingsSection from '@/components/settings/sections/section';
+import {
+  SettingsSection,
+  SettingsSectionContent,
+  SettingsSectionHeader,
+} from '@/components/settings/sections/section';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
@@ -10,11 +14,11 @@ const AppearancePage = () => {
 
   return (
     <SettingsSection>
-      <SettingsSection.Header
+      <SettingsSectionHeader
         title='Appearance'
         description='Customize the appearance of the application.'
       />
-      <SettingsSection.Content>
+      <SettingsSectionContent>
         <div className='space-y-4'>
           <Label className='font-semibold'>Application Theme</Label>
           <div className='flex justify-start gap-3 pt-2'>
@@ -85,7 +89,7 @@ const AppearancePage = () => {
             </div>
           </div>
         </div>
-      </SettingsSection.Content>
+      </SettingsSectionContent>
     </SettingsSection>
   );
 };

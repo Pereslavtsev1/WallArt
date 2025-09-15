@@ -4,7 +4,6 @@ import { ForwardIcon } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { findTagsByWallpaperId } from '@/actions/tag-actions';
-import { findWallpaperById } from '@/actions/wallpaper-actions';
 import DownloadButton from '@/components/general/download-button';
 import UserItem from '@/components/general/user-item/user-item';
 import {
@@ -18,6 +17,7 @@ import { Button } from '@/components/ui/button';
 import WallpaperActions from '@/components/wallpaper/wallpaper-actions';
 import WallpaperTags from '@/components/wallpaper/wallpaper-tags';
 import { buildImageUrl, hasFullName } from '@/utils/functions';
+import { findWallpaperWithUserAndLikeStatusById } from '@/actions/wallpaper-actions';
 
 export default async function Page({
   params,
@@ -26,14 +26,19 @@ export default async function Page({
 }) {
   const { id: wallpaperId } = await params;
   const { userId } = await auth();
-  const wallpaper = await findWallpaperById(wallpaperId, userId);
+  const wallpaper = await findWallpaperWithUserAndLikeStatusById(
+    wallpaperId,
+    userId,
+  );
   if (!wallpaper) notFound();
   const tagsPromise = findTagsByWallpaperId(wallpaperId);
+  console.log(wallpaper);
+
   return (
     <WallpaperCard className='rounded-none pt-4'>
       <WallpaperCardHeader className='px-0'>
         <div className='flex items-center gap-x-3'>
-          <Link href={`profile/${wallpaper.userId}`}>
+          <Link href={`/profile/${wallpaper.userId}`}>
             <UserItem
               src={wallpaper.user.imageUrl}
               alt={wallpaper.user.username}

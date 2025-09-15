@@ -23,7 +23,6 @@ export default function SettingsLayout({
           <div className='w-full'>{section}</div>
         </div>
       </div>
-
       <CreateCollection />
     </SidebarProvider>
   );

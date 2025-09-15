@@ -1,5 +1,5 @@
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import type { UploadFile } from '@/components/general/modals/wallpaper-upload';
+import type { UploadFile } from '@/components/forms/create-wallpaper-form';
 import type { User } from '@/db/schema';
 
 export const formatFileSize = (bytes: number) => {

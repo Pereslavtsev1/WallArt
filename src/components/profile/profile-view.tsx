@@ -15,6 +15,7 @@ const ProfileView = ({
   promise: Promise<UserWithWallpapersAndCollections | undefined>;
 }) => {
   const user = use(promise);
+  console.log(user);
   if (!user) notFound();
   const [selectedTab, setSelectedTab] = useState<'wallpapers' | 'collections'>(
     'wallpapers',

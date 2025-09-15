@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
+    "@clerk/types": "^4.86.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

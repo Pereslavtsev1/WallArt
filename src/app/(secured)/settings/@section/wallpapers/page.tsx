@@ -1,7 +1,11 @@
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
 import { findAllWallpapersByUserId } from '@/actions/wallpaper-actions';
-import SettingsSection from '@/components/settings/sections/section';
+import {
+  SettingsSection,
+  SettingsSectionContent,
+  SettingsSectionHeader,
+} from '@/components/settings/sections/section';
 import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
 import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
 import SkeletonList from '@/components/skeletons/skeleton-list';
@@ -15,10 +19,10 @@ export default async function WallpapersSection() {
 
   const wallpapers = findAllWallpapersByUserId(userId);
   console.log(wallpapers);
-
+  // TODO: rewrite witout wallpaperList
   return (
     <SettingsSection>
-      <SettingsSection.Header className='flex items-center justify-between'>
+      <SettingsSectionHeader className='flex items-center justify-between'>
         <div className='space-y-1.5'>
           <CardTitle>My wallpaper</CardTitle>
           <CardDescription className='text-sm text-muted-foreground'>
@@ -26,16 +30,14 @@ export default async function WallpapersSection() {
           </CardDescription>
         </div>
         <AddWallpaperButton />
-      </SettingsSection.Header>
-      <SettingsSection.Content>
+      </SettingsSectionHeader>
+      <SettingsSectionContent>
         <div className='columns-1 lg:columns-2 gap-4'>
-          <Suspense
-            fallback={<SkeletonList length={35} className='h-52 w-full mb-2' />}
-          >
+          <Suspense fallback={<SkeletonList length={35} className='h-52 w-full mb-2' />}>
             <WallpaperList promise={wallpapers} />
           </Suspense>
         </div>
-      </SettingsSection.Content>
+      </SettingsSectionContent>
     </SettingsSection>
   );
 }

@@ -1,3 +1,4 @@
+-- Custom SQL migration file, put your code below! --
 INSERT INTO "tags_table" ("name") VALUES
     -- Styles
     ('Abstract'),
