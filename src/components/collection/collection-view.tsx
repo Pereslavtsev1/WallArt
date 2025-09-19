@@ -9,7 +9,11 @@ type CollectionsViewProps = {
 const CollectionsView = ({ promise }: CollectionsViewProps) => {
   const collection = use(promise);
   if (!collection) notFound();
-  return <div>{collection.title}</div>;
+  return (
+    <div>
+      <h1>{collection.title}</h1>
+    </div>
+  );
 };
 
 export default CollectionsView;

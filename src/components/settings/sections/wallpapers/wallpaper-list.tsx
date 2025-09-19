@@ -2,18 +2,26 @@ import { EyeIcon, ForwardIcon } from 'lucide-react';
 import Image from 'next/image';
 import { use } from 'react';
 import { Button } from '@/components/ui/button';
-import type { Wallpaper } from '@/db/schema';
+import type { Result } from '@/db';
+import type { WallpaperWithUserAndLikeStatus } from '@/db/schema';
 import { buildImageUrl } from '@/utils/functions';
 
-const WallpaperList = ({ promise }: { promise: Promise<Wallpaper[]> }) => {
-  const wallpapers = use(promise);
-  console.log(wallpapers);
+const WallpaperList = ({
+  promise,
+}: {
+  promise: Promise<Result<WallpaperWithUserAndLikeStatus[]>>;
+}) => {
+  const data = use(promise);
+  if (!data.success) {
+    throw new Error(data.error);
+  }
+  const wallpapers = data.data;
 
   return (
     <>
       {wallpapers.map((wallpaper) => (
         <div
-          className='relative flex flex-col overflow-hidden rounded-lg border bg-background shadow-sm mb-4'
+          className='relative mb-4 flex flex-col overflow-hidden rounded-lg border bg-background shadow-sm'
           key={wallpaper.id}
         >
           <div

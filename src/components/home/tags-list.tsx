@@ -1,17 +1,16 @@
-'use client';
-import { use } from 'react';
-import type { Tag } from '@/db/schema';
+import { findAllTags } from '@/actions/tag-actions';
 import { Button } from '../ui/button';
 
-const TagsList = ({ promise }: { promise: Promise<Tag[]> }) => {
-  const tags = use(promise);
+export default async function TagsList() {
+  const res = await findAllTags();
+  const tags = res.success ? res.data : [];
 
   return (
     <>
       {tags.map((tag) => (
         <Button
           key={tag.id}
-          className='font-semibold justify-start'
+          className='justify-start font-semibold'
           variant={'ghost'}
         >
           {tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}
@@ -19,6 +18,4 @@ const TagsList = ({ promise }: { promise: Promise<Tag[]> }) => {
       ))}
     </>
   );
-};
-
-export default TagsList;
+}

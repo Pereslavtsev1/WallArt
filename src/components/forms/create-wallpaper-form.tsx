@@ -7,14 +7,21 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
-import { createWallpaperWithExistingTags } from '@/actions/wallpaper-actions';
+import { createWallpaperWithTags } from '@/actions/wallpaper-actions';
 import type { Tag } from '@/db/schema';
 import { uploadFile } from '@/services/S3-service';
 import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
 import Dropzone from '../general/dropzone/dropzone-input';
 import { SelectedImagePreview } from '../general/selected-image-preview/selected-image-preview';
 import { Button } from '../ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form';
 import { Input } from '../ui/input';
 import MultipleSelector from '../ui/multi-select';
 import { Textarea } from '../ui/textarea';
@@ -38,9 +45,12 @@ const fileSchema = z.object(
       .refine((file) => file.size <= 10 * 1024 * 1024, {
         message: 'File must be smaller than 10MB',
       })
-      .refine((file) => ['image/png', 'image/jpeg', 'image/webp'].includes(file.type), {
-        message: 'Only PNG, JPEG, or WEBP files are allowed',
-      }),
+      .refine(
+        (file) => ['image/png', 'image/jpeg', 'image/webp'].includes(file.type),
+        {
+          message: 'Only PNG, JPEG, or WEBP files are allowed',
+        },
+      ),
     width: z.number(),
     height: z.number(),
   },
@@ -122,11 +132,10 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
       const key = await uploadFile(data.fileData.file);
       if (!key) throw new Error('Failed to upload file');
 
-      const res = await createWallpaperWithExistingTags({
+      const res = await createWallpaperWithTags({
         width: data.fileData.width,
         height: data.fileData.height,
         title: data.title,
-        userId,
         fileKey: key,
         description: data.description,
         tags: selectedTags,
@@ -137,11 +146,15 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
           description: 'Your wallpaper has been successfully uploaded!',
         });
       } else {
-        toast.error('Upload Failed', { description: res.error ?? 'Unexpected error' });
+        toast.error('Upload Failed', {
+          description: res.error ?? 'Unexpected error',
+        });
       }
     } catch (error) {
       console.error(error);
-      toast.error('Upload Error', { description: 'An unexpected error occurred.' });
+      toast.error('Upload Error', {
+        description: 'An unexpected error occurred.',
+      });
     } finally {
       toggle();
     }
@@ -186,7 +199,9 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
               value: tag.name,
             }))}
             onChange={(value) =>
-              setSelectedTags(value.map((tag) => ({ id: tag.id, name: tag.label }) as Tag))
+              setSelectedTags(
+                value.map((tag) => ({ id: tag.id, name: tag.label }) as Tag),
+              )
             }
             badgeClassName='font-semibold'
           />
@@ -197,7 +212,9 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='text-sm font-semibold'>Wallpaper Description</FormLabel>
+              <FormLabel className='text-sm font-semibold'>
+                Wallpaper Description
+              </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
@@ -247,7 +264,11 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
           )}
         />
 
-        <Button type='submit' className='font-semibold' disabled={form.formState.isSubmitting}>
+        <Button
+          type='submit'
+          className='font-semibold'
+          disabled={form.formState.isSubmitting}
+        >
           {form.formState.isSubmitting ? 'Uploading...' : 'Upload'}
         </Button>
       </form>

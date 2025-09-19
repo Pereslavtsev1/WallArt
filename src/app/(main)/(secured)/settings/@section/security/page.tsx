@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server';
 import { Label } from '@radix-ui/react-label';
 import { Key } from 'lucide-react';
 import { Suspense } from 'react';
-import { getUserSessions } from '@/actions/user-actions';
+import { findUserSessions } from '@/actions/user-actions';
 import DeviceList from '@/components/settings/sections/device-list';
 import {
   SettingsSection,
@@ -16,7 +16,7 @@ export default async function SecuritySection() {
   const { userId, redirectToSignIn } = await auth();
 
   if (!userId) return redirectToSignIn();
-  const sessions = getUserSessions(userId);
+  const sessions = findUserSessions();
 
   return (
     <SettingsSection>
@@ -30,8 +30,10 @@ export default async function SecuritySection() {
             <div className='flex items-center gap-3 font-semibold'>
               <Key className='h-5 w-5 text-primary' />
               <div className='space-y-1'>
-                <Label className='font-semibold text-base'>Password</Label>
-                <p className='text-muted-foreground text-xs'>Change your account password.</p>
+                <Label className='text-base font-semibold'>Password</Label>
+                <p className='text-xs text-muted-foreground'>
+                  Change your account password.
+                </p>
               </div>
               <Button className='ml-auto font-semibold'>Change</Button>
             </div>

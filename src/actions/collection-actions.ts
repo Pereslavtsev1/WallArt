@@ -1,85 +1,118 @@
 'use server';
 import { and, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/db';
-import { type CollectionInsert, collectionsTable, collectionToWallpapersTable } from '@/db/schema';
+import { withAuth, withDb } from '@/db';
+import {
+  type CollectionInsert,
+  collectionsTable,
+  collectionToWallpapersTable,
+} from '@/db/schema';
 
-export async function createCollection(collection: CollectionInsert) {
-  try {
-    const result = await db.insert(collectionsTable).values(collection).returning();
-    // FIXME: Delete it
-    revalidatePath('/settings/collections');
-    return { success: true, data: result[0] };
-  } catch (error) {
-    console.error('Error creating wallpaper:', error);
-    return { success: false, error: 'Failed to create wallpaper.' };
-  }
+export async function createCollection(
+  newCollection: Omit<CollectionInsert, 'userId'>,
+) {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db
+        .insert(collectionsTable)
+        .values({ ...newCollection, userId })
+        .returning(),
+    ).then((result) => {
+      revalidatePath('/settings/collections');
+      return result;
+    }),
+  );
 }
-export async function findCollectionWithWallpaperById(id: string) {
-  try {
-    const collection = await db.query.collectionsTable.findFirst({
+
+export async function findCollectionById(id: string) {
+  return withDb((db) =>
+    db.query.collectionsTable.findFirst({
       where: eq(collectionsTable.id, id),
       with: {
         wallpapers: {
           with: {
             wallpaper: true,
           },
+          columns: {
+            wallpaperId: false,
+            collectionId: false,
+          },
         },
       },
-    });
-
-    if (!collection) {
-      return;
-    }
-
-    return {
-      ...collection,
-      wallpapers: collection.wallpapers.map((w) => w.wallpaper),
-    };
-  } catch (error) {
-    console.error('Error finding collection with wallpaper:', error);
-    throw error;
-  }
+    }),
+  );
 }
 
-export async function findAllCollectionsByUserId(userId: string) {
-  return await db.query.collectionsTable.findMany({
-    where: eq(collectionsTable.userId, userId),
-  });
+export async function findCollectionsByUserId() {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.query.collectionsTable.findMany({
+        where: eq(collectionsTable.userId, userId),
+        columns: {
+          id: true,
+          title: true,
+        },
+      }),
+    ),
+  );
 }
 
-export async function addWallpaperToCollection(collectionId: string, wallpaperId: string) {
-  try {
-    const result = await db
-      .insert(collectionToWallpapersTable)
-      .values({
-        collectionId,
-        wallpaperId,
-      })
-      .returning();
-    return { success: true, data: result[0] };
-  } catch (error) {
-    console.error('Error adding wallpaper to collection:', error);
-    return { success: false, error: 'Failed to add wallpaper to collection.' };
-  }
+// Add a wallpaper to a collection (only if the user owns the collection)
+export async function addWallpaperToCollection(
+  collectionId: string,
+  wallpaperId: string,
+) {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.transaction(async (tx) => {
+        const collection = await tx.query.collectionsTable.findFirst({
+          where: eq(collectionsTable.id, collectionId),
+        });
+
+        if (!collection || collection.userId !== userId) {
+          throw new Error(
+            "You don't have permission to modify this collection",
+          );
+        }
+
+        return tx
+          .insert(collectionToWallpapersTable)
+          .values({ collectionId, wallpaperId })
+          .returning()
+          .onConflictDoNothing();
+      }),
+    ),
+  );
 }
 
-export async function removeWallpaperFromCollection(collectionId: string, wallpaperId: string) {
-  try {
-    await db
-      .delete(collectionToWallpapersTable)
-      .where(
-        and(
-          eq(collectionToWallpapersTable.collectionId, collectionId),
-          eq(collectionToWallpapersTable.wallpaperId, wallpaperId),
-        ),
-      );
-    return { success: true };
-  } catch (error) {
-    console.error('Error removing wallpaper from collection:', error);
-    return {
-      success: false,
-      error: 'Failed to remove wallpaper from collection.',
-    };
-  }
+export async function removeWallpaperFromCollection(
+  collectionId: string,
+  wallpaperId: string,
+) {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.transaction(async (tx) => {
+        const collection = await tx.query.collectionsTable.findFirst({
+          where: and(
+            eq(collectionsTable.id, collectionId),
+            eq(collectionsTable.userId, userId),
+          ),
+        });
+
+        if (!collection) {
+          throw new Error('Not authorized to modify this collection');
+        }
+
+        return tx
+          .delete(collectionToWallpapersTable)
+          .where(
+            and(
+              eq(collectionToWallpapersTable.collectionId, collectionId),
+              eq(collectionToWallpapersTable.wallpaperId, wallpaperId),
+            ),
+          )
+          .returning();
+      }),
+    ),
+  );
 }

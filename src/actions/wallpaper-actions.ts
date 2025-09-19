@@ -1,145 +1,137 @@
 'use server';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { db } from '@/db';
+import { withAuth, withDb } from '@/db';
 import {
+  collectionToWallpapersTable,
   likesTable,
   type Tag,
-  type Wallpaper,
   type WallpaperInsert,
   wallpapersTable,
   wallpapersToTagsTable,
 } from '@/db/schema';
 
-export async function createWallpaper(wallpaper: Wallpaper) {
-  try {
-    const result = await db.insert(wallpapersTable).values(wallpaper).returning();
-    return { success: true, data: result[0] };
-  } catch (error) {
-    console.error('Error creating wallpaper:', error);
-    return { success: false, error: 'Failed to create wallpaper.' };
-  }
+export async function createWallpaper(
+  wallpaper: Omit<WallpaperInsert, 'userId'>,
+) {
+  return withAuth((userId) =>
+    withDb((db) => db.insert(wallpapersTable).values({ userId, ...wallpaper })),
+  );
 }
 
-export async function findAllWallpapersByUserId(userId: string) {
-  return await db.query.wallpapersTable.findMany({
-    where: eq(wallpapersTable.userId, userId),
-  });
+export async function findWallpapersByUser() {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db
+        .select()
+        .from(wallpapersTable)
+        .where(eq(wallpapersTable.userId, userId)),
+    ),
+  );
 }
 
-export async function findWallpaperWithUserAndLikeStatusById(id: string, userId: string | null) {
-  try {
-    const wallpaper = await db.query.wallpapersTable.findFirst({
-      with: {
-        user: true,
-        likes: userId ? { where: eq(likesTable.userId, userId) } : undefined,
-      },
-      where: eq(wallpapersTable.id, id),
-    });
-
-    if (!wallpaper) {
-      return;
-    }
-
-    const { likes, ...rest } = wallpaper;
-
-    return {
-      ...rest,
-      isLiked: !!likes?.length,
-    };
-  } catch (error) {
-    console.error('Error finding wallpaper:', error);
-  }
+export async function findWallpaperWithLikeStatus(wallpaperId: string) {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.query.wallpapersTable
+        .findFirst({
+          where: eq(wallpapersTable.id, wallpaperId),
+          with: {
+            likes: {
+              where: eq(likesTable.userId, userId),
+            },
+          },
+        })
+        .then((wallpaper) => {
+          if (!wallpaper) return null;
+          return {
+            ...wallpaper,
+            isLiked: wallpaper.likes.length > 0,
+          };
+        }),
+    ),
+  );
 }
 
-type FindAllWallpapersProps = {
-  offset: number;
-  limit: number;
-};
-
-type FindAllWallpapersWithLikesProps = FindAllWallpapersProps & {
-  userId: string | null;
-};
-
-export async function findAllWallpapersWithLikeStatus({
+export async function findWallpapersWithLikeStatus({
   offset,
   limit,
-  userId,
-}: FindAllWallpapersWithLikesProps) {
-  const res = await db.query.wallpapersTable.findMany({
-    with: {
-      user: true,
-      likes: userId ? { where: eq(likesTable.userId, userId) } : undefined,
-    },
-    offset,
-    limit,
-  });
-  console.log(userId);
-  console.log(res);
-
-  return res.map((w) => {
-    const { likes, ...rest } = w;
-
-    return {
-      ...rest,
-      isLiked: !!likes?.length,
-    };
-  });
+}: {
+  offset: number;
+  limit: number;
+}) {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.query.wallpapersTable
+        .findMany({
+          with: {
+            likes: { where: eq(likesTable.userId, userId) },
+            user: true,
+          },
+          limit,
+          offset,
+        })
+        .then((wallpapers) =>
+          wallpapers.map(({ likes, ...rest }) => ({
+            ...rest,
+            isLiked: !!likes?.length,
+          })),
+        ),
+    ),
+  );
 }
 
-export async function createWallpaperWithExistingTags(
-  data: WallpaperInsert & {
-    tags: Tag[];
-  },
+export async function createWallpaperWithTags(
+  data: Omit<WallpaperInsert, 'userId'> & { tags: Tag[] },
 ) {
-  try {
-    const result = await db.transaction(async (tx) => {
-      const wallpaper = await tx
-        .insert(wallpapersTable)
-        .values({
-          ...data,
-        })
-        .returning();
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.transaction(async (tx) => {
+        const wallpaper = await tx
+          .insert(wallpapersTable)
+          .values({ userId, ...data })
+          .returning();
 
-      const createdWallpaper = wallpaper[0];
-      const wallpaperId = createdWallpaper.id;
+        const createdWallpaper = wallpaper[0];
 
-      if (data.tags && data.tags.length > 0) {
-        const records = data.tags
-          .filter((tag) => tag.id !== undefined) // Filter out tags with undefined IDs
-          .map(({ id: tagId }) => ({
-            wallpaperId,
-            tagId: tagId as string,
+        if (data.tags?.length) {
+          const records = data.tags.map(({ id: tagId }) => ({
+            wallpaperId: createdWallpaper.id,
+            tagId,
           }));
-
-        if (records.length > 0) {
           await tx.insert(wallpapersToTagsTable).values(records);
         }
-      }
-      return createdWallpaper;
-    });
+
+        return createdWallpaper;
+      }),
+    ),
+  ).then((res) => {
     revalidatePath('settings/wallpapers');
-    return { success: true, data: result };
-  } catch (error) {
-    console.error('Error creating wallpaper with existing tags:', error);
-    return { success: false, error: 'Failed to create wallpaper with tags.' };
-  }
+    return res;
+  });
 }
 
-export async function findAllLikedWallpapersByUserId(userId: string) {
-  const result = await db.query.likesTable.findMany({
-    where: eq(likesTable.userId, userId),
-    with: {
-      wallpaper: {
-        with: {
-          user: true,
+export async function findLikedWallpapersByUser() {
+  return withAuth((userId) =>
+    withDb((db) =>
+      db.query.likesTable.findMany({
+        where: eq(likesTable.userId, userId),
+        with: { wallpaper: { with: { user: true } } },
+        columns: { userId: false, wallpaperId: false, createdAt: false },
+      }),
+    ),
+  );
+}
+
+export async function findWallpapersByCollection(collectionId: string) {
+  return withDb((db) =>
+    db.query.collectionToWallpapersTable.findMany({
+      where: eq(collectionToWallpapersTable.collectionId, collectionId),
+      with: {
+        wallpaper: {
+          with: { user: true },
         },
       },
-    },
-  });
-
-  return result.map((like) => ({
-    ...like.wallpaper,
-    isLiked: true,
-  }));
+    }),
+  );
 }

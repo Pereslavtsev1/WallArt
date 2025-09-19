@@ -1,6 +1,5 @@
 import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
-import { findAllWallpapersByUserId } from '@/actions/wallpaper-actions';
 import {
   SettingsSection,
   SettingsSectionContent,
@@ -10,15 +9,10 @@ import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wa
 import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
 import SkeletonList from '@/components/skeletons/skeleton-list';
 import { CardDescription, CardTitle } from '@/components/ui/card';
+import { findWallpapersByUser } from '@/actions/wallpaper-actions';
 
 export default async function WallpapersSection() {
-  const { userId, redirectToSignIn } = await auth();
-
-  if (!userId) return redirectToSignIn();
-  console.log(userId);
-
-  const wallpapers = findAllWallpapersByUserId(userId);
-  console.log(wallpapers);
+  const wallpapers = findWallpapersByUser();
   // TODO: rewrite witout wallpaperList
   return (
     <SettingsSection>
@@ -32,8 +26,10 @@ export default async function WallpapersSection() {
         <AddWallpaperButton />
       </SettingsSectionHeader>
       <SettingsSectionContent>
-        <div className='columns-1 lg:columns-2 gap-4'>
-          <Suspense fallback={<SkeletonList length={35} className='h-52 w-full mb-2' />}>
+        <div className='columns-1 gap-4 lg:columns-2'>
+          <Suspense
+            fallback={<SkeletonList length={35} className='mb-2 h-52 w-full' />}
+          >
             <WallpaperList promise={wallpapers} />
           </Suspense>
         </div>

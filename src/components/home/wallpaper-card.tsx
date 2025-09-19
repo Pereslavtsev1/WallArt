@@ -1,13 +1,7 @@
 import Image from 'next/image';
 import type { ReactNode } from 'react';
 import { PixelImage } from '../magicui/pixel-image';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '../ui/card';
+import { Card, CardAction, CardContent, CardFooter, CardHeader } from '../ui/card';
 
 type WallpaperCardProps = {
   children?: ReactNode;
@@ -20,7 +14,7 @@ export const WallpaperCard = ({
 }: WallpaperCardProps & React.ComponentProps<'div'>) => {
   return (
     <Card
-      className={`p-0 relative overflow-hidden mb-4 bg-background border-none ring-1 ring-background group transition-all duration-300 ${className}`}
+      className={`p-0 relative overflow-hidden mb-2 bg-background border-none ring-1 ring-background group transition-all duration-300 ${className}`}
       {...props}
     >
       {children}
@@ -32,10 +26,7 @@ type WallpaperCardContentProps = {
   children?: ReactNode;
   className?: string;
 };
-export const WallpaperCardContent = ({
-  className,
-  children,
-}: WallpaperCardContentProps) => {
+export const WallpaperCardContent = ({ className, children }: WallpaperCardContentProps) => {
   return <CardContent className={`p-0 ${className}`}>{children}</CardContent>;
 };
 
@@ -61,6 +52,7 @@ export const WallpaperCardImage = ({
         src={src}
         alt={alt}
         className={`object-cover rounded-2xl ${className}`}
+        grayscaleAnimation={false}
       />
     </div>
   ) : (
@@ -78,23 +70,15 @@ type WallpaperCardActionsProps = {
   children?: ReactNode;
   className?: string;
 };
-export const WallpaperCardActions = ({
-  className,
-  children,
-}: WallpaperCardActionsProps) => {
-  return (
-    <CardAction className={`flex gap-x-2 ${className}`}>{children}</CardAction>
-  );
+export const WallpaperCardActions = ({ className, children }: WallpaperCardActionsProps) => {
+  return <CardAction className={`flex gap-x-2 ${className}`}>{children}</CardAction>;
 };
 
 type WallpaperCardFooterProps = {
   children?: ReactNode;
   className?: string;
 };
-export const WallpaperCardFoooter = ({
-  className,
-  children,
-}: WallpaperCardFooterProps) => {
+export const WallpaperCardFoooter = ({ className, children }: WallpaperCardFooterProps) => {
   return <CardFooter className={className}>{children}</CardFooter>;
 };
 
@@ -102,13 +86,8 @@ type WallpaperCardHeaderProps = {
   children?: ReactNode;
   className?: string;
 };
-export const WallpaperCardHeader = ({
-  className,
-  children,
-}: WallpaperCardHeaderProps) => {
+export const WallpaperCardHeader = ({ className, children }: WallpaperCardHeaderProps) => {
   return (
-    <CardHeader className={`flex items-center justify-between ${className}`}>
-      {children}
-    </CardHeader>
+    <CardHeader className={`flex items-center justify-between ${className}`}>{children}</CardHeader>
   );
 };

@@ -1,16 +1,27 @@
-import { UserResource } from '@clerk/types';
+import type { UserResource } from '@clerk/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '../ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 
 const schema = z.object({
   description: z.string().optional(),
-  firstName: z.string().min(1, { message: 'First name must be at least 1 character' }),
-  lastName: z.string().min(2, { message: 'Last name must be at least 2 characters' }),
+  firstName: z
+    .string()
+    .min(1, { message: 'First name must be at least 1 character' }),
+  lastName: z
+    .string()
+    .min(2, { message: 'Last name must be at least 2 characters' }),
 });
 
 const ProfileForm = ({ user }: { user: UserResource }) => {
@@ -55,7 +66,7 @@ const ProfileForm = ({ user }: { user: UserResource }) => {
                   className='font-semibold placeholder:font-semibold'
                 />
               </FormControl>
-              <FormMessage className='font-semibold text-xs' />
+              <FormMessage className='text-xs font-semibold' />
             </FormItem>
           )}
         />
@@ -74,7 +85,7 @@ const ProfileForm = ({ user }: { user: UserResource }) => {
                   className='font-semibold placeholder:font-semibold'
                 />
               </FormControl>
-              <FormMessage className='font-semibold text-xs' />
+              <FormMessage className='text-xs font-semibold' />
             </FormItem>
           )}
         />
@@ -94,11 +105,11 @@ const ProfileForm = ({ user }: { user: UserResource }) => {
                   className='resize-none font-semibold placeholder:font-semibold'
                 />
               </FormControl>
-              <FormMessage className='font-semibold text-xs' />
+              <FormMessage className='text-xs font-semibold' />
             </FormItem>
           )}
         />
-        <div className='w-full flex justify-end'>
+        <div className='flex w-full justify-end'>
           <Button type='submit' className='font-semibold'>
             Update Profile
           </Button>

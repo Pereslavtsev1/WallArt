@@ -1,30 +1,41 @@
 'use client';
 import { use, useState, useTransition } from 'react';
 import { toggleLike } from '@/actions/like-actions';
+import type { Result } from '@/db';
 import type { WallpaperWithUserAndLikeStatus } from '@/db/schema';
 import WallpaperItem from './wallpaper-item';
 
 const WallpaperListContainer = ({
   promise,
 }: {
-  promise: Promise<WallpaperWithUserAndLikeStatus[]>;
+  promise: Promise<Result<WallpaperWithUserAndLikeStatus[]>>;
 }) => {
-  const [wallpapers, setWallpapers] = useState<WallpaperWithUserAndLikeStatus[]>(use(promise));
+  const result = use(promise);
+  if (!result.success) throw new Error(result.error);
+  const initialWallpapers = result.data;
+  const [wallpapers, setWallpapers] =
+    useState<WallpaperWithUserAndLikeStatus[]>(initialWallpapers);
   const [isPending, startTransition] = useTransition();
   const [optimisticWallpapers, setOptimisticWallpapers] =
     useState<WallpaperWithUserAndLikeStatus[]>(wallpapers);
   const handleLike = async (wallpaper: WallpaperWithUserAndLikeStatus) => {
     setOptimisticWallpapers((prev) =>
-      prev.map((w) => (w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w)),
+      prev.map((w) =>
+        w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w,
+      ),
     );
     const res = await toggleLike(wallpaper.id);
-    if (res.success && res.liked !== undefined) {
+    if (res.success && res.data) {
       setWallpapers((prev) =>
-        prev.map((w) => (w.id === wallpaper.id ? { ...w, isLiked: res.liked } : w)),
+        prev.map((w) =>
+          w.id === wallpaper.id ? { ...w, isLiked: res.data.isLiked } : w,
+        ),
       );
     } else {
       setOptimisticWallpapers((prev) =>
-        prev.map((w) => (w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w)),
+        prev.map((w) =>
+          w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w,
+        ),
       );
     }
   };

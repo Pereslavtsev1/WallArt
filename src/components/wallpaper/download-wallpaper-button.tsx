@@ -1,9 +1,9 @@
 'use client';
 
+import { DownloadIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
-import { DownloadIcon } from 'lucide-react';
 
 interface DownloadButtonProps {
   fileKey: string;

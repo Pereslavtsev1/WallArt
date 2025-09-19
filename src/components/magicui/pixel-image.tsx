@@ -72,10 +72,7 @@ export const PixelImage = ({
   useEffect(() => {
     // Generate random delays only on the client after mount
     const total = rows * cols;
-    const delays = Array.from(
-      { length: total },
-      () => Math.random() * maxAnimationDelay,
-    );
+    const delays = Array.from({ length: total }, () => Math.random() * maxAnimationDelay);
     setPixelDelays(delays);
 
     setIsVisible(true);
@@ -115,7 +112,7 @@ export const PixelImage = ({
             isVisible ? 'opacity-100' : 'opacity-0',
           )}
           style={{
-            clipPath: !showColor ? piece.clipPath : '',
+            clipPath: !showColor ? piece.clipPath : 'none',
             transitionDelay: `${pixelDelays[index] || 0}ms`,
             transitionDuration: `${pixelFadeInDuration}ms`,
           }}

@@ -3,6 +3,7 @@
 import { useUser } from '@clerk/nextjs';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import Logo from '../general/logo';
 import UserItem from '../general/user-item/user-item';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -12,11 +13,12 @@ const Header = () => {
   const { user, isLoaded, isSignedIn } = useUser();
 
   return (
-    <header className='py-2 flex items-center justify-between'>
-      <Link href='/' className='font-semibold text-lg'>
-        WallArt
+    <header className='py-2 flex items-center justify-between gap-x-2'>
+      <Link href='/' className='font-semibold text-lg flex items-center gap-x-2'>
+        <Logo />
+        <span className='hidden sm:inline'>WallArt</span>
       </Link>
-      <div className='max-w-2xl mx-8 w-full'>
+      <div className='max-w-2xl w-full'>
         <div className='relative'>
           <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4' />
           <Input
@@ -27,7 +29,7 @@ const Header = () => {
           />
         </div>
       </div>
-      <div className='w-20 justify-end flex'>
+      <div className='justify-end flex items-center'>
         {!isLoaded ? (
           <Skeleton className='h-9 w-9 rounded-full' />
         ) : !isSignedIn ? (
@@ -38,9 +40,7 @@ const Header = () => {
           </Link>
         ) : (
           <Link href={'/settings/profile'}>
-            <Button size='icon' variant='ghost' asChild className='rounded-full'>
-              <UserItem src={user.imageUrl} alt={''} />
-            </Button>
+            <UserItem src={user.imageUrl} alt={''} className='size-9' />
           </Link>
         )}
       </div>
