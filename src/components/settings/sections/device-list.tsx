@@ -2,15 +2,18 @@
 import { LogOutIcon } from 'lucide-react';
 import { use } from 'react';
 import { Button } from '@/components/ui/button';
+import type { Result } from '@/db';
 import type { Session } from '@/utils/types';
 
 export default function DeviceList({
   promise,
 }: {
-  promise: Promise<Session[]>;
+  promise: Promise<Result<Session[]>>;
 }) {
-  const sessions = use(promise);
-  console.log(sessions);
+  const res = use(promise);
+  if (!res.success) throw new Error(res.error);
+  const sessions = res.data;
+
   return (
     <div className='w-full space-y-2'>
       {sessions.length > 0 ? (

@@ -1,9 +1,21 @@
-import { findAllTags } from '@/actions/tag-actions';
+'use client';
+import { use } from 'react';
+import type { Result } from '@/db';
+import type { Tag } from '@/db/schema';
 import { Button } from '../ui/button';
 
-export default async function TagsList() {
-  const res = await findAllTags();
-  const tags = res.success ? res.data : [];
+export default function TagsList({
+  promise,
+}: {
+  promise: Promise<Result<Tag[]>>;
+}) {
+  const data = use(promise);
+  if (!data.success) {
+    console.log('here');
+    console.error(data.error);
+    throw new Error(data.error);
+  }
+  const tags = data.data;
 
   return (
     <>

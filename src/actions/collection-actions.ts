@@ -48,16 +48,11 @@ export async function findCollectionsByUserId() {
     withDb((db) =>
       db.query.collectionsTable.findMany({
         where: eq(collectionsTable.userId, userId),
-        columns: {
-          id: true,
-          title: true,
-        },
       }),
     ),
   );
 }
 
-// Add a wallpaper to a collection (only if the user owns the collection)
 export async function addWallpaperToCollection(
   collectionId: string,
   wallpaperId: string,

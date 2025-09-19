@@ -1,6 +1,7 @@
 'use server';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { findAllTags } from '@/actions/tag-actions';
 import { findWallpapersWithLikeStatus } from '@/actions/wallpaper-actions';
 import Carousel from '@/components/home/carousel';
 import TagsList from '@/components/home/tags-list';
@@ -17,17 +18,19 @@ export default async function Home() {
     });
   return (
     <>
-      <Carousel>
-        <Suspense
-          fallback={
-            <div className='flex gap-x-2'>
-              <SkeletonList length={35} className='h-9 w-40' />
-            </div>
-          }
-        >
-          <TagsList />
-        </Suspense>
-      </Carousel>
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+        <Carousel className='flex gap-x-2 py-4'>
+          <Suspense
+            fallback={
+              <div className='flex gap-x-2'>
+                <SkeletonList length={35} className='h-9 w-40' />
+              </div>
+            }
+          >
+            <TagsList promise={findAllTags()} />
+          </Suspense>
+        </Carousel>
+      </ErrorBoundary>
       <div className='columns-1 gap-x-2 sm:columns-2 lg:columns-3'>
         <ErrorBoundary fallback={<div>Something went wrong</div>}>
           <Suspense

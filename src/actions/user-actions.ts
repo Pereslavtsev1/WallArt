@@ -14,26 +14,6 @@ export async function createUser(user: Omit<UserInsert, 'id'>) {
   );
 }
 
-export async function findUserSessions() {
-  return withAuth(async (userId) => {
-    const response = await fetch(
-      `https://api.clerk.com/v1/sessions?user_id=${userId}&status=active&paginated=false`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch sessions');
-    }
-
-    return response.json();
-  });
-}
-
 export async function createUserWithCollection(
   user: Omit<UserInsert, 'id'>,
   collection: Omit<CollectionInsert, 'userId'>,

@@ -7,8 +7,15 @@ import {
   useRef,
   useState,
 } from 'react';
+import { cn } from '@/lib/utils';
 
-const Carousel = ({ children }: { children: ReactNode }) => {
+const Carousel = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className: string;
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -38,17 +45,20 @@ const Carousel = ({ children }: { children: ReactNode }) => {
   return (
     <div className='relative'>
       {!atStart && (
-        <div className='pointer-events-none absolute top-0 left-0 h-full w-12 bg-gradient-to-r from-background z-10' />
+        <div className='pointer-events-none absolute top-0 left-0 z-10 h-full w-12 bg-gradient-to-r from-background' />
       )}
 
       {!atEnd && (
-        <div className='pointer-events-none absolute top-0 right-0 h-full w-12 bg-gradient-to-l from-background z-10' />
+        <div className='pointer-events-none absolute top-0 right-0 z-10 h-full w-12 bg-gradient-to-l from-background' />
       )}
 
       <div
         ref={containerRef}
         onWheel={handleWheel}
-        className='overflow-x-auto overscroll-contain overflow-y-hidden flex gap-x-2 py-4 cursor-pointer scroll-smooth [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'
+        className={cn(
+          'cursor-pointer overflow-x-auto overflow-y-hidden overscroll-contain scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+          className,
+        )}
       >
         {children}
       </div>

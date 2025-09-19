@@ -7,7 +7,6 @@ import {
   ImageIcon,
   Palette,
   Settings,
-  Shield,
   User,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -39,11 +38,6 @@ const SettingsSidebar = () => {
           section: SectionIDs.PROFILE,
           label: 'Profile',
           icon: User,
-        },
-        {
-          section: SectionIDs.SECURITY,
-          label: 'Security',
-          icon: Shield,
         },
         {
           section: SectionIDs.COLLECTIONS,

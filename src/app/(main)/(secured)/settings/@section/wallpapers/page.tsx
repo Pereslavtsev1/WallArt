@@ -1,5 +1,5 @@
-import { auth } from '@clerk/nextjs/server';
 import { Suspense } from 'react';
+import { findWallpapersByUser } from '@/actions/wallpaper-actions';
 import {
   SettingsSection,
   SettingsSectionContent,
@@ -9,11 +9,8 @@ import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wa
 import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
 import SkeletonList from '@/components/skeletons/skeleton-list';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-import { findWallpapersByUser } from '@/actions/wallpaper-actions';
 
 export default async function WallpapersSection() {
-  const wallpapers = findWallpapersByUser();
-  // TODO: rewrite witout wallpaperList
   return (
     <SettingsSection>
       <SettingsSectionHeader className='flex items-center justify-between'>
@@ -30,7 +27,7 @@ export default async function WallpapersSection() {
           <Suspense
             fallback={<SkeletonList length={35} className='mb-2 h-52 w-full' />}
           >
-            <WallpaperList promise={wallpapers} />
+            <WallpaperList promise={findWallpapersByUser()} />
           </Suspense>
         </div>
       </SettingsSectionContent>

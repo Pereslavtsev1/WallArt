@@ -22,10 +22,20 @@ export async function createWallpaper(
 export async function findWallpapersByUser() {
   return withAuth((userId) =>
     withDb((db) =>
-      db
-        .select()
-        .from(wallpapersTable)
-        .where(eq(wallpapersTable.userId, userId)),
+      db.query.wallpapersTable
+        .findMany({
+          where: eq(wallpapersTable.userId, userId),
+          with: {
+            likes: { where: eq(likesTable.userId, userId) },
+            user: true,
+          },
+        })
+        .then((wallpapers) =>
+          wallpapers.map(({ likes, ...rest }) => ({
+            ...rest,
+            isLiked: !!likes?.length,
+          })),
+        ),
     ),
   );
 }
@@ -37,6 +47,7 @@ export async function findWallpaperWithLikeStatus(wallpaperId: string) {
         .findFirst({
           where: eq(wallpapersTable.id, wallpaperId),
           with: {
+            user: true,
             likes: {
               where: eq(likesTable.userId, userId),
             },
@@ -114,11 +125,18 @@ export async function createWallpaperWithTags(
 export async function findLikedWallpapersByUser() {
   return withAuth((userId) =>
     withDb((db) =>
-      db.query.likesTable.findMany({
-        where: eq(likesTable.userId, userId),
-        with: { wallpaper: { with: { user: true } } },
-        columns: { userId: false, wallpaperId: false, createdAt: false },
-      }),
+      db.query.likesTable
+        .findMany({
+          where: eq(likesTable.userId, userId),
+          with: { wallpaper: { with: { user: true } } },
+          columns: { userId: false, wallpaperId: false, createdAt: false },
+        })
+        .then((likesEntries) =>
+          likesEntries.map(({ wallpaper }) => ({
+            ...wallpaper,
+            isLiked: true,
+          })),
+        ),
     ),
   );
 }

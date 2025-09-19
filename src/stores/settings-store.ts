@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 export const SectionIDs = {
   PROFILE: 'profile',
-  SECURITY: 'security',
   COLLECTIONS: 'collections',
   WALLPAPERS: 'wallpapers',
   GENERAL: 'general',
