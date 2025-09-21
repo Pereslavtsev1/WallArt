@@ -1,14 +1,16 @@
 'use client';
 import { use, useState, useTransition } from 'react';
-import { toggleLike } from '@/actions/like-actions';
 import type { Result } from '@/db';
 import type { WallpaperWithUserAndLikeStatus } from '@/db/schema';
+import { toggleLikeAction } from '@/server/actions/like-actions';
 import WallpaperItem from './wallpaper-item';
 
 const FavoriteWallpaperListContainer = ({
   promise,
 }: {
-  promise: Promise<Result<WallpaperWithUserAndLikeStatus[]>>;
+  promise: Promise<
+    Result<WallpaperWithUserAndLikeStatus[]>
+  >;
 }) => {
   const res = use(promise);
   if (!res.success) throw new Error(res.error);
@@ -18,19 +20,26 @@ const FavoriteWallpaperListContainer = ({
   const [isPending, startTransition] = useTransition();
   const [optimisticWallpapers, setOptimisticWallpapers] =
     useState<WallpaperWithUserAndLikeStatus[]>(wallpapers);
-  const handleLike = async (wallpaper: WallpaperWithUserAndLikeStatus) => {
+  const handleLike = async (
+    wallpaper: WallpaperWithUserAndLikeStatus,
+  ) => {
     setOptimisticWallpapers((prev) =>
       prev.filter((w) => w.id !== wallpaper.id),
     );
-    const res = await toggleLike(wallpaper.id);
-    if (res.success && res.liked !== undefined) {
+    const res = await toggleLikeAction(wallpaper.id);
+    if (res.success) {
       setWallpapers((prev) =>
         prev.map((w) =>
-          w.id === wallpaper.id ? { ...w, isLiked: res.liked } : w,
+          w.id === wallpaper.id
+            ? { ...w, isLiked: res.data.isLiked }
+            : w,
         ),
       );
     } else {
-      setOptimisticWallpapers((prev) => [...prev, wallpaper]);
+      setOptimisticWallpapers((prev) => [
+        ...prev,
+        wallpaper,
+      ]);
     }
   };
   console.log(optimisticWallpapers);
@@ -41,7 +50,9 @@ const FavoriteWallpaperListContainer = ({
           key={wallpaper.id}
           wallpaper={wallpaper}
           isPending={isPending}
-          handleLike={() => startTransition(() => handleLike(wallpaper))}
+          handleLike={() =>
+            startTransition(() => handleLike(wallpaper))
+          }
         />
       ))}
     </>

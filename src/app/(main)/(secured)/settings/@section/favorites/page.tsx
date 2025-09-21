@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { findLikedWallpapersByUser } from '@/actions/wallpaper-actions';
 import {
   SettingsSection,
   SettingsSectionContent,
@@ -8,7 +7,8 @@ import {
 } from '@/components/settings/sections/section';
 import SkeletonList from '@/components/skeletons/skeleton-list';
 import { CardDescription, CardTitle } from '@/components/ui/card';
-import FavoriteWallpaperListContainer from '@/components/wallpaper/favorite-wallpaper-list-container';
+import { findAllLikedWallpapersByCurrentUserAction } from '@/server/actions/like-actions';
+import FavoriteWallpaperListContainer from '@/components/wallpaper-1/favorite-wallpaper-list-container';
 
 export default async function FavoritesPage() {
   return (
@@ -30,7 +30,7 @@ export default async function FavoritesPage() {
               }
             >
               <FavoriteWallpaperListContainer
-                promise={findLikedWallpapersByUser()}
+                promise={findAllLikedWallpapersByCurrentUserAction()}
               />
             </Suspense>
           </div>

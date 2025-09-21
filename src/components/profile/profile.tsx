@@ -1,4 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader } from '../ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from '../ui/card';
 
 type ProfileRootChild =
   | React.ReactElement<typeof ProfileHeader>
@@ -13,7 +18,11 @@ export function Profile({
   children: ProfileRootChild | ProfileRootChild[];
   className?: string;
 }) {
-  return <Card className={`bg-background ${className}`}>{children}</Card>;
+  return (
+    <Card className={`${className} bg-background`}>
+      {children}
+    </Card>
+  );
 }
 
 export function ProfileHeader({
@@ -24,7 +33,9 @@ export function ProfileHeader({
   className?: string;
 }) {
   return (
-    <CardHeader className={`flex items-center gap-x-2 ${className}`}>
+    <CardHeader
+      className={`${className} flex items-center gap-x-2`}
+    >
       {children}
     </CardHeader>
   );
@@ -38,7 +49,9 @@ export function ProfileStats({
   className?: string;
 }) {
   return (
-    <CardDescription className={`flex gap-x-4 items-center ${className}`}>
+    <CardDescription
+      className={`${className} flex items-center gap-x-4`}
+    >
       {children}
     </CardDescription>
   );
@@ -52,7 +65,9 @@ export function ProfileTabs({
   className?: string;
 }) {
   return (
-    <nav className={`flex w-full items-center px-6 gap-x-2 ${className}`}>
+    <nav
+      className={`${className} flex w-full items-center gap-x-2 px-6`}
+    >
       {children}
     </nav>
   );
@@ -65,5 +80,9 @@ export function ProfileContent({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <CardContent className={`${className}`}>{children}</CardContent>;
+  return (
+    <CardContent className={`${className}`}>
+      {children}
+    </CardContent>
+  );
 }

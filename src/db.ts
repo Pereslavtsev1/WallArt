@@ -1,8 +1,10 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { getUserSession } from './actions/auth';
-import * as schema from './db/schema';
+import * as schema from '@/db/schema';
+import { getUserSession } from './server/actions/auth';
 
-const db = drizzle(process.env.DATABASE_URL!, { schema: { ...schema } });
+const db = drizzle(process.env.DATABASE_URL!, {
+  schema: { ...schema },
+});
 
 export type DB = typeof db;
 

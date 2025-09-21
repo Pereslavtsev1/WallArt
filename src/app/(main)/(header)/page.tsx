@@ -1,18 +1,17 @@
 'use server';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { findAllTags } from '@/actions/tag-actions';
-import { findWallpapersWithLikeStatus } from '@/actions/wallpaper-actions';
 import Carousel from '@/components/home/carousel';
 import TagsList from '@/components/home/tags-list';
 import SkeletonList from '@/components/skeletons/skeleton-list';
-import WallpaperListContainer from '@/components/wallpaper/wallpaper-list-container';
+import WallpaperListContainer from '@/components/wallpaper-1/wallpaper-list-container';
 import type { Result } from '@/db';
 import type { WallpaperWithUserAndLikeStatus } from '@/db/schema';
+import { findAllWallpapersWithLikeStatusAction } from '@/server/actions/wallpaper-actions';
 
 export default async function Home() {
   const wallpapers: Promise<Result<WallpaperWithUserAndLikeStatus[]>> =
-    findWallpapersWithLikeStatus({
+    findAllWallpapersWithLikeStatusAction({
       limit: 10,
       offset: 0,
     });
@@ -27,7 +26,7 @@ export default async function Home() {
               </div>
             }
           >
-            <TagsList promise={findAllTags()} />
+            <TagsList />
           </Suspense>
         </Carousel>
       </ErrorBoundary>

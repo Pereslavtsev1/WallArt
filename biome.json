@@ -22,24 +22,29 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "a11y": {
-        "noSvgWithoutTitle": "warn"
-      },
+      "a11y": { "noSvgWithoutTitle": "warn" },
       "correctness": {
         "noUnusedVariables": {
           "level": "error",
           "fix": "safe"
         }
       },
-
       "style": {
-        "useConst": {
-          "level": "warn",
-          "fix": "safe"
-        },
-        "useTemplate": {
-          "level": "warn",
-          "fix": "safe"
+        "useConst": { "level": "warn", "fix": "safe" },
+        "useTemplate": { "level": "warn", "fix": "safe" },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "patterns": [
+              {
+                "group": [
+                  "src/server/repositories/**",
+                  "@/server/repositories/**"
+                ],
+                "message": "Imports from /src/server/repositories are restricted."
+              }
+            ]
+          }
         }
       }
     }
@@ -56,17 +61,9 @@
       "trailingCommas": "all"
     }
   },
-  "css": {
-    "linter": {
-      "enabled": false
-    }
-  },
+  "css": { "linter": { "enabled": false } },
   "assist": {
     "enabled": true,
-    "actions": {
-      "source": {
-        "organizeImports": "on"
-      }
-    }
+    "actions": { "source": { "organizeImports": "on" } }
   }
 }

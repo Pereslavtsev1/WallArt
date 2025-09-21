@@ -8,17 +8,15 @@ export async function findAllTags() {
 
 export async function findTagsByWallpaperId(wallpaperId: string) {
   return withDb((db) =>
-    db.query.wallpapersToTagsTable
-      .findMany({
-        where: eq(wallpapersToTagsTable.wallpaperId, wallpaperId),
-        with: {
-          tag: true,
-        },
-        columns: {
-          wallpaperId: false,
-          tagId: false,
-        },
-      })
-      .then((tags) => tags.map(({ tag }) => tag)),
+    db.query.wallpapersToTagsTable.findMany({
+      where: eq(wallpapersToTagsTable.wallpaperId, wallpaperId),
+      with: {
+        tag: true,
+      },
+      columns: {
+        tagId: false,
+        wallpaperId: false,
+      },
+    }),
   );
 }

@@ -7,26 +7,33 @@ import { cn } from '@/lib/utils';
 import { formantDate } from '@/utils/functions';
 import UserItem from '../general/user-item/user-item';
 import { Button } from '../ui/button';
-import { Profile, ProfileContent, ProfileHeader, ProfileTabs } from './profile';
+import {
+  Profile,
+  ProfileContent,
+  ProfileHeader,
+  ProfileTabs,
+} from './profile';
 
 const ProfileView = ({
   promise,
 }: {
-  promise: Promise<UserWithWallpapersAndCollections | undefined>;
+  promise: Promise<
+    UserWithWallpapersAndCollections | undefined
+  >;
 }) => {
   const user = use(promise);
   console.log(user);
   if (!user) notFound();
-  const [selectedTab, setSelectedTab] = useState<'wallpapers' | 'collections'>(
-    'wallpapers',
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    'wallpapers' | 'collections'
+  >('wallpapers');
   return (
     <Profile className='border-none'>
-      <ProfileHeader className='flex flex-col sm:flex-row items-center sm:items-start gap-4 p-6 rounded-xl shadow-sm'>
+      <ProfileHeader className='flex flex-col items-center gap-4 rounded-xl p-6 shadow-sm sm:flex-row sm:items-start'>
         <UserItem
           src={user.imageUrl}
           alt={user.username}
-          className='w-20 h-20 rounded-full'
+          className='h-20 w-20 rounded-full'
         />
         <div className='flex flex-col gap-1 text-center sm:text-left'>
           <span className='text-2xl font-bold'>
@@ -35,7 +42,7 @@ const ProfileView = ({
           <span className='text-sm font-semibold text-muted-foreground'>
             @{user.username}
           </span>
-          <span className='text-xs text-muted-foreground font-semibold'>
+          <span className='text-xs font-semibold text-muted-foreground'>
             Joined {formantDate(user.createdAt)}
           </span>
         </div>
@@ -68,7 +75,7 @@ const ProfileView = ({
         </Button>
       </ProfileTabs>
       <ProfileContent className='mt-6'>
-        <div className='columns-1 sm:columns-2 gap-4'>
+        <div className='columns-1 gap-4 sm:columns-2'>
           {/* TODO: update this */}
           {/* {selectedTab === 'wallpapers' */}
           {/*   ? user.wallpapers.map((wallpaper, index) => ( */}

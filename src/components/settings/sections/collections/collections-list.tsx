@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { use } from 'react';
 import { CardDescription, CardTitle } from '@/components/ui/card';
 import type { Result } from '@/db';
-import type { Collection } from '@/db/schema';
+import type { CollectionWithCount } from '@/db/schema';
 import CollectionCard, {
   CollectionIcon,
   CollectionInfo,
@@ -12,7 +12,7 @@ import CollectionCard, {
 const CollectionsList = ({
   promise,
 }: {
-  promise: Promise<Result<Collection[]>>;
+  promise: Promise<Result<CollectionWithCount[]>>;
 }) => {
   const res = use(promise);
   if (!res.success) throw new Error(res.error);

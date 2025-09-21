@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { findWallpapersByUser } from '@/actions/wallpaper-actions';
 import {
   SettingsSection,
   SettingsSectionContent,
@@ -8,7 +7,11 @@ import {
 import AddWallpaperButton from '@/components/settings/sections/wallpapers/add-wallpaper-button';
 import WallpaperList from '@/components/settings/sections/wallpapers/wallpaper-list';
 import SkeletonList from '@/components/skeletons/skeleton-list';
-import { CardDescription, CardTitle } from '@/components/ui/card';
+import {
+  CardDescription,
+  CardTitle,
+} from '@/components/ui/card';
+import { findAllWallpapersByCurrentUserAction } from '@/server/actions/wallpaper-actions';
 
 export default async function WallpapersSection() {
   return (
@@ -25,9 +28,16 @@ export default async function WallpapersSection() {
       <SettingsSectionContent>
         <div className='columns-1 gap-4 lg:columns-2'>
           <Suspense
-            fallback={<SkeletonList length={35} className='mb-2 h-52 w-full' />}
+            fallback={
+              <SkeletonList
+                length={35}
+                className='mb-2 h-52 w-full'
+              />
+            }
           >
-            <WallpaperList promise={findWallpapersByUser()} />
+            <WallpaperList
+              promise={findAllWallpapersByCurrentUserAction()}
+            />
           </Suspense>
         </div>
       </SettingsSectionContent>

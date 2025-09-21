@@ -1,14 +1,10 @@
 'use client';
 import { use } from 'react';
-import type { Result } from '@/db';
-import type { Tag } from '@/db/schema';
+import { useTagsPromise } from '../providers/tags-provider';
 import { Button } from '../ui/button';
 
-export default function TagsList({
-  promise,
-}: {
-  promise: Promise<Result<Tag[]>>;
-}) {
+export default function TagsList() {
+  const promise = useTagsPromise();
   const data = use(promise);
   if (!data.success) {
     console.log('here');
@@ -25,7 +21,8 @@ export default function TagsList({
           className='justify-start font-semibold'
           variant={'ghost'}
         >
-          {tag.name.charAt(0).toUpperCase() + tag.name.slice(1)}
+          {tag.name.charAt(0).toUpperCase() +
+            tag.name.slice(1)}
         </Button>
       ))}
     </>

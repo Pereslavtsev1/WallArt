@@ -1,8 +1,8 @@
 'use client';
 import { use, useState, useTransition } from 'react';
-import { toggleLike } from '@/actions/like-actions';
 import type { Result } from '@/db';
 import type { WallpaperWithUserAndLikeStatus } from '@/db/schema';
+import { toggleLikeAction } from '@/server/actions/like-actions';
 import WallpaperItem from './wallpaper-item';
 
 const WallpaperListContainer = ({
@@ -24,7 +24,7 @@ const WallpaperListContainer = ({
         w.id === wallpaper.id ? { ...w, isLiked: !w.isLiked } : w,
       ),
     );
-    const res = await toggleLike(wallpaper.id);
+    const res = await toggleLikeAction(wallpaper.id);
     if (res.success && res.data) {
       setWallpapers((prev) =>
         prev.map((w) =>

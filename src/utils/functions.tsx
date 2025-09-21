@@ -1,4 +1,5 @@
 import { AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import type { UploadFile } from '@/components/forms/create-wallpaper-form';
 import type { User } from '@/db/schema';
 
@@ -36,3 +37,39 @@ export const formantDate = (data: Date) => {
 export const hasFullName = (user: User) => {
   return user.firstName && user.lastName;
 };
+
+export async function downloadFile({
+  fileKey,
+  fileName,
+}: {
+  fileKey: string;
+  fileName: string;
+}) {
+  try {
+    const res = await fetch(`/api/s3?key=${encodeURIComponent(fileKey)}`);
+    const { presignedUrl } = await res.json();
+    console.log(presignedUrl);
+    if (!presignedUrl) throw new Error('Failed to get URL');
+
+    const fileRes = await fetch(presignedUrl);
+    if (!fileRes.ok) throw new Error('Error downloading file');
+
+    const blob = await fileRes.blob();
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+
+    const filename = fileName || fileKey.split('/').pop() || 'file';
+    link.download = filename;
+
+    link.click();
+    URL.revokeObjectURL(link.href);
+    toast.success('Success', {
+      description: 'File downloaded successfully.',
+    });
+  } catch (err) {
+    console.error(err);
+    toast.error('Error', {
+      description: 'Failed to download file. Please try again.',
+    });
+  }
+}

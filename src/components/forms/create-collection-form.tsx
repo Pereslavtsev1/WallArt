@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import { createCollection } from '@/actions/collection-actions';
+import { createCollectionAction } from '@/server/actions/collection-actions';
 import { useCreateCollectionStore } from '@/stores/create-collection-store';
 import { Button } from '../ui/button';
 import {
@@ -17,7 +17,9 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 
 const schema = z.object({
-  title: z.string().min(4, { message: 'Title must be at least 4 characters' }),
+  title: z.string().min(4, {
+    message: 'Title must be at least 4 characters',
+  }),
   description: z.optional(z.string()),
 });
 const CreateCollectionForm = () => {
@@ -31,7 +33,7 @@ const CreateCollectionForm = () => {
   });
   const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
-      const response = await createCollection({
+      const response = await createCollectionAction({
         title: data.title,
         description: data.description,
       });
@@ -52,13 +54,18 @@ const CreateCollectionForm = () => {
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='space-y-8'
+      >
         <FormField
           control={form.control}
           name='title'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='font-semibold'>Title</FormLabel>
+              <FormLabel className='font-semibold'>
+                Title
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder='Enter collection title'
@@ -77,7 +84,9 @@ const CreateCollectionForm = () => {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='font-semibold'>Description</FormLabel>
+              <FormLabel className='font-semibold'>
+                Description
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder='Enter collection description'
