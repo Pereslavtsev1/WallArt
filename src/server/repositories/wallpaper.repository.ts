@@ -141,3 +141,13 @@ export async function findAllWallpapersWithLikeStatusByUserId(userId: string) {
       ),
   );
 }
+
+export async function findAllWallpapers() {
+  return withDb((db) =>
+    db.query.wallpapersTable.findMany({
+      with: {
+        user: true,
+      },
+    }),
+  );
+}

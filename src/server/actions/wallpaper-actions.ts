@@ -65,3 +65,6 @@ export async function findWallpaperWithUserAndLikeStatusByIdAction(
     findWallpaperWithUserAndLikeStatusById(userId, wallpaperId),
   );
 }
+export async function findAllWallpapersAction() {
+  return findAllWallpapers();
+}
