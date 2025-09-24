@@ -5,7 +5,7 @@ import {
   findAllTags,
   findTagsByWallpaperId,
 } from '../repositories/tags.repository';
-export const finAllTagsAction = cache(async () => {
+export const findAllTagsAction = cache(async () => {
   return await findAllTags();
 });
 

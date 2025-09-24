@@ -4,10 +4,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { withDb } from '@/db';
 import { likesTable } from '@/db/schema';
 
-export async function toggleLike(
-  wallpaperId: string,
-  userId: string,
-) {
+export async function toggleLike(wallpaperId: string, userId: string) {
   return withDb(async (db) =>
     db.transaction(async (tx) => {
       const existing = await tx.query.likesTable.findFirst({
@@ -28,36 +25,31 @@ export async function toggleLike(
           );
         return { isLiked: false };
       } else {
-        await tx
-          .insert(likesTable)
-          .values({ userId, wallpaperId });
+        await tx.insert(likesTable).values({ userId, wallpaperId });
         return { isLiked: true };
       }
     }),
   );
 }
 
-export async function findUserLikesForWallpapers(
-  userId: string,
-  wallpaperIds: string[],
-) {
+export type LikeCollumns = {
+  [K in keyof typeof likesTable.$inferSelect]?: boolean;
+};
+export async function findUserLikesForWallpapers<
+  const L extends { [K in keyof typeof likesTable.$inferSelect]?: boolean },
+>(userId: string, wallpaperIds: string[], columns: L) {
   return withDb((db) =>
     db.query.likesTable.findMany({
+      columns,
       where: and(
         eq(likesTable.userId, userId),
         inArray(likesTable.wallpaperId, wallpaperIds),
       ),
-      columns: {
-        userId: false,
-        createdAt: false,
-      },
     }),
   );
 }
 
-export async function findAllLikedWallpapersByUserId(
-  userId: string,
-) {
+export async function findAllLikedWallpapersByUserId(userId: string) {
   return withDb(async (db) => {
     const likes = await db.query.likesTable.findMany({
       where: eq(likesTable.userId, userId),

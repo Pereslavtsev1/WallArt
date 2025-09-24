@@ -23,12 +23,10 @@ export async function withDb<T>(
   }
 }
 
-export async function withAuth<T>(
-  callback: (userId: string) => Promise<Result<T>>,
-): Promise<Result<T>> {
+export async function withAuth<T>(callback: (userId: string) => T) {
   const session = await getUserSession();
   if (!session?.userId) {
-    return { success: false, error: 'Unauthorized' };
+    throw new Error('Not authenticated');
   }
-  return callback(session.userId);
+  return await callback(session.userId);
 }

@@ -1,13 +1,15 @@
 import { eq } from 'drizzle-orm';
-import { withDb } from '@/db';
+import { type Result, withDb } from '@/db';
 import {
   likesTable,
   type Tag,
+  type usersTable,
   type Wallpaper,
   type WallpaperInsert,
   wallpapersTable,
   wallpapersToTagsTable,
 } from '@/db/schema';
+import { LikeCollumns } from './likes.repository';
 
 export async function createWallpaper(wallpaper: Wallpaper) {
   return withDb((db) =>
@@ -49,24 +51,24 @@ export async function findWallpaperWithUserAndLikeStatusById(
   });
 }
 
-export async function findAllWallpapersWithUser({
-  offset,
-  limit,
-}: {
-  offset: number;
-  limit: number;
-}) {
-  return withDb((db) =>
-    db.query.wallpapersTable.findMany({
-      with: {
-        user: true,
-      },
-      offset,
-      limit,
-    }),
-  );
-}
-
+// export async function findAllWallpapersWithUser({
+//   offset,
+//   limit,
+// }: {
+//   offset: number;
+//   limit: number;
+// }) {
+//   return withDb((db) =>
+//     db.query.wallpapersTable.findMany({
+//       with: {
+//         user: true,
+//       },
+//       offset,
+//       limit,
+//     }),
+//   );
+// }
+//
 export async function createWallpaperWithExistingTags(
   data: WallpaperInsert & { tags: Tag[] },
 ) {
@@ -142,12 +144,72 @@ export async function findAllWallpapersWithLikeStatusByUserId(userId: string) {
   );
 }
 
-export async function findAllWallpapers() {
+export async function findAllWallpapers1() {
   return withDb((db) =>
     db.query.wallpapersTable.findMany({
       with: {
         user: true,
       },
+    }),
+  );
+}
+
+export type WallpaperColumns = {
+  [K in keyof typeof wallpapersTable.$inferSelect]?: boolean;
+};
+
+export type UserColumns = {
+  [K in keyof typeof usersTable.$inferSelect]?: boolean;
+};
+
+export function findAllWallpapers<W extends WallpaperColumns>(columns: W) {
+  return withDb((db) =>
+    db.query.wallpapersTable.findMany({
+      columns,
+    }),
+  );
+}
+export type PaginationParams = {
+  limit: number;
+  offset: number;
+};
+
+export function findAllWallpapersWithUser<
+  W extends WallpaperColumns,
+  U extends UserColumns,
+>(columns: W & { user: U }, { limit, offset }: PaginationParams) {
+  return withDb((db) =>
+    db.query.wallpapersTable.findMany({
+      with: {
+        user: {
+          columns: columns.user,
+        },
+      },
+      columns: {
+        ...columns,
+      },
+      limit,
+      offset,
+    }),
+  );
+}
+export function findAllWallpapersWithUserAndLikeStatus<
+  W extends WallpaperColumns,
+  U extends UserColumns,
+  L extends LikeCollumns,
+>(columns: W & { user: U; likes: L }, userId: string) {
+  return withDb((db) =>
+    db.query.wallpapersTable.findMany({
+      with: {
+        user: {
+          columns: columns.user,
+        },
+        likes: {
+          where: eq(likesTable.userId, userId),
+          columns: columns.likes,
+        },
+      },
+      columns,
     }),
   );
 }
