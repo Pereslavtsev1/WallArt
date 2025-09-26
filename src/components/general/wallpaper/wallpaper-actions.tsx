@@ -1,9 +1,15 @@
 import { HeartIcon, PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const WallpaperAction = ({ value }: { value: boolean }) => {
+const WallpaperActions = ({
+  value,
+  className,
+}: {
+  value: boolean;
+  className: string;
+}) => {
   return (
-    <>
+    <div className={className}>
       <Button
         size='icon'
         variant='default'
@@ -18,8 +24,8 @@ const WallpaperAction = ({ value }: { value: boolean }) => {
       >
         <PlusIcon className='size-4.5' />
       </Button>
-    </>
+    </div>
   );
 };
 
-export default WallpaperAction;
+export default WallpaperActions;

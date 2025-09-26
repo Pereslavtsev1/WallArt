@@ -1,12 +1,21 @@
 import { Skeleton } from '../ui/skeleton';
 
-const WallpaperListSkeleton = ({ length = 10 }: { length?: number }) => {
+type WallpaperListSkeletonProps = {
+  className?: string;
+  length?: number;
+  ref?: any;
+};
+const WallpaperListSkeleton = ({
+  length = 10,
+  className,
+  ref,
+}: WallpaperListSkeletonProps) => {
   return (
-    <ul className='flex w-full gap-x-2'>
+    <ul className={className} ref={ref}>
       {Array.from({ length }).map((_, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         <li key={index}>
-          <Skeleton className={'h-72 w-full'} />
+          <Skeleton className={'h-72 mb-2 break-inside-avoid'} />
         </li>
       ))}
     </ul>

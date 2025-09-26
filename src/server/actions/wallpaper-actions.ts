@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { withAuth } from '@/db';
 import type { Tag, Wallpaper, WallpaperInsert } from '@/db/schema';
 import 'server-only';
+import type { LikeCollumns } from '../repositories/likes.repository';
 import {
   createWallpaper,
   createWallpaperWithExistingTags,
@@ -11,14 +12,13 @@ import {
   findAllWallpapersWithLikeStatusByUserId,
   findAllWallpapersWithUser,
   findAllWallpapersWithUserAndLikeStatus,
-  findWallpaperWithUserAndLikeStatusById,
-  PaginationParams,
+  findWallpaperWithUserAndLikesById,
+  findWallpaperWithUserById,
+  type PaginationParams,
   type UserColumns,
   type WallpaperColumns,
 } from '../repositories/wallpaper.repository';
 import { getUserSession } from './auth';
-import { findUserLikesForWallpapersAction } from './like-actions';
-import { LikeCollumns } from '../repositories/likes.repository';
 
 export async function createWallpaperAction(
   wallpaper: Omit<Wallpaper, 'userId'>,
@@ -74,10 +74,26 @@ export async function findAllWallpapersWithUserAndLikesAction<
   const L extends LikeCollumns,
 >(columns: W & { user: U; likes: L }, params: PaginationParams) {
   const { userId, isAuthenticated } = await getUserSession();
-  const a = await new Promise((resolve) => setTimeout(resolve, 10000));
+  const a = await new Promise((resolve) => setTimeout(resolve, 2000));
   const wallpapers = await findAllWallpapersWithUserAction(columns, params);
   if (!isAuthenticated) {
     return wallpapers;
   }
   return await findAllWallpapersWithUserAndLikeStatus(columns, userId);
+}
+export async function findWallpaperWithUserAndLikesByIdAction<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>(columns: W & { user: U; likes: L }, wallpaperId: string) {
+  const { userId, isAuthenticated } = await getUserSession();
+  return isAuthenticated
+    ? findWallpaperWithUserAndLikesById(columns, userId, wallpaperId)
+    : findWallpaperWithUserById(columns, wallpaperId);
+}
+
+export async function loadMore() {
+  const res = await fetchWallpapers(limit, page);
+  if (!res.success) throw new Error(res.error);
+  return res.data;
 }

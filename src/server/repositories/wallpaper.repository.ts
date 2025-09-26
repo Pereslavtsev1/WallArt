@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import { type Result, withDb } from '@/db';
+import { withDb } from '@/db';
 import {
   likesTable,
   type Tag,
@@ -9,7 +9,7 @@ import {
   wallpapersTable,
   wallpapersToTagsTable,
 } from '@/db/schema';
-import { LikeCollumns } from './likes.repository';
+import type { LikeCollumns } from './likes.repository';
 
 export async function createWallpaper(wallpaper: Wallpaper) {
   return withDb((db) =>
@@ -23,32 +23,6 @@ export async function findAllWallpapersByUserId(userId: string) {
       where: eq(wallpapersTable.userId, userId),
     }),
   );
-}
-
-export async function findWallpaperWithUserAndLikeStatusById(
-  userId: string,
-  wallpaperId: string,
-) {
-  return withDb(async (db) => {
-    const wallpaper = await db.query.wallpapersTable.findFirst({
-      where: eq(wallpapersTable.id, wallpaperId),
-      with: {
-        user: true,
-        likes: {
-          where: eq(likesTable.userId, userId),
-        },
-      },
-    });
-
-    if (!wallpaper) return null;
-
-    const { likes, ...rest } = wallpaper;
-
-    return {
-      ...rest,
-      isLiked: likes.length > 0,
-    };
-  });
 }
 
 // export async function findAllWallpapersWithUser({
@@ -212,4 +186,45 @@ export function findAllWallpapersWithUserAndLikeStatus<
       columns,
     }),
   );
+}
+
+export async function findWallpaperWithUserAndLikesById<
+  W extends WallpaperColumns,
+  U extends UserColumns,
+  L extends LikeCollumns,
+>(columns: W & { user: U; likes: L }, userId: string, wallpaperId: string) {
+  return withDb(async (db) => {
+    const wallpaper = await db.query.wallpapersTable.findFirst({
+      columns,
+      where: eq(wallpapersTable.id, wallpaperId),
+      with: {
+        user: {
+          columns: columns.user,
+        },
+        likes: {
+          where: eq(likesTable.userId, userId),
+          columns: columns.likes,
+        },
+      },
+    });
+    return wallpaper === undefined ? null : wallpaper;
+  });
+}
+
+export async function findWallpaperWithUserById<
+  W extends WallpaperColumns,
+  U extends UserColumns,
+>(columns: W & { user: U }, wallpaperId: string) {
+  return withDb(async (db) => {
+    const wallpaper = await db.query.wallpapersTable.findFirst({
+      columns,
+      where: eq(wallpapersTable.id, wallpaperId),
+      with: {
+        user: {
+          columns: columns.user,
+        },
+      },
+    });
+    return wallpaper === undefined ? null : wallpaper;
+  });
 }

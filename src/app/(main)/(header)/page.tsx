@@ -32,10 +32,9 @@ export default async function MainPage() {
         </Carousel>
       </section>
       <section>
-        <WallpaperListWrapper
-          wallpapers={wallpapers}
-          className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'
-        />
+        <div className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'>
+          <WallpaperListWrapper wallpapers={wallpapers} />
+        </div>
       </section>
     </div>
   );
