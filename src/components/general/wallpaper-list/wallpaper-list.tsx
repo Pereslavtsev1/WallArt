@@ -12,7 +12,7 @@ export type WallpaperListItem = Pick<
   Wallpaper,
   'id' | 'title' | 'fileKey' | 'width' | 'height'
 > & {
-  user: Pick<User, 'lastName' | 'firstName' | 'username' | 'imageUrl'>;
+  user: Pick<User, 'id' | 'lastName' | 'firstName' | 'username' | 'imageUrl'>;
   likes?: { wallpaperId: string }[];
 };
 
@@ -43,7 +43,10 @@ export function WallpaperList({
             </CardContent>
 
             <div className='absolute top-4 right-4 flex items-center gap-x-1 opacity-100 transition-opacity duration-500 group-hover:opacity-100 sm:opacity-0'>
-              <WallpaperActions value={false} className={''} />
+              <WallpaperActions
+                value={false}
+                className={'items-center gap-x-1 flex'}
+              />
             </div>
 
             <CardFooter className='absolute right-0 bottom-0 left-0 flex items-center gap-x-3 p-4 opacity-100 transition-all duration-500 group-hover:bg-gradient-to-t group-hover:from-black/50 group-hover:opacity-100 sm:opacity-0'>

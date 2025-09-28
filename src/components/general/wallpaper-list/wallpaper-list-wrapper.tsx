@@ -28,6 +28,7 @@ export function WallpaperListWrapper({
           width: true,
           fileKey: true,
           user: {
+            id: true,
             firstName: true,
             lastName: true,
             username: true,

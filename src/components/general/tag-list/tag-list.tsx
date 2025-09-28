@@ -13,12 +13,7 @@ export function TagList({ className, tags }: TagListProps) {
   return (
     <Stream
       value={tags}
-      fallback={
-        <TagListSkeleton
-          className={'flex gap-x-2'}
-          skeletonStyles={'h-9 w-44'}
-        />
-      }
+      fallback={<TagListSkeleton />}
       errorFallback={<div>Error</div>}
     >
       {(data) => {

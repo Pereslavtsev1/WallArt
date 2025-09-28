@@ -14,6 +14,7 @@ export default async function MainPage() {
       width: true,
       fileKey: true,
       user: {
+        id: true,
         firstName: true,
         lastName: true,
         username: true,

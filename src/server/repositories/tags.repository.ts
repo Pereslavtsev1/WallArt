@@ -1,21 +1,27 @@
 import { eq } from 'drizzle-orm';
 import { withDb } from '@/db';
 import { wallpapersToTagsTable } from '@/db/schema';
+import type { TagColumns } from '../actions/tag-actions';
 
 export async function findAllTags() {
   return withDb((db) => db.query.tagsTable.findMany());
 }
 
-export async function findTagsByWallpaperId(wallpaperId: string) {
+export async function findTagsByWallpaperId<T extends TagColumns>(
+  columns: T,
+  wallpaperId: string,
+) {
   return withDb((db) =>
     db.query.wallpapersToTagsTable.findMany({
       where: eq(wallpapersToTagsTable.wallpaperId, wallpaperId),
       with: {
-        tag: true,
+        tag: {
+          columns,
+        },
       },
       columns: {
-        tagId: false,
         wallpaperId: false,
+        tagId: false,
       },
     }),
   );
