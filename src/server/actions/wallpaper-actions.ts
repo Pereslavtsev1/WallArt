@@ -72,9 +72,14 @@ export async function findAllWallpapersWithUserAndLikesAction<
   const W extends WallpaperColumns,
   const U extends UserColumns,
   const L extends LikeCollumns,
->(columns: W & { user: U; likes: L }, params: PaginationParams) {
+>({
+  columns,
+  params,
+}: {
+  columns: W & { user: U; likes: L };
+  params: PaginationParams;
+}) {
   const { userId, isAuthenticated } = await getUserSession();
-  const a = await new Promise((resolve) => setTimeout(resolve, 2000));
   const wallpapers = await findAllWallpapersWithUserAction(columns, params);
   if (!isAuthenticated) {
     return wallpapers;
@@ -92,8 +97,15 @@ export async function findWallpaperWithUserAndLikesByIdAction<
     : findWallpaperWithUserById(columns, wallpaperId);
 }
 
-export async function loadMore() {
-  const res = await fetchWallpapers(limit, page);
-  if (!res.success) throw new Error(res.error);
-  return res.data;
+export async function findAllUserWallpapersWithUserAndLikesAction<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>(columns: W & { user: U; likes: L }, params: PaginationParams) {
+  const { userId, isAuthenticated } = await getUserSession();
+  const wallpapers = await findAllWallpapersWithUserAction(columns, params);
+  if (!isAuthenticated) {
+    return wallpapers;
+  }
+  return await findAllWallpapersWithUserAndLikeStatus(columns, userId);
 }

@@ -19,8 +19,8 @@ export function WallpaperListWrapper({
     console.log(page, limit);
 
     const res: Result<WallpaperListItem[]> =
-      await findAllWallpapersWithUserAndLikesAction(
-        {
+      await findAllWallpapersWithUserAndLikesAction({
+        columns: {
           id: true,
           title: true,
           description: true,
@@ -36,8 +36,8 @@ export function WallpaperListWrapper({
           },
           likes: { wallpaperId: true },
         },
-        { limit: limit, offset: page * limit },
-      );
+        params: { limit: limit, offset: page * limit },
+      });
     if (!res.success) throw new Error(res.error);
     return res.data;
   };

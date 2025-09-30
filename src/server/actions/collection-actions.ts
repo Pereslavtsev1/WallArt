@@ -1,13 +1,13 @@
 'use server';
-import 'server-only';
 import { revalidatePath } from 'next/cache';
 import { withAuth } from '@/db';
 import type { CollectionInsert } from '@/db/schema';
+import 'server-only';
 import {
   addWallpaperToCollection,
+  type CollectionColumns,
   createCollection,
   findAllCollectionsByUserId,
-  findAllCollectionsByUserIdWithCount,
   findCollectionWithWallpaperById,
   removeWallpaperFromCollection,
 } from '../repositories/collection.repository';
@@ -15,7 +15,7 @@ import {
 export async function createCollectionAction(
   collection: Omit<CollectionInsert, 'userId'>,
 ) {
-  return withAuth((userId) =>
+  return await withAuth((userId) =>
     createCollection({ ...collection, userId }).then((res) => {
       revalidatePath('/collections');
       return res;
@@ -24,22 +24,14 @@ export async function createCollectionAction(
 }
 
 export async function findCollectionWithWallpaperByIdAction(id: string) {
-  return findCollectionWithWallpaperById(id);
-}
-
-export async function findAllCollectionsByUserIdAction(userId: string) {
-  return findAllCollectionsByUserId(userId);
-}
-
-export async function findAllCollecitonByCurrentUserAction() {
-  return withAuth((userId) => findAllCollectionsByUserId(userId));
+  return await findCollectionWithWallpaperById(id);
 }
 
 export async function addWallpaperToCollectionAction(
   collectionId: string,
   wallpaperId: string,
 ) {
-  return withAuth((userId) =>
+  return await withAuth((userId) =>
     addWallpaperToCollection(userId, collectionId, wallpaperId).then((res) => {
       revalidatePath(`/collections/${collectionId}`);
       return res;
@@ -51,7 +43,7 @@ export async function removeWallpaperFromCollectionAction(
   collectionId: string,
   wallpaperId: string,
 ) {
-  return withAuth((userId) =>
+  return await withAuth((userId) =>
     removeWallpaperFromCollection(userId, collectionId, wallpaperId).then(
       (res) => {
         revalidatePath(`/settings/collections`);
@@ -60,6 +52,8 @@ export async function removeWallpaperFromCollectionAction(
     ),
   );
 }
-export async function findAllCollectionsByUserIdWithCountAction() {
-  return withAuth((userId) => findAllCollectionsByUserIdWithCount(userId));
+export async function findAllCollectionsWithByUserIdAction<
+  const C extends CollectionColumns,
+>({ columns, userId }: { columns: C; userId: string }) {
+  return await findAllCollectionsByUserId({ columns, userId });
 }

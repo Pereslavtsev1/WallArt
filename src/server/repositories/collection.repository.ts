@@ -1,10 +1,10 @@
-import { and, count, eq, sql } from 'drizzle-orm';
 import { withDb } from '@/db';
 import {
   type CollectionInsert,
   collectionsTable,
   collectionToWallpapersTable,
 } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
 
 export async function createCollection(collection: CollectionInsert) {
   return withDb((db) =>
@@ -28,11 +28,16 @@ export async function findCollectionWithWallpaperById(id: string) {
     }),
   );
 }
-
-export async function findAllCollectionsByUserId(userId: string) {
+export type CollectionColumns = {
+  [K in keyof typeof collectionsTable.$inferSelect]?: boolean;
+};
+export async function findAllCollectionsByUserId<
+  const C extends CollectionColumns,
+>({ columns, userId }: { columns: C; userId: string }) {
   return withDb((db) =>
     db.query.collectionsTable.findMany({
       where: eq(collectionsTable.userId, userId),
+      columns,
     }),
   );
 }
@@ -86,24 +91,5 @@ export async function removeWallpaperFromCollection(
           ),
         );
     }),
-  );
-}
-
-export async function findAllCollectionsByUserIdWithCount(userId: string) {
-  return withDb((db) =>
-    db
-      .select({
-        id: collectionsTable.id,
-        title: collectionsTable.title,
-        description: collectionsTable.description,
-        wallpaperCount: sql<number>`count(${collectionToWallpapersTable.wallpaperId})`,
-      })
-      .from(collectionsTable)
-      .leftJoin(
-        collectionToWallpapersTable,
-        eq(collectionsTable.id, collectionToWallpapersTable.collectionId),
-      )
-      .where(eq(collectionsTable.userId, userId))
-      .groupBy(collectionsTable.id),
   );
 }

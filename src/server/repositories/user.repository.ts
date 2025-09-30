@@ -6,6 +6,7 @@ import {
   type UserInsert,
   usersTable,
 } from '@/db/schema';
+import type { UserColumns } from './wallpaper.repository';
 
 export async function createUser(user: UserInsert) {
   return withDb((db) => db.insert(usersTable).values(user));
@@ -17,9 +18,17 @@ export async function updateUser(user: UserInsert) {
   );
 }
 
-export async function findUserById(userId: string) {
+export async function findUserById<const U extends UserColumns>(
+  columns: U,
+  userId: string,
+) {
   return withDb((db) =>
-    db.query.usersTable.findFirst({ where: eq(usersTable.id, userId) }),
+    db.query.usersTable
+      .findFirst({
+        where: eq(usersTable.id, userId),
+        columns,
+      })
+      .then((user) => (user === undefined ? null : user)),
   );
 }
 export async function findUserWithCollectionsAndWallpaperByUserId(

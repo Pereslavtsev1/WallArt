@@ -5,8 +5,8 @@ import { findAllTagsAction } from '@/server/actions/tag-actions';
 import { findAllWallpapersWithUserAndLikesAction } from '@/server/actions/wallpaper-actions';
 
 export default async function MainPage() {
-  const wallpapers = findAllWallpapersWithUserAndLikesAction(
-    {
+  const wallpapers = findAllWallpapersWithUserAndLikesAction({
+    columns: {
       id: true,
       title: true,
       description: true,
@@ -22,8 +22,11 @@ export default async function MainPage() {
       },
       likes: { wallpaperId: true },
     },
-    { limit: 1, offset: 0 },
-  );
+    params: {
+      limit: 1,
+      offset: 0,
+    },
+  });
   console.log(wallpapers);
   return (
     <div className='mt-4 space-y-4'>
