@@ -1,15 +1,18 @@
-import { X } from 'lucide-react';
+import { AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import Image from 'next/image';
 import type { UploadFile } from '@/components/forms/create-wallpaper-form';
 import { Button } from '@/components/ui/button';
-import { formatFileSize, getStatusIcon } from '@/utils/functions';
+import { formatFileSize } from '@/lib/utils';
 
 interface SelectedFilePreviewProps {
   file: UploadFile;
   onRemove: () => void;
 }
 
-export const SelectedImagePreview = ({ file, onRemove }: SelectedFilePreviewProps) => {
+export const SelectedImagePreview = ({
+  file,
+  onRemove,
+}: SelectedFilePreviewProps) => {
   return (
     <>
       <h3 className='text-sm font-semibold'>Selected File</h3>
@@ -20,7 +23,10 @@ export const SelectedImagePreview = ({ file, onRemove }: SelectedFilePreviewProp
         >
           <div className='flex min-w-0 flex-1 items-center space-x-3'>
             <Image
-              src={file.previewUrl || '/placeholder.svg?height=40&width=40&query=file preview'}
+              src={
+                file.previewUrl ||
+                '/placeholder.svg?height=40&width=40&query=file preview'
+              }
               alt='Preview'
               width={40}
               height={40}
@@ -28,7 +34,9 @@ export const SelectedImagePreview = ({ file, onRemove }: SelectedFilePreviewProp
             />
             <div className='font-semibold'>
               <p className='max-w-40 truncate text-sm'>{file.file.name}</p>
-              <p className='text-xs text-muted-foreground'>{formatFileSize(file.file.size)}</p>
+              <p className='text-xs text-muted-foreground'>
+                {formatFileSize(file.file.size)}
+              </p>
               {file.uploading && (
                 <div>
                   <div className='h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
@@ -37,11 +45,15 @@ export const SelectedImagePreview = ({ file, onRemove }: SelectedFilePreviewProp
                       style={{ width: `${file.progress}%` }}
                     />
                   </div>
-                  <p className='text-xs text-muted-foreground'>{file.progress}% uploaded</p>
+                  <p className='text-xs text-muted-foreground'>
+                    {file.progress}% uploaded
+                  </p>
                 </div>
               )}
               {file.error && (
-                <p className='text-xs text-red-500'>Upload failed. Please try again.</p>
+                <p className='text-xs text-red-500'>
+                  Upload failed. Please try again.
+                </p>
               )}
             </div>
           </div>
@@ -62,4 +74,16 @@ export const SelectedImagePreview = ({ file, onRemove }: SelectedFilePreviewProp
       </div>
     </>
   );
+};
+export const getStatusIcon = (file: UploadFile) => {
+  if (file.uploading) {
+    return <Loader2 className='size-4 animate-spin text-blue-500' />;
+  }
+  if (file.error) {
+    return <AlertCircle className='size-4 text-red-500' />;
+  }
+  if (file.uploaded) {
+    return <CheckCircle className='size-4 text-green-500' />;
+  }
+  return null;
 };

@@ -1,34 +1,29 @@
 'use client';
 
-import { use } from 'react';
 import CreateWallpaperForm from '@/components/forms/create-wallpaper-form';
-import { useTagsPromise } from '@/components/providers/tags-provider';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
+import type { Result } from '@/db';
+import type { Tag } from '@/db/schema';
+import { useCreateWallpaperStore } from '@/stores/upload-wallpaper-store';
 
-const CreateWallpaper = () => {
-  const { open, toggle } = useUploadWallpaperStore();
-  const res = use(useTagsPromise());
-  if (!res.success) throw new Error(res.error);
-  const tags = res.data;
-
+const CreateWallpaper = ({ tags }: { tags: Promise<Result<Tag[]>> }) => {
+  const { open, toggle } = useCreateWallpaperStore();
   return (
     <Dialog open={open} onOpenChange={toggle}>
       <DialogContent>
-        <div>
+        <DialogHeader>
           <DialogTitle>Upload Wallpaper</DialogTitle>
-          <DialogDescription>
-            Drag and drop your image here, or click to
-            select a file.
+          <DialogDescription className='font-semibold'>
+            Drag and drop your image here, or click to select a file.
           </DialogDescription>
-        </div>
-
-        <CreateWallpaperForm tags={tags} />
+        </DialogHeader>
+        <CreateWallpaperForm promise={tags} />
       </DialogContent>
     </Dialog>
   );

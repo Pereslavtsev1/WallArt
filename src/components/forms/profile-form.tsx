@@ -1,4 +1,4 @@
-import type { UserResource } from '@clerk/types';
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -24,30 +24,12 @@ const schema = z.object({
     .min(2, { message: 'Last name must be at least 2 characters' }),
 });
 
-const ProfileForm = ({ user }: { user: UserResource }) => {
+const ProfileForm = () => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
-      description: (user.unsafeMetadata.description as string) ?? '',
-    },
   });
 
-  const onSubmit = async (data: z.infer<typeof schema>) => {
-    try {
-      await user.update({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        unsafeMetadata: {
-          description: data.description,
-        },
-      });
-      console.log('Profile updated successfully!');
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-    }
-  };
+  const onSubmit = async (data: z.infer<typeof schema>) => {};
 
   return (
     <Form {...form}>
@@ -102,7 +84,7 @@ const ProfileForm = ({ user }: { user: UserResource }) => {
                   {...field}
                   variant='ghost'
                   rows={6}
-                  className='resize-none font-semibold placeholder:font-semibold'
+                  className='resize-none bg-background font-semibold placeholder:font-semibold'
                 />
               </FormControl>
               <FormMessage className='text-xs font-semibold' />

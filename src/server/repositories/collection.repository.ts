@@ -1,10 +1,12 @@
+import { and, eq } from 'drizzle-orm';
 import { withDb } from '@/db';
 import {
   type CollectionInsert,
   collectionsTable,
   collectionToWallpapersTable,
 } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import type { UserColumns } from './wallpaper.repository';
+import { withAuth } from '../actions/auth';
 
 export async function createCollection(collection: CollectionInsert) {
   return withDb((db) =>
@@ -12,25 +14,10 @@ export async function createCollection(collection: CollectionInsert) {
   );
 }
 
-export async function findCollectionWithWallpaperById(id: string) {
-  return withDb((db) =>
-    db.query.collectionsTable.findFirst({
-      where: eq(collectionsTable.id, id),
-      with: {
-        wallpapers: {
-          with: { wallpaper: true },
-          columns: {
-            wallpaperId: false,
-            collectionId: false,
-          },
-        },
-      },
-    }),
-  );
-}
 export type CollectionColumns = {
   [K in keyof typeof collectionsTable.$inferSelect]?: boolean;
 };
+
 export async function findAllCollectionsByUserId<
   const C extends CollectionColumns,
 >({ columns, userId }: { columns: C; userId: string }) {
@@ -91,5 +78,29 @@ export async function removeWallpaperFromCollection(
           ),
         );
     }),
+  );
+}
+export async function findCollectionWithUserById<
+  const C extends CollectionColumns,
+  const U extends UserColumns,
+>({
+  columns,
+  collectionId,
+}: {
+  columns: C & { user: U };
+  collectionId: string;
+}) {
+  return withDb((db) =>
+    db.query.collectionsTable
+      .findFirst({
+        columns,
+        where: eq(collectionsTable.id, collectionId),
+        with: {
+          user: {
+            columns: columns.user,
+          },
+        },
+      })
+      .then((collection) => collection ?? null),
   );
 }

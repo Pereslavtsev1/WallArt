@@ -1,6 +1,5 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import { withAuth } from '@/db';
 import type { CollectionInsert } from '@/db/schema';
 import 'server-only';
 import {
@@ -8,9 +7,9 @@ import {
   type CollectionColumns,
   createCollection,
   findAllCollectionsByUserId,
-  findCollectionWithWallpaperById,
   removeWallpaperFromCollection,
 } from '../repositories/collection.repository';
+import { withAuth } from './auth';
 
 export async function createCollectionAction(
   collection: Omit<CollectionInsert, 'userId'>,
@@ -21,10 +20,6 @@ export async function createCollectionAction(
       return res;
     }),
   );
-}
-
-export async function findCollectionWithWallpaperByIdAction(id: string) {
-  return await findCollectionWithWallpaperById(id);
 }
 
 export async function addWallpaperToCollectionAction(
@@ -56,4 +51,9 @@ export async function findAllCollectionsWithByUserIdAction<
   const C extends CollectionColumns,
 >({ columns, userId }: { columns: C; userId: string }) {
   return await findAllCollectionsByUserId({ columns, userId });
+}
+export async function findAllCurrentUserCollectionsAction<
+  const C extends CollectionColumns,
+>({ columns }: { columns: C }) {
+  return withAuth((userId) => findAllCollectionsByUserId({ columns, userId }));
 }

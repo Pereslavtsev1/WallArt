@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  type MouseEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 
@@ -8,13 +15,16 @@ export function Tab({
   children,
   index,
   className,
+  onClick,
   ...props
 }: {
   children?: React.ReactNode;
   index: number;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
 } & ClassNameProps &
   React.ComponentProps<'button'>) {
   const { tabRefs, setActiveIndex, setHoveredIndex } = useTabs();
+
   return (
     <Button
       type='button'
@@ -22,7 +32,13 @@ export function Tab({
       ref={(el) => (tabRefs.current[index] = el)}
       onMouseEnter={() => setHoveredIndex(index)}
       onMouseLeave={() => setHoveredIndex(null)}
-      onClick={() => setActiveIndex(index)}
+      onClick={(e) => {
+        if (onClick) {
+          onClick(e);
+        }
+
+        setActiveIndex(index);
+      }}
       className={cn(
         'font-semibold hover:bg-transparent dark:hover:bg-transparent relative',
         className,
@@ -41,7 +57,7 @@ export function HoverHighlight({ className }: ClassNameProps) {
   return (
     <div
       className={cn(
-        'absolute flex h-9 items-center rounded-md bg-muted transition-all duration-300 ease-out',
+        'absolute flex h-9 items-center rounded-t-2xl bg-muted transition-all duration-300 ease-out',
         className,
       )}
       style={{
@@ -54,6 +70,7 @@ export function HoverHighlight({ className }: ClassNameProps) {
 
 export function ActiveIndicator({ className }: ClassNameProps) {
   const { activeStyle } = useTabs();
+
   return (
     <div
       className={cn(
@@ -88,11 +105,7 @@ export function TabsProvider({ children }: { children: React.ReactNode }) {
     if (hoveredIndex !== null) {
       const hoveredElement = tabRefs.current[hoveredIndex];
       if (hoveredElement) {
-        const { offsetLeft, offsetWidth } = hoveredElement;
-        setHoverStyle({
-          left: `${offsetLeft}px`,
-          width: `${offsetWidth}px`,
-        });
+        setHoverStyle(getElementStyle(tabRefs.current[hoveredIndex]));
       }
     }
   }, [hoveredIndex]);
@@ -120,6 +133,15 @@ export function TabsProvider({ children }: { children: React.ReactNode }) {
       }
     });
   }, []);
+
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      const activeEl = tabRefs.current[activeIndex];
+      setActiveStyle(getElementStyle(activeEl));
+    });
+    tabRefs.current.map((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [activeIndex]);
   return (
     <TabsContext.Provider
       value={{
@@ -148,4 +170,8 @@ export function Tabs({ children }: { children: React.ReactNode }) {
       <div className='relative'>{children}</div>
     </TabsProvider>
   );
+}
+function getElementStyle(el: HTMLElement | null) {
+  if (!el) return { left: '0px', width: '0px' };
+  return { left: `${el.offsetLeft}px`, width: `${el.offsetWidth}px` };
 }

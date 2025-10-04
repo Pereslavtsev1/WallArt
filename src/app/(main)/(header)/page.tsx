@@ -1,11 +1,10 @@
 import { TagList } from '@/components/general/tag-list/tag-list';
-import { WallpaperListWrapper } from '@/components/general/wallpaper-list/wallpaper-list-wrapper';
 import Carousel from '@/components/home/carousel';
 import { findAllTagsAction } from '@/server/actions/tag-actions';
 import { findAllWallpapersWithUserAndLikesAction } from '@/server/actions/wallpaper-actions';
 
 export default async function MainPage() {
-  const wallpapers = findAllWallpapersWithUserAndLikesAction({
+  const wallpapers = await findAllWallpapersWithUserAndLikesAction({
     columns: {
       id: true,
       title: true,
@@ -15,10 +14,8 @@ export default async function MainPage() {
       fileKey: true,
       user: {
         id: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        imageUrl: true,
+        name: true,
+        image: true,
       },
       likes: { wallpaperId: true },
     },
@@ -27,7 +24,6 @@ export default async function MainPage() {
       offset: 0,
     },
   });
-  console.log(wallpapers);
   return (
     <div className='mt-4 space-y-4'>
       <section>
@@ -36,9 +32,7 @@ export default async function MainPage() {
         </Carousel>
       </section>
       <section>
-        <div className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'>
-          <WallpaperListWrapper wallpapers={wallpapers} />
-        </div>
+        <div className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'></div>
       </section>
     </div>
   );

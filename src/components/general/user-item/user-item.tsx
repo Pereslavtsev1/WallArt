@@ -12,7 +12,7 @@ export default function UserItem({ src, alt, className }: UserItemProps) {
   return (
     <Avatar className={cn(className)}>
       <AvatarImage src={src} alt={alt} />
-      <AvatarFallback>{alt[0]}</AvatarFallback>
+      <AvatarFallback>{alt[0].toUpperCase()}</AvatarFallback>
     </Avatar>
   );
 }

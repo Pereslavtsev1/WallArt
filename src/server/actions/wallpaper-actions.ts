@@ -1,34 +1,20 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import { withAuth } from '@/db';
-import type { Tag, Wallpaper, WallpaperInsert } from '@/db/schema';
+import type { Tag, WallpaperInsert } from '@/db/schema';
 import 'server-only';
 import type { LikeCollumns } from '../repositories/likes.repository';
 import {
-  createWallpaper,
   createWallpaperWithExistingTags,
-  findAllWallpapers,
-  findAllWallpapersByUserId,
-  findAllWallpapersWithLikeStatusByUserId,
   findAllWallpapersWithUser,
   findAllWallpapersWithUserAndLikeStatus,
+  findAllWallpapersWithUserAndLikesByUserId,
   findWallpaperWithUserAndLikesById,
   findWallpaperWithUserById,
   type PaginationParams,
   type UserColumns,
   type WallpaperColumns,
 } from '../repositories/wallpaper.repository';
-import { getUserSession } from './auth';
-
-export async function createWallpaperAction(
-  wallpaper: Omit<Wallpaper, 'userId'>,
-) {
-  return withAuth((userId) => createWallpaper({ ...wallpaper, userId }));
-}
-
-export async function findAllWallpapersByUserIdAction(userId: string) {
-  return findAllWallpapersByUserId(userId);
-}
+import { getUserSession, withAuth } from './auth';
 
 export async function createWallpaperWithExistingTagsAction(
   data: Omit<WallpaperInsert, 'userId'> & { tags: Tag[] },
@@ -44,28 +30,11 @@ export async function createWallpaperWithExistingTagsAction(
   );
 }
 
-export async function findAllWallpapersByCurrentUserAction() {
-  return withAuth((userId) => findAllWallpapersWithLikeStatusByUserId(userId));
-}
-export async function findWallpaperWithUserAndLikeStatusByIdAction(
-  wallpaperId: string,
-) {
-  return withAuth((userId) =>
-    findWallpaperWithUserAndLikeStatusById(userId, wallpaperId),
-  );
-}
-
 export async function findAllWallpapersWithUserAction<
   const W extends WallpaperColumns,
   const U extends UserColumns,
 >(columns: W & { user: U }, { limit, offset }: PaginationParams) {
   return await findAllWallpapersWithUser(columns, { limit, offset });
-}
-
-export async function findAllWallpapersAction<const W extends WallpaperColumns>(
-  columns: W,
-) {
-  return await findAllWallpapers(columns);
 }
 
 export async function findAllWallpapersWithUserAndLikesAction<
@@ -79,21 +48,21 @@ export async function findAllWallpapersWithUserAndLikesAction<
   columns: W & { user: U; likes: L };
   params: PaginationParams;
 }) {
-  const { userId, isAuthenticated } = await getUserSession();
+  const res = await getUserSession();
   const wallpapers = await findAllWallpapersWithUserAction(columns, params);
-  if (!isAuthenticated) {
+  if (res === null) {
     return wallpapers;
   }
-  return await findAllWallpapersWithUserAndLikeStatus(columns, userId);
+  return await findAllWallpapersWithUserAndLikeStatus(columns, res.user.id);
 }
 export async function findWallpaperWithUserAndLikesByIdAction<
   const W extends WallpaperColumns,
   const U extends UserColumns,
   const L extends LikeCollumns,
 >(columns: W & { user: U; likes: L }, wallpaperId: string) {
-  const { userId, isAuthenticated } = await getUserSession();
-  return isAuthenticated
-    ? findWallpaperWithUserAndLikesById(columns, userId, wallpaperId)
+  const res = await getUserSession();
+  return res !== null
+    ? findWallpaperWithUserAndLikesById(columns, res.user.id, wallpaperId)
     : findWallpaperWithUserById(columns, wallpaperId);
 }
 
@@ -102,10 +71,47 @@ export async function findAllUserWallpapersWithUserAndLikesAction<
   const U extends UserColumns,
   const L extends LikeCollumns,
 >(columns: W & { user: U; likes: L }, params: PaginationParams) {
-  const { userId, isAuthenticated } = await getUserSession();
+  const res = await getUserSession();
   const wallpapers = await findAllWallpapersWithUserAction(columns, params);
-  if (!isAuthenticated) {
+  if (res === null) {
     return wallpapers;
   }
-  return await findAllWallpapersWithUserAndLikeStatus(columns, userId);
+  return await findAllWallpapersWithUserAndLikeStatus(columns, res.user.id);
+}
+
+export async function findAllWallpapersWithUserAndLikesByCollectionIdAction<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>({
+  columns,
+  params,
+}: {
+  columns: W & { user: U; likes: L };
+  params: PaginationParams;
+}) {
+  const res = await getUserSession();
+  const wallpapers = await findAllWallpapersWithUserAction(columns, params);
+  if (res === null) {
+    return wallpapers;
+  }
+  return await findAllWallpapersWithUserAndLikeStatus(columns, res.user.id);
+}
+export async function findAllCurrentUserWallpapersWithUserAndLikesAction<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>({
+  columns,
+  limit,
+  offset,
+}: { columns: W & { user: U; likes: L } } & PaginationParams) {
+  return withAuth((userId) =>
+    findAllWallpapersWithUserAndLikesByUserId({
+      columns,
+      userId: userId,
+      limit,
+      offset,
+    }),
+  );
 }

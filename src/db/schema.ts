@@ -13,15 +13,66 @@ import {
 /** ------------------- Tables ------------------- */
 
 export const usersTable = pgTable('users_table', {
-  id: varchar('id').primaryKey(),
-  firstName: varchar('first_name'),
-  lastName: varchar('last_name'),
-  publicProfile: boolean('public').notNull().default(false),
-  username: varchar('username').notNull().unique(),
-  description: text('description'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  imageUrl: text('image_url').notNull(),
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name').notNull(),
+  email: varchar('email').notNull().unique(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  image: varchar('image'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
 });
+
+export const sessionsTable = pgTable('sessions_table', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  token: varchar('token').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  ipAddress: varchar('ip_address'),
+  userAgent: varchar('user_agent'),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+export const accountsTable = pgTable('accounts_table', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  accountId: varchar('account_id').notNull(),
+  providerId: varchar('provider_id').notNull(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  accessToken: varchar('access_token'),
+  refreshToken: varchar('refresh_token'),
+  idToken: varchar('id_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at'),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  scope: varchar('scope'),
+  password: varchar('password'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+export const verificationsTable = pgTable('verifications_table', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  identifier: varchar('identifier').notNull(),
+  value: varchar('value').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+/** ------------------- Tables ------------------- */
 
 export const tagsTable = pgTable('tags_table', {
   id: uuid('id').notNull().primaryKey().defaultRandom(),
@@ -35,7 +86,7 @@ export const wallpapersTable = pgTable('wallpapers_table', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   width: integer('width').notNull(),
   height: integer('height').notNull(),
-  userId: varchar('user_id')
+  userId: uuid('user_id')
     .references(() => usersTable.id)
     .notNull(),
   fileKey: varchar('file_key').notNull().unique(),
@@ -46,7 +97,8 @@ export const collectionsTable = pgTable('collections_table', {
   title: varchar('title').notNull(),
   description: text('description'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  userId: varchar('user_id')
+  wallpaperCount: integer('wallpaper_count').notNull().default(0),
+  userId: uuid('user_id')
     .notNull()
     .references(() => usersTable.id, { onDelete: 'cascade' }),
 });
@@ -54,7 +106,7 @@ export const collectionsTable = pgTable('collections_table', {
 export const likesTable = pgTable(
   'likes_table',
   {
-    userId: varchar('user_id')
+    userId: uuid('user_id')
       .notNull()
       .references(() => usersTable.id, { onDelete: 'cascade' }),
     wallpaperId: uuid('wallpaper_id')
@@ -184,38 +236,3 @@ export type Collection = typeof collectionsTable.$inferSelect;
 
 export type LikeInsert = typeof likesTable.$inferInsert;
 export type Like = typeof likesTable.$inferSelect;
-
-export type WallpaperTagSelect = typeof wallpapersToTagsTable.$inferSelect;
-export type CollectionToWallpaperSelect =
-  typeof collectionToWallpapersTable.$inferSelect;
-
-type WithUser<T> = T & { user: User };
-type WithTags<T> = T & { tags: Tag[] };
-type WithCollections<T> = T & { collections: Collection[] };
-type WithLikeStatus<T> = T & { isLiked: boolean };
-
-export type UserWithWallpapersAndCollections = WithCollections<User> & {
-  wallpapers: Wallpaper[];
-};
-
-export type CollectionWithWallpapers = Collection & {
-  wallpapers: Wallpaper[];
-};
-
-export type WallpaperWithTags = WithTags<Wallpaper>;
-export type WallpaperWithCollections = WithCollections<Wallpaper>;
-export type WallpaperWithUser = WithUser<Wallpaper>;
-export type WallpaperWithUserAndTags = WithUser<WithTags<Wallpaper>>;
-export type WallpaperWithUserAndCollections = WithUser<
-  WithCollections<Wallpaper>
->;
-export type WallpaperWithUserAndLikeStatus = WithLikeStatus<
-  WithUser<Wallpaper>
->;
-
-export type CollectionWithCount = {
-  id: string;
-  title: string;
-  description: string | null;
-  wallpaperCount: number;
-};

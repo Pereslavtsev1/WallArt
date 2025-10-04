@@ -2,28 +2,32 @@ import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 export type UseIfinityScrollProps<T extends unknown[]> = {
-  initinalPage?: number;
-  loadMore: (params: { page: number; limit: number }) => Promise<T>;
+  initialPage?: number;
+  loadMore: ({ page, limit }: { page: number; limit: number }) => Promise<T>;
   limit: number;
-  initinalItems: T;
-  initinalHasMore: boolean;
+  initialItems: T;
+  initialHasMore: boolean;
+  maxRetries?: number;
 };
 
 export function useIfinityScroll<T extends unknown[]>({
-  initinalPage = 1,
+  initialPage = 1,
   loadMore,
   limit,
-  initinalItems,
-  initinalHasMore = true,
+  initialItems,
+  initialHasMore = true,
+  maxRetries = 3,
 }: UseIfinityScrollProps<T>) {
-  const [items, setItems] = useState<T>(initinalItems);
+  const [items, setItems] = useState<T>(initialItems);
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(initinalPage);
+  const [page, setPage] = useState(initialPage);
   const { ref, inView } = useInView();
-  const [hasMore, setHasMore] = useState(initinalHasMore);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const fetchMore = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (isLoading || !hasMore || retryCount <= maxRetries) return;
     setIsLoading(true);
 
     try {
@@ -35,12 +39,15 @@ export function useIfinityScroll<T extends unknown[]>({
       if (newItems.length < limit) {
         setHasMore(false);
       }
+      setRetryCount(0);
     } catch (error) {
       console.error(error);
+      setRetryCount((prev) => prev + 1);
+      setError('Failed to load more items');
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, limit, loadMore, page, hasMore]);
+  }, [isLoading, limit, loadMore, page, hasMore, maxRetries, retryCount]);
 
   useEffect(() => {
     if (inView && !isLoading && hasMore) {
@@ -48,5 +55,5 @@ export function useIfinityScroll<T extends unknown[]>({
     }
   }, [fetchMore, inView, hasMore, isLoading]);
 
-  return { items, setItems, hasMore, isLoading, ref };
+  return { items, setItems, hasMore, isLoading, ref, error };
 }

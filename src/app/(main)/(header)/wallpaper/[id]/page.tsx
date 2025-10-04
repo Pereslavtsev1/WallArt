@@ -19,7 +19,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { findTagsByWallpaperIdAction } from '@/server/actions/tag-actions';
 import { findWallpaperWithUserAndLikesByIdAction } from '@/server/actions/wallpaper-actions';
-import { buildImageUrl } from '@/utils/functions';
+import { buildImageUrl } from '@/lib/utils';
 
 export default async function WallpaperPage({
   params,
@@ -66,7 +66,7 @@ export default async function WallpaperPage({
 
             return (
               <div className='flex w-full gap-x-2'>
-                <Card className='w-full border-none bg-background px-0'>
+                <Card className='w-full border-none bg-background px-0 shadow-none'>
                   <CardHeader className='flex items-center justify-between px-0'>
                     <div className='flex items-center gap-x-2'>
                       <Link href={`/profile/${wallpaper.user.id}`}>

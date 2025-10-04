@@ -1,16 +1,11 @@
 import { notFound } from 'next/navigation';
-import {
-  ActiveIndicator,
-  HoverHighlight,
-  Tab,
-  Tabs,
-} from '@/components/general/tabs';
+import { ProfileTabs } from '@/components/general/profile/profile-tabs';
 import UserItem from '@/components/general/user-item/user-item';
 import { Stream } from '@/components/general/utils/stream';
 import { findAllCollectionsWithByUserIdAction } from '@/server/actions/collection-actions';
 import { findUserByIdAction } from '@/server/actions/user-actions';
 import { findAllWallpapersWithUserAndLikesAction } from '@/server/actions/wallpaper-actions';
-import { ProfileTabs } from '@/components/general/profile/profile-tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default async function ProfilePage({
   params,
@@ -56,14 +51,22 @@ export default async function ProfilePage({
       offset: 0,
     },
   });
-  const tabs = ['Wallpapers', 'Collections'];
 
   return (
-    <div className='mx-auto max-w-7xl'>
+    <div className='mx-auto max-w-7xl space-y-4'>
       <section>
         <Stream
           value={userPromise}
-          fallback={<div>loading...</div>}
+          fallback={
+            <div className='flex items-center gap-4'>
+              <Skeleton className='size-20 rounded-full' />
+              <div className='space-y-1'>
+                <Skeleton className='h-7 w-48' />
+                <Skeleton className='h-4 w-40' />
+                <Skeleton className='h-4 w-36' />
+              </div>
+            </div>
+          }
           errorFallback={<div>error</div>}
         >
           {(data) => {
@@ -71,33 +74,39 @@ export default async function ProfilePage({
             if (data.data === null) notFound();
             const user = data.data;
             return (
-              <div>
-                <div className='flex items-center gap-x-2'>
-                  <UserItem
-                    src={user.imageUrl}
-                    alt={user.username}
-                    className='size-20'
-                  />
-                  <div className='font-semibold'>
-                    <p className='truncate text-muted-foreground'>
-                      {user.firstName} {user.lastName}
+              <div className='flex items-center gap-4'>
+                <UserItem
+                  src={user.imageUrl}
+                  alt={user.username}
+                  className='size-20 rounded-full shadow'
+                />
+
+                <div className='flex flex-col justify-center space-y-1'>
+                  <h1 className='text-xl font-semibold'>
+                    {user.firstName} {user.lastName}
+                  </h1>
+                  <p className='text-xs font-semibold text-muted-foreground'>
+                    @{user.username}
+                  </p>
+                  <p className='text-xs font-semibold text-muted-foreground'>
+                    Joined at {user.createdAt.toLocaleDateString()}
+                  </p>
+                  {user.description && (
+                    <p className='mt-2 max-w-prose text-sm text-muted-foreground'>
+                      {user.description}
                     </p>
-                    <p className='truncate text-xs text-muted-foreground'>
-                      @{user.username}
-                    </p>
-                    <p className='truncate text-xs text-muted-foreground'>
-                      Created at: {user.createdAt.toLocaleDateString()}
-                    </p>
-                  </div>
+                  )}
                 </div>
-                <div>{user.description}</div>
               </div>
             );
           }}
         </Stream>
       </section>
       <section>
-        <ProfileTabs />
+        <ProfileTabs
+          wallpapersPromise={userWallpapersPromise}
+          collectionsPromise={userCollectionPromise}
+        />
       </section>
     </div>
   );
