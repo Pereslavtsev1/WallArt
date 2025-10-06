@@ -1,6 +1,6 @@
 import SkeletonList from './list-skeleton';
 
-export const TagListSkeleton = () => {
+export default function TagListSkeleton() {
   return (
     <SkeletonList
       length={20}
@@ -8,4 +8,4 @@ export const TagListSkeleton = () => {
       skeletonStyles={'h-9 w-44'}
     />
   );
-};
+}

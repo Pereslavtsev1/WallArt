@@ -10,6 +10,7 @@ import {
   removeWallpaperFromCollection,
 } from '../repositories/collection.repository';
 import { withAuth } from './auth';
+import { PaginationParams } from '../repositories/wallpaper.repository';
 
 export async function createCollectionAction(
   collection: Omit<CollectionInsert, 'userId'>,
@@ -52,8 +53,11 @@ export async function findAllCollectionsWithByUserIdAction<
 >({ columns, userId }: { columns: C; userId: string }) {
   return await findAllCollectionsByUserId({ columns, userId });
 }
+
 export async function findAllCurrentUserCollectionsAction<
   const C extends CollectionColumns,
->({ columns }: { columns: C }) {
-  return withAuth((userId) => findAllCollectionsByUserId({ columns, userId }));
+>({ columns, params }: { columns: C; params: PaginationParams }) {
+  return withAuth((userId) =>
+    findAllCollectionsByUserId({ columns, userId, params }),
+  );
 }

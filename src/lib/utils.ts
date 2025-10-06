@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 export function buildImageUrl(fileKey: string) {
-  return `https://t3.storage.dev/wall-art/${fileKey}`;
+  return `https://wall-art.t3.storage.dev/${fileKey}`;
 }
 
 export const formatFileSize = (bytes: number) => {

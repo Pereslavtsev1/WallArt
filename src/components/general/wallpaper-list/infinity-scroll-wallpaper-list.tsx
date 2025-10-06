@@ -26,9 +26,7 @@ export default function InfinityScrollWallpaperList({
   limit: number;
   initialHasMore: boolean;
 } & ClassNameProps) {
-  const { items, ref, isLoading, hasMore } = useIfinityScroll<
-    WallpaperCardProps[]
-  >({
+  const { items, ref, hasMore } = useIfinityScroll<WallpaperCardProps[]>({
     initialItems,
     loadMore: loadMoreAction,
     limit,

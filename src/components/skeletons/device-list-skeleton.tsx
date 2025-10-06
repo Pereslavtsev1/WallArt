@@ -1,6 +1,6 @@
 import { Skeleton } from '../ui/skeleton';
 
-export default async function DeviceListSkeleton() {
+export default function DeviceListSkeleton() {
   return (
     <div className='space-y-2'>
       {Array(3)

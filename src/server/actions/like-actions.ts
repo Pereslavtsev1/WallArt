@@ -1,5 +1,4 @@
 'use server';
-import { withAuth } from '@/db';
 import 'server-only';
 import {
   findAllLikedWallpapersByUserId,
@@ -7,7 +6,12 @@ import {
   type LikeCollumns,
   toggleLike,
 } from '../repositories/likes.repository';
-import { getUserSession } from './auth';
+import type {
+  PaginationParams,
+  UserColumns,
+  WallpaperColumns,
+} from '../repositories/wallpaper.repository';
+import { withAuth } from './auth';
 
 export async function toggleLikeAction(wallpaperId: string) {
   return withAuth((userId) => toggleLike(wallpaperId, userId));
@@ -21,15 +25,18 @@ export async function findUserLikesForWallpapersAction<L extends LikeCollumns>(
   );
 }
 
-export async function findAllLikedWallpapersByCurrentUserAction() {
-  return withAuth(async (userId) => findAllLikedWallpapersByUserId(userId));
-}
-export async function getLikes<L extends LikeCollumns>(
-  wallpaperIds: string[],
-  columns: L,
-) {
-  const { isAuthenticated } = await getUserSession();
-  return isAuthenticated
-    ? findUserLikesForWallpapersAction(wallpaperIds, columns)
-    : [];
+export async function findAllLikedWallpapersByCurrentUserAction<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>({
+  columns,
+  params,
+}: {
+  columns: W & { user: U; likes: L };
+  params: PaginationParams;
+}) {
+  return withAuth(async (userId) =>
+    findAllLikedWallpapersByUserId({ params, userId, columns }),
+  );
 }

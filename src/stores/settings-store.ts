@@ -4,7 +4,6 @@ export const SectionIDs = {
   COLLECTIONS: 'collections',
   SECURITY: 'security',
   WALLPAPERS: 'wallpapers',
-  GENERAL: 'general',
   APPEARANCE: 'appearance',
   FAVORITES: 'favorites',
 } as const;

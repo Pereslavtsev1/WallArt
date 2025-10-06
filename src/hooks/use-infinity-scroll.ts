@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-export type UseIfinityScrollProps<T extends unknown[]> = {
+export type UseIfinityScrollProps<T> = {
   initialPage?: number;
   loadMore: ({ page, limit }: { page: number; limit: number }) => Promise<T>;
   limit: number;
@@ -10,7 +10,7 @@ export type UseIfinityScrollProps<T extends unknown[]> = {
   maxRetries?: number;
 };
 
-export function useIfinityScroll<T extends unknown[]>({
+export function useIfinityScroll<T>({
   initialPage = 1,
   loadMore,
   limit,

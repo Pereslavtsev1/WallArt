@@ -66,11 +66,6 @@ const SettingsSidebar = () => {
       title: 'Preferences',
       items: [
         {
-          section: SectionIDs.GENERAL,
-          label: 'General',
-          icon: Settings,
-        },
-        {
           section: SectionIDs.APPEARANCE,
           label: 'Appearance',
           icon: Palette,

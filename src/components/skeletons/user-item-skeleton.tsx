@@ -1,7 +1,5 @@
 import { Skeleton } from '../ui/skeleton';
 
-const UserItemSekeleton = () => {
+export default function UserItemSekeleton() {
   return <Skeleton className='size-9 rounded-full' />;
-};
-
-export default UserItemSekeleton;
+}

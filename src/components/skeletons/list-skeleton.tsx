@@ -7,12 +7,12 @@ type SkeletonListProps = {
   asChild?: React.ElementType;
 };
 
-const SkeletonList = ({
+export default function SkeletonList({
   length = 7,
   className,
   skeletonStyles,
   asChild: CustomSkeleton,
-}: SkeletonListProps) => {
+}: SkeletonListProps) {
   const SkeletonComponent = CustomSkeleton || Skeleton;
 
   return (
@@ -25,6 +25,4 @@ const SkeletonList = ({
       ))}
     </ul>
   );
-};
-
-export default SkeletonList;
+}

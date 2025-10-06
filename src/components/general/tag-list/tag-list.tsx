@@ -1,4 +1,4 @@
-import { TagListSkeleton } from '@/components/skeletons/tag-list-skeleton';
+import TagListSkeleton from '@/components/skeletons/tag-list-skeleton';
 import { Button } from '@/components/ui/button';
 import type { Result } from '@/db';
 import type { Tag } from '@/db/schema';

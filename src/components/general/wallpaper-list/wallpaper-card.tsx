@@ -13,7 +13,11 @@ export type WallpaperCardProps = Pick<
   user: Pick<User, 'id' | 'name' | 'image'>;
   likes?: { wallpaperId: string }[];
 };
-export function WallpaperCard(wallpaper: WallpaperCardProps) {
+export function WallpaperCard({
+  wallpaper,
+}: {
+  wallpaper: WallpaperCardProps;
+}) {
   return (
     <Card className='group relative mb-2 break-inside-avoid overflow-hidden rounded-2xl border-none bg-transparent p-0'>
       <CardContent className='p-0'>

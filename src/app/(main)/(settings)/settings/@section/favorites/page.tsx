@@ -1,15 +1,19 @@
-import { TagList } from '@/components/general/tag-list/tag-list';
 import { Stream } from '@/components/general/utils/stream';
 import InfinityScrollWallpaperList from '@/components/general/wallpaper-list/infinity-scroll-wallpaper-list';
-import Carousel from '@/components/home/carousel';
 import WallpaperListSkeleton from '@/components/skeletons/wallpaper-list-skeleton';
-import { findAllTagsAction } from '@/server/actions/tag-actions';
-import { findAllWallpapersWithUserAndLikesAction } from '@/server/actions/wallpaper-actions';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { findAllLikedWallpapersByCurrentUserAction } from '@/server/actions/like-actions';
 
 const LIMIT = 10;
 
 async function fetchFunction({ limit, page }: { limit: number; page: number }) {
-  return findAllWallpapersWithUserAndLikesAction({
+  return findAllLikedWallpapersByCurrentUserAction({
     columns: {
       id: true,
       title: true,
@@ -33,17 +37,14 @@ async function loadMore({ limit, page }: { limit: number; page: number }) {
   if (!res.success) throw new Error(res.error);
   return res.data;
 }
-
-export default async function MainPage() {
+export default async function FavoritesSection() {
   return (
-    <div className='mt-4 space-y-4'>
-      <section>
-        <Carousel className='flex gap-x-2'>
-          <TagList className='flex gap-x-2' tags={findAllTagsAction()} />
-        </Carousel>
-      </section>
-
-      <section>
+    <Card className='bg-background'>
+      <CardHeader className='font-semibold'>
+        <CardTitle>My favorites wallpaper</CardTitle>
+        <CardDescription>Manage your custom wallpapers.</CardDescription>
+      </CardHeader>
+      <CardContent>
         <Stream
           value={fetchFunction({ limit: LIMIT, page: 0 })}
           fallback={
@@ -68,7 +69,7 @@ export default async function MainPage() {
             );
           }}
         </Stream>
-      </section>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

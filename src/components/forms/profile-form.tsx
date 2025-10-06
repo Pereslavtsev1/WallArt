@@ -2,6 +2,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import type { User } from '@/db/schema';
 import { Button } from '../ui/button';
 import {
   Form,
@@ -16,17 +17,20 @@ import { Textarea } from '../ui/textarea';
 
 const schema = z.object({
   description: z.string().optional(),
-  firstName: z
-    .string()
-    .min(1, { message: 'First name must be at least 1 character' }),
-  lastName: z
+  username: z
     .string()
     .min(2, { message: 'Last name must be at least 2 characters' }),
 });
-
-const ProfileForm = () => {
+export type ProofileFromProps = {
+  user: Pick<User, 'name' | 'description' | 'image'>;
+};
+const ProfileForm = ({ user }: ProofileFromProps) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      description: user.description || '',
+      username: user.name,
+    },
   });
 
   const onSubmit = async (data: z.infer<typeof schema>) => {};
@@ -36,29 +40,10 @@ const ProfileForm = () => {
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
-          name='firstName'
+          name='username'
           render={({ field }) => (
             <FormItem>
               <FormLabel className='font-semibold'>First name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder=''
-                  {...field}
-                  variant='ghost'
-                  className='font-semibold placeholder:font-semibold'
-                />
-              </FormControl>
-              <FormMessage className='text-xs font-semibold' />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name='lastName'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className='font-semibold'>Last name</FormLabel>
               <FormControl>
                 <Input
                   placeholder=''

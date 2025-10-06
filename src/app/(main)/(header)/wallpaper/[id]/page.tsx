@@ -17,14 +17,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { buildImageUrl } from '@/lib/utils';
 import { findTagsByWallpaperIdAction } from '@/server/actions/tag-actions';
 import { findWallpaperWithUserAndLikesByIdAction } from '@/server/actions/wallpaper-actions';
-import { buildImageUrl } from '@/lib/utils';
 
 export default async function WallpaperPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
 
@@ -38,10 +38,8 @@ export default async function WallpaperPage({
       fileKey: true,
       user: {
         id: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        imageUrl: true,
+        name: true,
+        image: true,
       },
       likes: { wallpaperId: true },
     },
@@ -71,17 +69,14 @@ export default async function WallpaperPage({
                     <div className='flex items-center gap-x-2'>
                       <Link href={`/profile/${wallpaper.user.id}`}>
                         <UserItem
-                          src={wallpaper.user.imageUrl}
-                          alt={wallpaper.user.username}
+                          src={wallpaper.user.image || ''}
+                          alt={wallpaper.user.name}
                         />
                       </Link>
                       <div className='flex flex-col font-semibold'>
-                        <span className='text-sm'>
-                          {wallpaper.user.firstName} {wallpaper.user.lastName}
-                        </span>
-                        <span className='text-xs text-muted-foreground'>
-                          {wallpaper.user.username}
-                        </span>
+                        <p className='truncate text-sm font-semibold'>
+                          {wallpaper.user.name}
+                        </p>
                       </div>
                     </div>
                     <div className='flex gap-x-1'>

@@ -3,6 +3,11 @@ import 'server-only';
 import { and, eq, inArray } from 'drizzle-orm';
 import { withDb } from '@/db';
 import { likesTable } from '@/db/schema';
+import type {
+  PaginationParams,
+  UserColumns,
+  WallpaperColumns,
+} from './wallpaper.repository';
 
 export async function toggleLike(wallpaperId: string, userId: string) {
   return withDb(async (db) =>
@@ -49,22 +54,40 @@ export async function findUserLikesForWallpapers<
   );
 }
 
-export async function findAllLikedWallpapersByUserId(userId: string) {
-  return withDb(async (db) => {
-    const likes = await db.query.likesTable.findMany({
-      where: eq(likesTable.userId, userId),
-      with: {
-        wallpaper: {
-          with: {
-            user: true,
+export async function findAllLikedWallpapersByUserId<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>({
+  columns,
+  params,
+  userId,
+}: {
+  columns: W & { user: U; likes: L };
+  userId: string;
+  params: PaginationParams;
+}) {
+  return withDb(async (db) =>
+    db.query.likesTable
+      .findMany({
+        where: eq(likesTable.userId, userId),
+        with: {
+          wallpaper: {
+            with: {
+              user: {
+                columns: columns.user,
+              },
+            },
+            columns: columns,
           },
         },
-      },
-    });
-
-    return likes.map((like) => ({
-      ...like.wallpaper,
-      isLiked: true,
-    }));
-  });
+        columns: {
+          wallpaperId: false,
+          userId: false,
+          createdAt: false,
+        },
+        ...params,
+      })
+      .then((likes) => likes.map((like) => like.wallpaper)),
+  );
 }

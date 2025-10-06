@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
 import ProfileForm from '@/components/forms/profile-form';
+import { Stream } from '@/components/general/utils/stream';
 import {
   Card,
   CardContent,
@@ -7,13 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 import { getUserSession } from '@/server/actions/auth';
 
 export default async function ProfileSection() {
-  const user = await getUserSession();
-  if (!user) {
-    return redirect('/');
-  }
   return (
     <Card className='bg-background'>
       <CardHeader className='font-semibold'>
@@ -21,7 +18,34 @@ export default async function ProfileSection() {
         <CardDescription>Manage your profile settings.</CardDescription>
       </CardHeader>
       <CardContent>
-        <ProfileForm />
+        <Stream
+          value={getUserSession()}
+          fallback={
+            <div className='space-y-8'>
+              <div className='space-y-2'>
+                <Skeleton className='h-3.5 w-32' />
+
+                <Skeleton className='h-9 w-full' />
+              </div>
+
+              <div className='space-y-2'>
+                <Skeleton className='h-3.5 w-32' />
+
+                <Skeleton className='h-36 w-full' />
+              </div>
+            </div>
+          }
+          errorFallback={undefined}
+        >
+          {(user) => {
+            if (!user) throw new Error('User not found');
+            return (
+              <ProfileForm
+                user={{ image: user.user.image ?? null, ...user.user }}
+              />
+            );
+          }}
+        </Stream>
       </CardContent>
     </Card>
   );

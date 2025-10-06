@@ -23,6 +23,7 @@ export const usersTable = pgTable('users_table', {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
+  description: text('description'),
 });
 
 export const sessionsTable = pgTable('sessions_table', {

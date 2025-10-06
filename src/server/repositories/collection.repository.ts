@@ -5,7 +5,7 @@ import {
   collectionsTable,
   collectionToWallpapersTable,
 } from '@/db/schema';
-import type { UserColumns } from './wallpaper.repository';
+import type { PaginationParams, UserColumns } from './wallpaper.repository';
 import { withAuth } from '../actions/auth';
 
 export async function createCollection(collection: CollectionInsert) {
@@ -20,12 +20,36 @@ export type CollectionColumns = {
 
 export async function findAllCollectionsByUserId<
   const C extends CollectionColumns,
->({ columns, userId }: { columns: C; userId: string }) {
+>({
+  columns,
+  userId,
+  params,
+}: {
+  columns: C;
+  userId: string;
+  params: PaginationParams;
+}) {
   return withDb((db) =>
     db.query.collectionsTable.findMany({
       where: eq(collectionsTable.userId, userId),
       columns,
+      ...params,
     }),
+  );
+}
+
+export async function findAllCurrentUserCollections<
+  const C extends CollectionColumns,
+>({
+  columns,
+  params,
+}: {
+  columns: C;
+  userId: string;
+  params: PaginationParams;
+}) {
+  return withAuth((userId) =>
+    findAllCollectionsByUserId({ columns, userId, params }),
   );
 }
 

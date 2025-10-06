@@ -54,7 +54,9 @@ export default async function WallpapersSection() {
             limit: LIMIT,
             offset: 0,
           })}
-          fallback={<WallpaperListSkeleton />}
+          fallback={
+            <WallpaperListSkeleton className='columns-1 gap-x-2 sm:columns-2' />
+          }
           errorFallback={<div>Error here</div>}
         >
           {(data) => {
@@ -62,6 +64,7 @@ export default async function WallpapersSection() {
 
             return (
               <InfinityScrollWallpaperList
+                className='columns-1 gap-x-2 sm:columns-2'
                 initialItems={data.data}
                 initialHasMore={LIMIT === data.data.length}
                 limit={LIMIT}
