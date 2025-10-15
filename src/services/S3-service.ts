@@ -1,8 +1,12 @@
+'use server';
+import 'server-only';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuid } from 'uuid';
+import { S3 } from '@/lib/s3/S3';
 
 export async function getPresignedUrl({
   key,
-  filename,
   contentType,
   size,
 }: {
@@ -12,30 +16,26 @@ export async function getPresignedUrl({
   size: number;
 }) {
   try {
-    const response = await fetch('/api/s3', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key, filename, contentType, size }),
+    const command = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key,
+      ContentType: contentType,
+      ContentLength: size,
     });
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to get presigned URL: ${response.status}. Message: ${response.body};
-        }`,
-      );
-    }
-
-    return response.json();
+    const presignedUrl = await getSignedUrl(S3, command, {
+      expiresIn: 360,
+    });
+    return {
+      presignedUrl,
+      key: key,
+    };
   } catch (error) {
     console.error('GetPresignedUrl error:', error);
     return null;
   }
 }
 
-export async function uploadFile(
-  file: File,
-  onProgress?: (progress: number) => void,
-): Promise<string> {
+export async function uploadFile(file: File) {
   const presignedUrlResponse = await getPresignedUrl({
     key: uuid(),
     filename: file.name,
@@ -46,38 +46,19 @@ export async function uploadFile(
   if (!presignedUrlResponse) {
     throw new Error('Failed to obtain presigned URL.');
   }
-
-  const { presignedUrl, key } = presignedUrlResponse;
-
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) {
-        const progress = Math.round((e.loaded / e.total) * 100);
-        onProgress?.(progress);
-      }
-    };
-
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        onProgress?.(100);
-        resolve(key);
-      } else {
-        reject(
-          new Error(
-            `Upload failed: ${xhr.status} - ${xhr.statusText || 'Unknown error'}`,
-          ),
-        );
-      }
-    };
-
-    xhr.onerror = () => reject(new Error('Network error during upload.'));
-    xhr.ontimeout = () => reject(new Error('Upload timeout.'));
-
-    xhr.open('PUT', presignedUrl);
-    xhr.setRequestHeader('Content-Type', file.type);
-    xhr.timeout = 60_000;
-    xhr.send(file);
+  const response = await fetch(presignedUrlResponse.presignedUrl, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': file.type,
+    },
+    body: file,
   });
+
+  if (!response.ok) {
+    throw new Error(
+      `Upload failed: ${response.status} - ${response.statusText}`,
+    );
+  }
+
+  return presignedUrlResponse.key;
 }

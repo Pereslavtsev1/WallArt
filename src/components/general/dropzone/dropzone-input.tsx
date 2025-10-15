@@ -4,8 +4,7 @@ import { UploadCloudIcon } from 'lucide-react';
 import { useCallback } from 'react';
 import { type FileRejection, useDropzone } from 'react-dropzone';
 import { toast } from 'sonner';
-import { cn } from '@/lib/utils';
-import { formatFileSize } from '@/utils/functions';
+import { cn, formatFileSize } from '@/lib/utils';
 
 type DropZoneProps = {
   className?: string;

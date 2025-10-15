@@ -1,67 +1,49 @@
 'use client';
-
-import { useAuth } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
-import { createWallpaperWithExistingTags } from '@/actions/wallpaper-actions';
+import type { Result } from '@/db';
 import type { Tag } from '@/db/schema';
+import { fileSchema, tagSchema } from '@/lib/schemas';
+import type { UploadFile } from '@/lib/utils';
+import { createWallpaperWithExistingTagsAction } from '@/server/actions/wallpaper-actions';
 import { uploadFile } from '@/services/S3-service';
-import { useUploadWallpaperStore } from '@/stores/upload-wallpaper-store';
+import { useCreateWallpaperStore } from '@/stores/upload-wallpaper-store';
 import Dropzone from '../general/dropzone/dropzone-input';
 import { SelectedImagePreview } from '../general/selected-image-preview/selected-image-preview';
+import { Stream } from '../general/utils/stream';
 import { Button } from '../ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form';
 import { Input } from '../ui/input';
 import MultipleSelector from '../ui/multi-select';
 import { Textarea } from '../ui/textarea';
 
-export type UploadFile = {
-  key: string;
-  file: File;
-  uploading: boolean;
-  progress: number;
-  uploaded: boolean;
-  error: boolean;
-  previewUrl: string;
-  width: number;
-  height: number;
-};
-const fileSchema = z.object(
-  {
-    file: z
-      .instanceof(File, { message: 'File is required' })
-      .refine((file) => file.size > 0, { message: 'File cannot be empty' })
-      .refine((file) => file.size <= 10 * 1024 * 1024, {
-        message: 'File must be smaller than 10MB',
-      })
-      .refine((file) => ['image/png', 'image/jpeg', 'image/webp'].includes(file.type), {
-        message: 'Only PNG, JPEG, or WEBP files are allowed',
-      }),
-    width: z.number(),
-    height: z.number(),
-  },
-  { message: 'File is required' },
-);
-
-const tagSchema = z.object({
-  id: z.string().min(1, { message: 'Tag id is required' }),
-  name: z.string().min(1, { message: 'Tag name is required' }),
-});
 const schema = z.object({
-  title: z.string().min(4, { message: 'Title must be at least 4 characters' }),
+  title: z.string().min(4, {
+    message: 'Title must be at least 4 characters',
+  }),
   description: z.optional(z.string()),
   tags: z.optional(z.array(tagSchema)),
   fileData: fileSchema,
 });
 
-const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
-  const { toggle } = useUploadWallpaperStore();
+const CreateWallpaperForm = ({
+  promise,
+}: {
+  promise: Promise<Result<Tag[]>>;
+}) => {
+  const { toggle } = useCreateWallpaperStore();
   const [file, setFile] = useState<UploadFile>();
-  const { userId } = useAuth();
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -71,6 +53,7 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
       tags: [],
     },
   });
+
   const onFileSelect = useCallback(
     (acceptedFile: File) => {
       const previewUrl = URL.createObjectURL(acceptedFile);
@@ -106,13 +89,6 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
     [form],
   );
   const onSubmit = async (data: z.infer<typeof schema>) => {
-    if (!userId) {
-      toast.error('Authentication Required', {
-        description: 'You must be logged in to upload a wallpaper.',
-      });
-      return;
-    }
-
     if (!data.fileData) {
       toast.error('No image selected');
       return;
@@ -122,11 +98,10 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
       const key = await uploadFile(data.fileData.file);
       if (!key) throw new Error('Failed to upload file');
 
-      const res = await createWallpaperWithExistingTags({
+      const res = await createWallpaperWithExistingTagsAction({
         width: data.fileData.width,
         height: data.fileData.height,
         title: data.title,
-        userId,
         fileKey: key,
         description: data.description,
         tags: selectedTags,
@@ -137,11 +112,15 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
           description: 'Your wallpaper has been successfully uploaded!',
         });
       } else {
-        toast.error('Upload Failed', { description: res.error ?? 'Unexpected error' });
+        toast.error('Upload Failed', {
+          description: res.error ?? 'Unexpected error',
+        });
       }
     } catch (error) {
       console.error(error);
-      toast.error('Upload Error', { description: 'An unexpected error occurred.' });
+      toast.error('Upload Error', {
+        description: 'An unexpected error occurred.',
+      });
     } finally {
       toggle();
     }
@@ -172,24 +151,42 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
 
         <FormItem>
           <FormLabel className='text-sm font-semibold'>Tags</FormLabel>
-          <MultipleSelector
-            placeholder='Select tags'
-            hidePlaceholderWhenSelected
-            options={tags.map((tag) => ({
-              id: tag.id,
-              label: tag.name,
-              value: tag.name,
-            }))}
-            value={selectedTags.map((tag) => ({
-              id: tag.id,
-              label: tag.name,
-              value: tag.name,
-            }))}
-            onChange={(value) =>
-              setSelectedTags(value.map((tag) => ({ id: tag.id, name: tag.label }) as Tag))
-            }
-            badgeClassName='font-semibold'
-          />
+          <Stream
+            value={promise}
+            fallback={<div>Loading...</div>}
+            errorFallback={<div>Error</div>}
+          >
+            {(data) => {
+              if (!data.success) throw new Error(data.error);
+              const tags = data.data;
+              return (
+                <MultipleSelector
+                  options={tags.map((tag) => ({
+                    id: tag.id,
+                    label: tag.name,
+                    value: tag.name,
+                  }))}
+                  value={selectedTags.map((tag) => ({
+                    id: tag.id,
+                    label: tag.name,
+                    value: tag.name,
+                  }))}
+                  onChange={(value) =>
+                    setSelectedTags(
+                      value.map(
+                        (tag) =>
+                          ({
+                            id: tag.id,
+                            name: tag.label,
+                          }) as Tag,
+                      ),
+                    )
+                  }
+                  badgeClassName='font-semibold'
+                />
+              );
+            }}
+          </Stream>
         </FormItem>
 
         <FormField
@@ -197,7 +194,9 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='text-sm font-semibold'>Wallpaper Description</FormLabel>
+              <FormLabel className='text-sm font-semibold'>
+                Wallpaper Description
+              </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
@@ -247,7 +246,11 @@ const CreateWallpaperForm = ({ tags }: { tags: Tag[] }) => {
           )}
         />
 
-        <Button type='submit' className='font-semibold' disabled={form.formState.isSubmitting}>
+        <Button
+          type='submit'
+          className='w-full font-semibold'
+          disabled={form.formState.isSubmitting}
+        >
           {form.formState.isSubmitting ? 'Uploading...' : 'Upload'}
         </Button>
       </form>

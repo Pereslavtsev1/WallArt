@@ -9,8 +9,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 't3.storage.dev',
-        pathname: '/wall-art/**',
+        hostname: 'wall-art.t3.storage.dev',
       },
     ],
   },

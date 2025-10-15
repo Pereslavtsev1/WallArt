@@ -1,51 +1,53 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
 import { Search } from 'lucide-react';
 import Link from 'next/link';
+import { useSession } from '@/lib/auth-client';
+import Logo from '../general/logo';
 import UserItem from '../general/user-item/user-item';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Skeleton } from '../ui/skeleton';
 
-const Header = () => {
-  const { user, isLoaded, isSignedIn } = useUser();
+export default function Header() {
+  const { data, isPending } = useSession();
+  console.log(data);
 
   return (
-    <header className='py-2 flex items-center justify-between'>
-      <Link href='/' className='font-semibold text-lg'>
-        WallArt
+    <header className='flex items-center justify-between gap-x-2 py-2'>
+      <Link
+        href='/'
+        className='flex items-center gap-x-2 text-lg font-semibold'
+      >
+        <Logo />
+        <span className='hidden sm:inline'>WallArt</span>
       </Link>
-      <div className='max-w-2xl mx-8 w-full'>
+      <div className='w-full max-w-2xl'>
         <div className='relative'>
-          <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4' />
+          <Search className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground' />
           <Input
             type='text'
             placeholder='Search for wallpapers...'
             variant='ghost'
-            className='pl-10 placeholder:text-xs text-xs sm:placeholder:text-sm sm:text-sm font-semibold'
+            className='pl-10 text-xs font-semibold placeholder:text-xs sm:text-sm sm:placeholder:text-sm'
           />
         </div>
       </div>
-      <div className='w-20 justify-end flex'>
-        {!isLoaded ? (
-          <Skeleton className='h-9 w-9 rounded-full' />
-        ) : !isSignedIn ? (
-          <Link href='/sign-in'>
-            <Button variant='default' className='h-8.5 w-20' asChild>
-              <span className='font-semibold'>Login</span>
-            </Button>
-          </Link>
-        ) : (
+      <div className='flex items-center justify-end'>
+        {isPending && <Skeleton className='size-9 rounded-full' />}
+        {!isPending && data && (
           <Link href={'/settings/profile'}>
-            <Button size='icon' variant='ghost' asChild className='rounded-full'>
-              <UserItem src={user.imageUrl} alt={''} />
+            <UserItem src={data.user.image || ''} alt={data.user.name} />
+          </Link>
+        )}
+        {!isPending && !data && (
+          <Link href={'/login'}>
+            <Button variant='ghost' className='font-semibold'>
+              Login
             </Button>
           </Link>
         )}
       </div>
     </header>
   );
-};
-
-export default Header;
+}

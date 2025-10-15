@@ -1,49 +1,46 @@
-import { UserResource } from '@clerk/types';
+'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import type { User } from '@/db/schema';
 import { Button } from '../ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 
 const schema = z.object({
   description: z.string().optional(),
-  firstName: z.string().min(1, { message: 'First name must be at least 1 character' }),
-  lastName: z.string().min(2, { message: 'Last name must be at least 2 characters' }),
+  username: z
+    .string()
+    .min(2, { message: 'Last name must be at least 2 characters' }),
 });
-
-const ProfileForm = ({ user }: { user: UserResource }) => {
+export type ProofileFromProps = {
+  user: Pick<User, 'name' | 'description' | 'image'>;
+};
+const ProfileForm = ({ user }: ProofileFromProps) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      firstName: user.firstName ?? '',
-      lastName: user.lastName ?? '',
-      description: (user.unsafeMetadata.description as string) ?? '',
+      description: user.description || '',
+      username: user.name,
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof schema>) => {
-    try {
-      await user.update({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        unsafeMetadata: {
-          description: data.description,
-        },
-      });
-      console.log('Profile updated successfully!');
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-    }
-  };
+  const onSubmit = async (data: z.infer<typeof schema>) => {};
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
-          name='firstName'
+          name='username'
           render={({ field }) => (
             <FormItem>
               <FormLabel className='font-semibold'>First name</FormLabel>
@@ -55,26 +52,7 @@ const ProfileForm = ({ user }: { user: UserResource }) => {
                   className='font-semibold placeholder:font-semibold'
                 />
               </FormControl>
-              <FormMessage className='font-semibold text-xs' />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name='lastName'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className='font-semibold'>Last name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder=''
-                  {...field}
-                  variant='ghost'
-                  className='font-semibold placeholder:font-semibold'
-                />
-              </FormControl>
-              <FormMessage className='font-semibold text-xs' />
+              <FormMessage className='text-xs font-semibold' />
             </FormItem>
           )}
         />
@@ -91,14 +69,14 @@ const ProfileForm = ({ user }: { user: UserResource }) => {
                   {...field}
                   variant='ghost'
                   rows={6}
-                  className='resize-none font-semibold placeholder:font-semibold'
+                  className='resize-none bg-background font-semibold placeholder:font-semibold'
                 />
               </FormControl>
-              <FormMessage className='font-semibold text-xs' />
+              <FormMessage className='text-xs font-semibold' />
             </FormItem>
           )}
         />
-        <div className='w-full flex justify-end'>
+        <div className='flex w-full justify-end'>
           <Button type='submit' className='font-semibold'>
             Update Profile
           </Button>
