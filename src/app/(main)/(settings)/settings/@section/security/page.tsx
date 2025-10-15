@@ -27,7 +27,7 @@ export default async function SecuritySection() {
       </CardHeader>
       <CardContent>
         <div className='space-y-4'>
-          <h1 className='text-sm font-semibold'>Application Theme</h1>
+          <h1 className='text-sm font-semibold'>Device List</h1>
           <Stream
             value={sessionsPromise}
             fallback={<DeviceListSkeleton />}

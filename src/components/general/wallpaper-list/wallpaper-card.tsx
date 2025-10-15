@@ -1,16 +1,16 @@
-import { AspectRatio } from '@radix-ui/react-aspect-ratio';
 import { PixelImage } from '@/components/magicui/pixel-image';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import type { User, Wallpaper } from '@/db/schema';
 import { buildImageUrl } from '@/lib/utils';
 import UserItem from '../user-item/user-item';
 import WallpaperActions from '../wallpaper/wallpaper-actions';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 export type WallpaperCardProps = Pick<
   Wallpaper,
   'id' | 'title' | 'fileKey' | 'width' | 'height'
 > & {
-  user: Pick<User, 'id' | 'name' | 'image'>;
+  user: Pick<User, 'id' | 'username' | 'image'>;
   likes?: { wallpaperId: string }[];
 };
 export function WallpaperCard({
@@ -38,13 +38,16 @@ export function WallpaperCard({
       </div>
 
       <CardFooter className='absolute right-0 bottom-0 left-0 flex items-center gap-x-3 p-4 opacity-100 transition-all duration-500 group-hover:bg-gradient-to-t group-hover:from-black/50 group-hover:opacity-100 sm:opacity-0'>
-        <UserItem src={wallpaper.user.image || ''} alt={wallpaper.user.name} />
+        <UserItem
+          src={wallpaper.user.image || ''}
+          alt={wallpaper.user.username}
+        />
         <div className='space-y-0.5'>
           <p className='truncate text-sm font-semibold text-white'>
             {wallpaper.title}
           </p>
           <p className='truncate text-xs font-semibold text-muted-foreground'>
-            {wallpaper.user.name}
+            {wallpaper.user.username}
           </p>
         </div>
       </CardFooter>

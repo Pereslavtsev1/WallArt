@@ -52,7 +52,7 @@ export async function loadMoreWallpaperByUserId({
         height: true,
         fileKey: true,
 
-        user: { id: true, name: true, image: true },
+        user: { id: true, username: true, image: true },
         likes: {
           wallpaperId: true,
         },

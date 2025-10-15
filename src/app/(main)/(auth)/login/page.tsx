@@ -1,5 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,12 +25,6 @@ import {
 import { Icons } from '@/components/ui/icons';
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { z } from 'zod';
 
 const schema = z.object({
   email: z.email({ message: 'Please enter a valid email address.' }),
@@ -65,6 +65,12 @@ const LoginPage = () => {
     );
   };
 
+  const signInWithGoogle = async () => {
+    const data = await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: '/',
+    });
+  };
   return (
     <div className='flex min-h-svh w-full items-center justify-center p-6 md:p-10'>
       <div className='w-full max-w-sm'>
@@ -82,7 +88,11 @@ const LoginPage = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-6'
               >
-                <Button type='button' className='w-full font-semibold'>
+                <Button
+                  type='button'
+                  className='w-full font-semibold'
+                  onClick={signInWithGoogle}
+                >
                   <Icons.google className='mr-2 size-4' />
                   Continue with Google
                 </Button>

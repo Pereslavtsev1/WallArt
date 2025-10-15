@@ -1,6 +1,6 @@
 'use server';
 import { revalidatePath } from 'next/cache';
-import type { CollectionInsert, UserInsert } from '@/db/schema';
+import type { CollectionInsert, User, UserInsert } from '@/db/schema';
 import 'server-only';
 import {
   createUser,
@@ -16,8 +16,10 @@ export async function createUserAction(user: Omit<UserInsert, 'id'>) {
   return withAuth((userId) => createUser({ id: userId, ...user }));
 }
 
-export async function updateUserAction(user: Omit<UserInsert, 'id'>) {
-  return withAuth((userId) => updateUser({ id: userId, ...user }));
+export async function updateUserAction(
+  user: Pick<User, 'username' | 'description' | 'firstName' | 'lastName'>,
+) {
+  return withAuth((userId) => updateUser({ userId: userId, user: user }));
 }
 
 export async function findUserByIdAction<const U extends UserColumns>({

@@ -3,6 +3,7 @@ import { withDb } from '@/db';
 import {
   type CollectionInsert,
   collectionsTable,
+  type User,
   type UserInsert,
   usersTable,
 } from '@/db/schema';
@@ -12,9 +13,21 @@ export async function createUser(user: UserInsert) {
   return withDb((db) => db.insert(usersTable).values(user));
 }
 
-export async function updateUser(user: UserInsert) {
+export async function updateUser({
+  user,
+  userId,
+}: {
+  user: Pick<User, 'username' | 'description' | 'firstName' | 'lastName'>;
+  userId: string;
+}) {
   return withDb((db) =>
-    db.update(usersTable).set(user).where(eq(usersTable.id, user.id)),
+    db.transaction((tx) =>
+      tx
+        .update(usersTable)
+        .set(user)
+        .where(eq(usersTable.id, userId))
+        .returning(),
+    ),
   );
 }
 

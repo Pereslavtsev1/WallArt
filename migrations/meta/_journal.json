@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1759482444744,
-      "tag": "0000_mean_ultron",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1759603123199,
-      "tag": "0001_tags-data",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1759678372766,
-      "tag": "0002_remarkable_vertigo",
+      "when": 1760553905453,
+      "tag": "0000_sharp_sumo",
       "breakpoints": true
     }
   ]

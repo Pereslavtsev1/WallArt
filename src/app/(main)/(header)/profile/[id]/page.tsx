@@ -14,10 +14,12 @@ export default async function ProfilePage({
   const userPromise = findUserByIdAction({
     columns: {
       id: true,
-      name: true,
+      username: true,
       image: true,
       description: true,
       createdAt: true,
+      firstName: true,
+      lastName: true,
     },
     userId: id,
   });
@@ -47,12 +49,18 @@ export default async function ProfilePage({
               <div className='flex items-center gap-4'>
                 <UserItem
                   src={user.image || ''}
-                  alt={user.name}
+                  alt={user.username}
                   className='size-20 rounded-full shadow'
                 />
 
                 <div className='flex flex-col justify-center space-y-1'>
-                  <h1 className='text-xl font-semibold'>@{user.name}</h1>
+                  <h1 className='text-xl font-semibold'>
+                    {user.firstName} {user.lastName}
+                  </h1>
+                  <p className='text-xs font-semibold text-muted-foreground'>
+                    {user.username}
+                  </p>
+
                   <p className='text-xs font-semibold text-muted-foreground'>
                     Joined at {user.createdAt.toLocaleDateString()}
                   </p>

@@ -7,7 +7,7 @@ type WallpaperListSkeletonProps = {
   ref?: React.RefObject<HTMLUListElement> | ((node?: Element | null) => void);
 };
 export default function WallpaperListSkeleton({
-  length = 10,
+  length = 20,
   className,
   ref,
 }: WallpaperListSkeletonProps) {

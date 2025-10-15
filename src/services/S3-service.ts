@@ -1,43 +1,64 @@
 'use server';
 import 'server-only';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuid } from 'uuid';
 import { S3 } from '@/lib/s3/S3';
 
-export async function getPresignedUrl({
-  key,
-  contentType,
-  size,
-}: {
-  key: string;
+interface UploadParams {
+  type: 'upload';
   filename: string;
   contentType: string;
   size: number;
-}) {
-  try {
-    const command = new PutObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME,
-      Key: key,
-      ContentType: contentType,
-      ContentLength: size,
-    });
-    const presignedUrl = await getSignedUrl(S3, command, {
-      expiresIn: 360,
-    });
-    return {
-      presignedUrl,
-      key: key,
-    };
-  } catch (error) {
-    console.error('GetPresignedUrl error:', error);
-    return null;
+  key?: string;
+  expiresIn?: number;
+}
+
+interface DownloadParams {
+  type: 'download';
+  key: string;
+  expiresIn?: number;
+}
+
+type PresignParams = UploadParams | DownloadParams;
+
+export async function getPresignedUrl(params: PresignParams) {
+  let command: PutObjectCommand | GetObjectCommand;
+  let key: string;
+
+  switch (params.type) {
+    case 'upload':
+      key = params.key || uuid();
+      command = new PutObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+        ContentType: params.contentType,
+        ContentLength: params.size,
+      });
+      break;
+
+    case 'download':
+      key = params.key;
+      command = new GetObjectCommand({
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: key,
+      });
+      break;
+
+    default:
+      throw new Error(`Unknown presign type: ${(params as any).type}`);
   }
+
+  const presignedUrl = await getSignedUrl(S3, command, {
+    expiresIn: params.expiresIn ?? 360,
+  });
+
+  return params.type === 'upload' ? { presignedUrl, key } : { presignedUrl };
 }
 
 export async function uploadFile(file: File) {
   const presignedUrlResponse = await getPresignedUrl({
-    key: uuid(),
+    type: 'upload',
     filename: file.name,
     contentType: file.type,
     size: file.size,

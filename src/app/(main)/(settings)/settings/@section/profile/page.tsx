@@ -1,4 +1,5 @@
 import ProfileForm from '@/components/forms/profile-form';
+import { ProfileTabs } from '@/components/general/profile/profile-tabs';
 import { Stream } from '@/components/general/utils/stream';
 import {
   Card,
@@ -40,9 +41,7 @@ export default async function ProfileSection() {
           {(user) => {
             if (!user) throw new Error('User not found');
             return (
-              <ProfileForm
-                user={{ image: user.user.image ?? null, ...user.user }}
-              />
+              <ProfileForm user={{ username: user.user.name, ...user.user }} />
             );
           }}
         </Stream>

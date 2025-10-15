@@ -1,7 +1,9 @@
+'use server';
 import { DownloadIcon, HeartIcon, PlusIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import DownloadButton from '@/components/buttons/download-button';
 import UserItem from '@/components/general/user-item/user-item';
 import { Stream } from '@/components/general/utils/stream';
 import SkeletonList from '@/components/skeletons/list-skeleton';
@@ -38,14 +40,15 @@ export default async function WallpaperPage({
       fileKey: true,
       user: {
         id: true,
-        name: true,
+        username: true,
         image: true,
+        firstName: true,
+        lastName: true,
       },
       likes: { wallpaperId: true },
     },
     id,
   );
-
   const tags = findTagsByWallpaperIdAction({ id: true, name: true }, id);
 
   return (
@@ -70,12 +73,16 @@ export default async function WallpaperPage({
                       <Link href={`/profile/${wallpaper.user.id}`}>
                         <UserItem
                           src={wallpaper.user.image || ''}
-                          alt={wallpaper.user.name}
+                          alt={wallpaper.user.username}
                         />
                       </Link>
                       <div className='flex flex-col font-semibold'>
                         <p className='truncate text-sm font-semibold'>
-                          {wallpaper.user.name}
+                          {wallpaper.user.firstName} {wallpaper.user.lastName}
+                        </p>
+
+                        <p className='truncate text-xs font-semibold text-muted-foreground'>
+                          {wallpaper.user.username}
                         </p>
                       </div>
                     </div>
@@ -108,12 +115,12 @@ export default async function WallpaperPage({
                         {wallpaper.description}
                       </CardDescription>
                     </div>
-                    <div>
-                      <Button className='font-semibold'>
-                        <DownloadIcon />
-                        <span className='hidden sm:inline'>Download</span>
-                      </Button>
-                    </div>
+                    <DownloadButton fileKey={wallpaper.fileKey}>
+                      <DownloadIcon />
+                      <span className='hidden font-semibold sm:inline'>
+                        Download
+                      </span>
+                    </DownloadButton>
                   </CardFooter>
                 </Card>
               </div>
@@ -124,36 +131,34 @@ export default async function WallpaperPage({
 
       <section className='mt-4'>
         <h3 className='mb-2 font-semibold'>Tags</h3>
-        <div>
-          <Stream
-            value={tags}
-            fallback={
-              <SkeletonList
-                className={'flex gap-x-2 flex-wrap '}
-                skeletonStyles={'h-7.5 w-36 mb-2'}
-              />
-            }
-            errorFallback={<div></div>}
-          >
-            {(data) => {
-              if (!data.success) throw new Error(data.error);
-              return (
-                <ul className='flex flex-wrap gap-x-2'>
-                  {data.data.map(({ tag }) => (
-                    <li key={tag.id}>
-                      <Badge
-                        className='px-4 py-1.5 font-semibold'
-                        variant='secondary'
-                      >
-                        {tag.name}
-                      </Badge>
-                    </li>
-                  ))}
-                </ul>
-              );
-            }}
-          </Stream>
-        </div>
+        <Stream
+          value={tags}
+          fallback={
+            <SkeletonList
+              className={'flex gap-x-2 flex-wrap '}
+              skeletonStyles={'h-7.5 w-36 mb-2'}
+            />
+          }
+          errorFallback={<div></div>}
+        >
+          {(data) => {
+            if (!data.success) throw new Error(data.error);
+            return (
+              <ul className='flex flex-wrap gap-x-2'>
+                {data.data.map(({ tag }) => (
+                  <li key={tag.id}>
+                    <Badge
+                      className='px-4 py-1.5 font-semibold'
+                      variant='secondary'
+                    >
+                      {tag.name}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            );
+          }}
+        </Stream>
       </section>
     </div>
   );

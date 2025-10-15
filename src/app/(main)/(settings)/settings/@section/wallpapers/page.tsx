@@ -22,14 +22,12 @@ export default async function WallpapersSection() {
         height: true,
         width: true,
         fileKey: true,
-        user: { id: true, name: true, image: true },
+        user: { id: true, username: true, image: true },
         likes: { wallpaperId: true },
       },
-      limit,
-      offset: page * limit,
+      params: { limit, offset: limit * page },
     });
     if (!res.success) throw new Error(res.error);
-    throw new Error('asdf');
     return res.data;
   }
 

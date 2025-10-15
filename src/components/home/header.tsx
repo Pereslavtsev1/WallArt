@@ -11,6 +11,8 @@ import { Skeleton } from '../ui/skeleton';
 
 export default function Header() {
   const { data, isPending } = useSession();
+
+  console.log('Data');
   console.log(data);
 
   return (
@@ -19,7 +21,9 @@ export default function Header() {
         href='/'
         className='flex items-center gap-x-2 text-lg font-semibold'
       >
-        <Logo />
+        <div className='px-2'>
+          <Logo />
+        </div>
         <span className='hidden sm:inline'>WallArt</span>
       </Link>
       <div className='w-full max-w-2xl'>
@@ -37,12 +41,12 @@ export default function Header() {
         {isPending && <Skeleton className='size-9 rounded-full' />}
         {!isPending && data && (
           <Link href={'/settings/profile'}>
-            <UserItem src={data.user.image || ''} alt={data.user.name} />
+            <UserItem src={data.user.image ?? ''} alt={data.user.name} />
           </Link>
         )}
         {!isPending && !data && (
           <Link href={'/login'}>
-            <Button variant='ghost' className='font-semibold'>
+            <Button variant='ghost' className='px-2 font-semibold md:px-4'>
               Login
             </Button>
           </Link>

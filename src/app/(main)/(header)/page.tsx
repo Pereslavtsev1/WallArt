@@ -15,7 +15,7 @@ async function fetchFunction({ limit, page }: { limit: number; page: number }) {
       fileKey: true,
       user: {
         id: true,
-        name: true,
+        username: true,
         image: true,
       },
       likes: { wallpaperId: true },
