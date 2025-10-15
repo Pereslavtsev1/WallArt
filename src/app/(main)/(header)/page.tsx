@@ -1,12 +1,8 @@
 import { TagList } from '@/components/general/tag-list/tag-list';
-import { Stream } from '@/components/general/utils/stream';
 import InfinityScrollWallpaperList from '@/components/general/wallpaper-list/infinity-scroll-wallpaper-list';
 import Carousel from '@/components/home/carousel';
-import WallpaperListSkeleton from '@/components/skeletons/wallpaper-list-skeleton';
 import { findAllTagsAction } from '@/server/actions/tag-actions';
 import { findAllWallpapersWithUserAndLikesAction } from '@/server/actions/wallpaper-actions';
-
-const LIMIT = 10;
 
 async function fetchFunction({ limit, page }: { limit: number; page: number }) {
   return findAllWallpapersWithUserAndLikesAction({
@@ -31,6 +27,7 @@ async function loadMore({ limit, page }: { limit: number; page: number }) {
   'use server';
   const res = await fetchFunction({ limit, page });
   if (!res.success) throw new Error(res.error);
+  console.log(res.data);
   return res.data;
 }
 
@@ -44,30 +41,12 @@ export default async function MainPage() {
       </section>
 
       <section>
-        <Stream
-          value={fetchFunction({ limit: LIMIT, page: 0 })}
-          fallback={
-            <WallpaperListSkeleton
-              className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'
-              length={20}
-            />
-          }
-          errorFallback={<div>Error loading wallpapers</div>}
-        >
-          {(data) => {
-            if (!data.success) throw new Error(data.error);
-
-            return (
-              <InfinityScrollWallpaperList
-                className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'
-                initialItems={data.data}
-                initialHasMore={LIMIT === data.data.length}
-                limit={LIMIT}
-                loadMoreAction={loadMore}
-              />
-            );
+        <InfinityScrollWallpaperList
+          className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'
+          props={{
+            loadMoreAction: loadMore,
           }}
-        </Stream>
+        />
       </section>
     </div>
   );

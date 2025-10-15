@@ -1,15 +1,12 @@
-import type { Result } from '@/db';
 import type { ClassNameProps } from '../tabs';
 import { Stream, type Streamable } from '../utils/stream';
 import CollectionCard, { type CollectionCardProps } from './collection-card';
 
 type CollectionListProps = {
-  collections:
-    | Streamable<CollectionCardProps[]>
-    | Streamable<Result<CollectionCardProps[]>>;
+  items: Streamable<CollectionCardProps[]>;
 } & ClassNameProps;
 export default function CollectionList({
-  collections,
+  items: collections,
   className,
 }: CollectionListProps) {
   return (
@@ -19,11 +16,6 @@ export default function CollectionList({
       errorFallback={undefined}
     >
       {(data) => {
-        if ('success' in data && !data.success) {
-          throw new Error(data.error);
-        }
-        data = Array.isArray(data) ? data : data.data;
-
         return (
           <ul className={className}>
             {data.map((collection) => (

@@ -103,15 +103,36 @@ export async function findAllCurrentUserWallpapersWithUserAndLikesAction<
   const L extends LikeCollumns,
 >({
   columns,
-  limit,
-  offset,
-}: { columns: W & { user: U; likes: L } } & PaginationParams) {
+  params,
+}: {
+  columns: W & { user: U; likes: L };
+  params: PaginationParams;
+}) {
   return withAuth((userId) =>
     findAllWallpapersWithUserAndLikesByUserId({
       columns,
       userId: userId,
-      limit,
-      offset,
+      params,
     }),
   );
+}
+
+export async function findAllWallpapersWithUserAndLikesByUserIdAction<
+  const W extends WallpaperColumns,
+  const U extends UserColumns,
+  const L extends LikeCollumns,
+>({
+  columns,
+  userId,
+  params,
+}: {
+  columns: W & { user: U; likes: L };
+  userId: string;
+  params: PaginationParams;
+}) {
+  return findAllWallpapersWithUserAndLikesByUserId({
+    columns,
+    userId,
+    params,
+  });
 }

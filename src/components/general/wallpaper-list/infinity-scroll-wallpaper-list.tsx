@@ -1,43 +1,26 @@
 'use client';
+
+import { ErrorBoundary } from 'react-error-boundary';
 import WallpaperListSkeleton from '@/components/skeletons/wallpaper-list-skeleton';
-import { useIfinityScroll } from '@/hooks/use-infinity-scroll';
-import type { ClassNameProps } from '../tabs';
+import {
+  type UseInfinityScrollProps,
+  useInfinityScroll,
+} from '@/hooks/use-infinity-scroll';
 import type { WallpaperCardProps } from './wallpaper-card';
 import { WallpaperList } from './wallpaper-list';
 
 export default function InfinityScrollWallpaperList({
-  initialItems,
-  loadMoreAction,
-  initialHasMore,
-  initialPage,
-  limit,
   className,
+  props,
 }: {
-  initialItems: WallpaperCardProps[];
-  loadMoreAction: ({
-    limit,
-    page,
-  }: {
-    limit: number;
-    page: number;
-  }) => Promise<WallpaperCardProps[]>;
-
-  initialPage?: number;
-  limit: number;
-  initialHasMore: boolean;
-} & ClassNameProps) {
-  const { items, ref, hasMore } = useIfinityScroll<WallpaperCardProps[]>({
-    initialItems,
-    loadMore: loadMoreAction,
-    limit,
-    initialHasMore,
-    initialPage,
-  });
-
+  className: string;
+  props: UseInfinityScrollProps<WallpaperCardProps>;
+}) {
+  const { items, ref, hasMore } = useInfinityScroll(props);
   return (
-    <>
+    <ErrorBoundary fallback=<div>ErrorBoundary</div>>
       <WallpaperList items={items} className={className} />
       {hasMore && <WallpaperListSkeleton ref={ref} className={className} />}
-    </>
+    </ErrorBoundary>
   );
 }

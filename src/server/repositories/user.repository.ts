@@ -18,17 +18,20 @@ export async function updateUser(user: UserInsert) {
   );
 }
 
-export async function findUserById<const U extends UserColumns>(
-  columns: U,
-  userId: string,
-) {
+export async function findUserById<const U extends UserColumns>({
+  columns,
+  userId,
+}: {
+  columns: U;
+  userId: string;
+}) {
   return withDb((db) =>
     db.query.usersTable
       .findFirst({
         where: eq(usersTable.id, userId),
         columns,
       })
-      .then((user) => (user === undefined ? null : user)),
+      .then((user) => user ?? null),
   );
 }
 export async function findUserWithCollectionsAndWallpaperByUserId(

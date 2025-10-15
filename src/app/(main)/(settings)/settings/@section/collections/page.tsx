@@ -1,11 +1,7 @@
 import InfinityScrollCollectionList from '@/components/general/collection-list/infinity-scroll-collection-list';
 import CollectionHeaderSection from '@/components/general/collections-section/collections-section-header';
-import { Stream } from '@/components/general/utils/stream';
-import CollectionListSkeleton from '@/components/skeletons/collection-list-skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { findAllCurrentUserCollectionsAction } from '@/server/actions/collection-actions';
-
-const LIMIT = 10;
 
 async function fetchFunction({ limit, page }: { limit: number; page: number }) {
   return findAllCurrentUserCollectionsAction({
@@ -30,25 +26,12 @@ export default async function CollectionSection() {
     <Card className='bg-background'>
       <CollectionHeaderSection />
       <CardContent>
-        <Stream
-          value={fetchFunction({ limit: LIMIT, page: 0 })}
-          fallback={<CollectionListSkeleton className='columns-2' />}
-          errorFallback={undefined}
-        >
-          {(res) => {
-            if (!res.success) throw new Error(res.error);
-            const collections = res.data;
-            return (
-              <InfinityScrollCollectionList
-                initialItems={collections}
-                className='columns-2'
-                limit={LIMIT}
-                initialHasMore={collections.length === LIMIT}
-                loadMoreAction={loadMore}
-              />
-            );
+        <InfinityScrollCollectionList
+          className='columns-1 gap-x-2 sm:columns-2 md:columns-3'
+          props={{
+            loadMoreAction: loadMore,
           }}
-        </Stream>
+        />
       </CardContent>
     </Card>
   );

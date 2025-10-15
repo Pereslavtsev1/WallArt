@@ -1,24 +1,37 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-export type UseIfinityScrollProps<T> = {
+export type UseInfinityScrollProps<T> = {
   initialPage?: number;
-  loadMore: ({ page, limit }: { page: number; limit: number }) => Promise<T>;
-  limit: number;
-  initialItems: T;
-  initialHasMore: boolean;
+  loadMoreAction: ({
+    page,
+    limit,
+  }: {
+    page: number;
+    limit: number;
+  }) => Promise<T[]>;
+  limit?: number;
+  initialItems?: T[];
+  initialHasMore?: boolean;
   maxRetries?: number;
 };
+export type UseInfinityScrollReturn<T> = {
+  items: T[];
+  hasMore: boolean;
+  isLoading: boolean;
+  ref: (node?: Element | null) => void;
+  error: string | null;
+};
 
-export function useIfinityScroll<T>({
-  initialPage = 1,
-  loadMore,
-  limit,
+export function useInfinityScroll<T>({
+  initialPage = 0,
+  loadMoreAction: loadMore,
+  limit = 10,
   initialItems,
   initialHasMore = true,
   maxRetries = 3,
-}: UseIfinityScrollProps<T>) {
-  const [items, setItems] = useState<T>(initialItems);
+}: UseInfinityScrollProps<T>): UseInfinityScrollReturn<T> {
+  const [items, setItems] = useState<T[]>(initialItems || []);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(initialPage);
   const { ref, inView } = useInView();
@@ -27,13 +40,13 @@ export function useIfinityScroll<T>({
   const [retryCount, setRetryCount] = useState(0);
 
   const fetchMore = useCallback(async () => {
-    if (isLoading || !hasMore || retryCount <= maxRetries) return;
+    if (isLoading || !hasMore || retryCount > maxRetries) return;
     setIsLoading(true);
 
     try {
       const newItems = await loadMore({ page, limit });
       if (newItems.length > 0) {
-        setItems((prevItems) => [...prevItems, ...newItems] as T);
+        setItems((prevItems) => [...prevItems, ...newItems]);
         setPage((prev) => prev + 1);
       }
       if (newItems.length < limit) {
@@ -55,5 +68,5 @@ export function useIfinityScroll<T>({
     }
   }, [fetchMore, inView, hasMore, isLoading]);
 
-  return { items, setItems, hasMore, isLoading, ref, error };
+  return { items, hasMore, isLoading, ref, error };
 }

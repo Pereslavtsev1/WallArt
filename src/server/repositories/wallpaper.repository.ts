@@ -1,10 +1,10 @@
 import { eq } from 'drizzle-orm';
 import { withDb } from '@/db';
-import type { usersTable } from '@/db/auth-schema';
 import {
   collectionToWallpapersTable,
   likesTable,
   type Tag,
+  type usersTable,
   type WallpaperInsert,
   wallpapersTable,
   wallpapersToTagsTable,
@@ -203,12 +203,12 @@ export async function findAllWallpapersWithUserAndLikesByUserId<
 >({
   columns,
   userId,
-  limit,
-  offset,
+  params,
 }: {
   columns: W & { user: U; likes: L };
   userId: string;
-} & PaginationParams) {
+  params: PaginationParams;
+}) {
   return withDb((db) =>
     db.query.wallpapersTable.findMany({
       where: eq(wallpapersTable.userId, userId),
@@ -222,8 +222,7 @@ export async function findAllWallpapersWithUserAndLikesByUserId<
           columns: columns.likes,
         },
       },
-      limit,
-      offset,
+      ...params,
     }),
   );
 }
