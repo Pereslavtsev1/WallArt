@@ -14,7 +14,7 @@ export default function InfinityScrollWallpaperList({
   props,
 }: {
   className: string;
-  props: UseInfinityScrollProps<WallpaperCardProps>;
+  props: UseInfinityScrollProps<WallpaperCardProps[]>;
 }) {
   const { items, ref, hasMore } = useInfinityScroll(props);
   return (

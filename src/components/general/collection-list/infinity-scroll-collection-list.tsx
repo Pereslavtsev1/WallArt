@@ -13,7 +13,7 @@ export default function InfinityScrollCollectionList({
   props,
 }: {
   className: string;
-  props: UseInfinityScrollProps<CollectionCardProps>;
+  props: UseInfinityScrollProps<CollectionCardProps[]>;
 }) {
   const { items, ref, hasMore } = useInfinityScroll(props);
   return (

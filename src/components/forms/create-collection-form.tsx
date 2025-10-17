@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { createCollectionAction } from '@/server/actions/collection-actions';
 import { useCreateCollectionStore } from '@/stores/create-collection-store';
+import { useUserCollections } from '../providers/user-collection-provider';
 import { Button } from '../ui/button';
 import {
   Form,
@@ -24,6 +25,7 @@ const schema = z.object({
 });
 const CreateCollectionForm = () => {
   const { toggle } = useCreateCollectionStore();
+  const { setItems } = useUserCollections();
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -37,12 +39,11 @@ const CreateCollectionForm = () => {
         title: data.title,
         description: data.description,
       });
-      if (response.success) {
-        console.log(response.data);
-        toast.success('Collection created successfully');
-      } else {
-        throw new Error('Collection creation failed');
-      }
+      if (!response.success) throw new Error('Collection creation failed');
+      console.log(response.data);
+      toast.success('Collection created successfully');
+
+      setItems((prev) => [...prev, response.data]);
     } catch (error) {
       if (error instanceof Error) {
         toast.error('Collection creation failed');
@@ -54,18 +55,13 @@ const CreateCollectionForm = () => {
   };
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className='space-y-8'
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
         <FormField
           control={form.control}
           name='title'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='font-semibold'>
-                Title
-              </FormLabel>
+              <FormLabel className='font-semibold'>Title</FormLabel>
               <FormControl>
                 <Input
                   placeholder='Enter collection title'
@@ -84,9 +80,7 @@ const CreateCollectionForm = () => {
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='font-semibold'>
-                Description
-              </FormLabel>
+              <FormLabel className='font-semibold'>Description</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder='Enter collection description'

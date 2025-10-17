@@ -11,17 +11,12 @@ import {
 } from '../repositories/collection.repository';
 import type { PaginationParams } from '../repositories/wallpaper.repository';
 import { withAuth } from './auth';
-import { Result } from '@/db';
-import { CollectionCardProps } from '@/components/general/collection-list/collection-card';
 
 export async function createCollectionAction(
   collection: Omit<CollectionInsert, 'userId'>,
 ) {
   return await withAuth((userId) =>
-    createCollection({ ...collection, userId }).then((res) => {
-      revalidatePath('/collections');
-      return res;
-    }),
+    createCollection({ ...collection, userId }),
   );
 }
 

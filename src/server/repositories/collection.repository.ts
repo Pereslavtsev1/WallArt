@@ -10,7 +10,11 @@ import { withAuth } from '../actions/auth';
 
 export async function createCollection(collection: CollectionInsert) {
   return withDb((db) =>
-    db.insert(collectionsTable).values(collection).returning(),
+    db
+      .insert(collectionsTable)
+      .values(collection)
+      .returning()
+      .then((c) => c[0]),
   );
 }
 

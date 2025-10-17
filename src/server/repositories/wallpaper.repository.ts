@@ -16,20 +16,41 @@ export async function createWallpaperWithExistingTags(
 ) {
   return withDb((db) =>
     db.transaction(async (tx) => {
-      const wallpaper = await tx
+      const [createdWallpaper] = await tx
         .insert(wallpapersTable)
         .values(data)
         .returning();
-      const createdWallpaper = wallpaper[0];
 
-      const records = data.tags.map((tag) => ({
+      const tagRecords = data.tags.map((tag) => ({
         wallpaperId: createdWallpaper.id,
         tagId: tag.id,
       }));
-      if (records.length)
-        await tx.insert(wallpapersToTagsTable).values(records);
+      if (tagRecords.length) {
+        await tx.insert(wallpapersToTagsTable).values(tagRecords);
+      }
 
-      return createdWallpaper;
+      const wallpaperWithUser = await tx.query.wallpapersTable.findFirst({
+        where: eq(wallpapersTable.id, createdWallpaper.id),
+        with: {
+          user: {
+            columns: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              username: true,
+              image: true,
+            },
+          },
+          likes: {
+            where: eq(likesTable.wallpaperId, createdWallpaper.id),
+            columns: {
+              wallpaperId: true,
+            },
+          },
+        },
+      });
+
+      return wallpaperWithUser ?? null;
     }),
   );
 }

@@ -21,21 +21,7 @@ export default async function ProfileSection() {
       <CardContent>
         <Stream
           value={getUserSession()}
-          fallback={
-            <div className='space-y-8'>
-              <div className='space-y-2'>
-                <Skeleton className='h-3.5 w-32' />
-
-                <Skeleton className='h-9 w-full' />
-              </div>
-
-              <div className='space-y-2'>
-                <Skeleton className='h-3.5 w-32' />
-
-                <Skeleton className='h-36 w-full' />
-              </div>
-            </div>
-          }
+          fallback={<ProfileSectionSkeleton />}
           errorFallback={undefined}
         >
           {(user) => {
@@ -47,5 +33,34 @@ export default async function ProfileSection() {
         </Stream>
       </CardContent>
     </Card>
+  );
+}
+export function ProfileSectionSkeleton() {
+  return (
+    <div className='space-y-8'>
+      <div className='space-y-2'>
+        <Skeleton className='h-3.5 w-32' />
+
+        <Skeleton className='h-9 w-full' />
+      </div>
+
+      <div className='space-y-2'>
+        <Skeleton className='h-3.5 w-32' />
+
+        <Skeleton className='h-9 w-full' />
+      </div>
+
+      <div className='space-y-2'>
+        <Skeleton className='h-3.5 w-32' />
+
+        <Skeleton className='h-9 w-full' />
+      </div>
+
+      <div className='space-y-2'>
+        <Skeleton className='h-3.5 w-32' />
+
+        <Skeleton className='h-36 w-full' />
+      </div>
+    </div>
   );
 }

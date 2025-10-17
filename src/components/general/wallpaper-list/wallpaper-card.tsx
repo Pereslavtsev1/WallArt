@@ -1,10 +1,12 @@
+'use client';
+import { HeartIcon, PlusIcon } from 'lucide-react';
 import { PixelImage } from '@/components/magicui/pixel-image';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import type { User, Wallpaper } from '@/db/schema';
 import { buildImageUrl } from '@/lib/utils';
 import UserItem from '../user-item/user-item';
-import WallpaperActions from '../wallpaper/wallpaper-actions';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 export type WallpaperCardProps = Pick<
   Wallpaper,
@@ -31,10 +33,22 @@ export function WallpaperCard({
       </CardContent>
 
       <div className='absolute top-4 right-4 flex items-center gap-x-1 opacity-100 transition-opacity duration-500 group-hover:opacity-100 sm:opacity-0'>
-        <WallpaperActions
-          value={false}
-          className={'items-center gap-x-1 flex'}
-        />
+        <div className={'items-center gap-x-1 flex'}>
+          <Button
+            size='icon'
+            variant='default'
+            className='bg-foreground/40 hover:bg-foreground/50'
+          >
+            <HeartIcon />
+          </Button>
+          <Button
+            size='icon'
+            variant='default'
+            className='bg-foreground/40 hover:bg-foreground/50'
+          >
+            <PlusIcon className='size-4.5' />
+          </Button>
+        </div>
       </div>
 
       <CardFooter className='absolute right-0 bottom-0 left-0 flex items-center gap-x-3 p-4 opacity-100 transition-all duration-500 group-hover:bg-gradient-to-t group-hover:from-black/50 group-hover:opacity-100 sm:opacity-0'>

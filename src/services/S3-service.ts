@@ -55,7 +55,6 @@ export async function getPresignedUrl(params: PresignParams) {
 
   return params.type === 'upload' ? { presignedUrl, key } : { presignedUrl };
 }
-
 export async function uploadFile(file: File) {
   const presignedUrlResponse = await getPresignedUrl({
     type: 'upload',

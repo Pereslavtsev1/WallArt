@@ -22,6 +22,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { buildImageUrl } from '@/lib/utils';
 import { findTagsByWallpaperIdAction } from '@/server/actions/tag-actions';
 import { findWallpaperWithUserAndLikesByIdAction } from '@/server/actions/wallpaper-actions';
+import { PixelImage } from '@/components/magicui/pixel-image';
+import { AspectRatio } from '@radix-ui/react-aspect-ratio';
 
 export default async function WallpaperPage({
   params,
@@ -97,13 +99,13 @@ export default async function WallpaperPage({
                   </CardHeader>
 
                   <CardContent className='px-0'>
-                    <Image
-                      src={buildImageUrl(wallpaper.fileKey)}
-                      alt={wallpaper.title}
-                      height={wallpaper.height}
-                      width={wallpaper.width}
-                      className='rounded-2xl object-cover'
-                    />
+                    <AspectRatio ratio={wallpaper.width / wallpaper.height}>
+                      <PixelImage
+                        src={buildImageUrl(wallpaper.fileKey)}
+                        alt={wallpaper.title}
+                        className='rounded-2xl object-cover'
+                      />
+                    </AspectRatio>
                   </CardContent>
 
                   <CardFooter className='flex items-start justify-between px-0'>

@@ -15,6 +15,8 @@ import { useCreateWallpaperStore } from '@/stores/upload-wallpaper-store';
 import Dropzone from '../general/dropzone/dropzone-input';
 import { SelectedImagePreview } from '../general/selected-image-preview/selected-image-preview';
 import { Stream } from '../general/utils/stream';
+import type { WallpaperCardProps } from '../general/wallpaper-list/wallpaper-card';
+import { useUserWallpapers } from '../providers/user-wallpapers';
 import { Button } from '../ui/button';
 import {
   Form,
@@ -45,6 +47,8 @@ const CreateWallpaperForm = ({
   const { toggle } = useCreateWallpaperStore();
   const [file, setFile] = useState<UploadFile>();
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const { setItems } = useUserWallpapers();
+
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -107,14 +111,15 @@ const CreateWallpaperForm = ({
         tags: selectedTags,
       });
 
-      if (res.success) {
-        toast.success('Wallpaper Uploaded', {
-          description: 'Your wallpaper has been successfully uploaded!',
-        });
-      } else {
-        toast.error('Upload Failed', {
-          description: res.error ?? 'Unexpected error',
-        });
+      if (!res.success) throw new Error(res.error);
+
+      toast.success('Wallpaper Uploaded', {
+        description: 'Your wallpaper has been successfully uploaded!',
+      });
+
+      if (res.data !== null) {
+        const newItem: WallpaperCardProps = res.data;
+        setItems((prev) => [...prev, newItem]);
       }
     } catch (error) {
       console.error(error);

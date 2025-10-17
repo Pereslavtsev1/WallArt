@@ -42,7 +42,7 @@ export default async function MainPage() {
 
       <section>
         <InfinityScrollWallpaperList
-          className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-4'
+          className='columns-1 gap-x-2 md:columns-2 lg:columns-3 xl:columns-4'
           props={{
             loadMoreAction: loadMore,
           }}

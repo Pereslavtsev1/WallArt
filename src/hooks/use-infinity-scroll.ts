@@ -1,7 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { useInView } from 'react-intersection-observer';
 
-export type UseInfinityScrollProps<T> = {
+export type UseInfinityScrollProps<T extends unknown[]> = {
   initialPage?: number;
   loadMoreAction: ({
     page,
@@ -9,21 +15,22 @@ export type UseInfinityScrollProps<T> = {
   }: {
     page: number;
     limit: number;
-  }) => Promise<T[]>;
+  }) => Promise<T>;
   limit?: number;
-  initialItems?: T[];
+  initialItems?: T;
   initialHasMore?: boolean;
   maxRetries?: number;
 };
 export type UseInfinityScrollReturn<T> = {
-  items: T[];
+  items: T;
   hasMore: boolean;
   isLoading: boolean;
   ref: (node?: Element | null) => void;
   error: string | null;
+  setItems: Dispatch<SetStateAction<T>>;
 };
 
-export function useInfinityScroll<T>({
+export function useInfinityScroll<T extends unknown[]>({
   initialPage = 0,
   loadMoreAction: loadMore,
   limit = 10,
@@ -31,7 +38,7 @@ export function useInfinityScroll<T>({
   initialHasMore = true,
   maxRetries = 3,
 }: UseInfinityScrollProps<T>): UseInfinityScrollReturn<T> {
-  const [items, setItems] = useState<T[]>(initialItems || []);
+  const [items, setItems] = useState<T>(initialItems || ([] as unknown as T));
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(initialPage);
   const { ref, inView } = useInView();
@@ -46,7 +53,7 @@ export function useInfinityScroll<T>({
     try {
       const newItems = await loadMore({ page, limit });
       if (newItems.length > 0) {
-        setItems((prevItems) => [...prevItems, ...newItems]);
+        setItems((prevItems) => [...prevItems, ...newItems] as T);
         setPage((prev) => prev + 1);
       }
       if (newItems.length < limit) {
@@ -68,5 +75,5 @@ export function useInfinityScroll<T>({
     }
   }, [fetchMore, inView, hasMore, isLoading]);
 
-  return { items, hasMore, isLoading, ref, error };
+  return { items, hasMore, isLoading, ref, error, setItems };
 }

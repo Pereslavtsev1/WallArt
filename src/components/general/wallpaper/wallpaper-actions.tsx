@@ -1,5 +1,6 @@
 import { HeartIcon, PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toggleLikeAction } from '@/server/actions/like-actions';
 
 const WallpaperActions = ({
   value,
@@ -10,13 +11,15 @@ const WallpaperActions = ({
 }) => {
   return (
     <div className={className}>
-      <Button
-        size='icon'
-        variant='default'
-        className='bg-foreground/40 hover:bg-foreground/50'
-      >
-        <HeartIcon />
-      </Button>
+      <form action={toggleLikeAction()}>
+        <Button
+          size='icon'
+          variant='default'
+          className='bg-foreground/40 hover:bg-foreground/50'
+        >
+          <HeartIcon />
+        </Button>
+      </form>
       <Button
         size='icon'
         variant='default'

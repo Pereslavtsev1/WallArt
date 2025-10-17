@@ -19,15 +19,14 @@ import { getUserSession, withAuth } from './auth';
 export async function createWallpaperWithExistingTagsAction(
   data: Omit<WallpaperInsert, 'userId'> & { tags: Tag[] },
 ) {
-  return withAuth((userId) =>
-    createWallpaperWithExistingTags({
+  return withAuth((userId) => {
+    console.log('heree');
+    const res = createWallpaperWithExistingTags({
       ...data,
       userId,
-    }).then((res) => {
-      revalidatePath('/wallpapers');
-      return res;
-    }),
-  );
+    });
+    return res;
+  });
 }
 
 export async function findAllWallpapersWithUserAction<

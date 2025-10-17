@@ -1,20 +1,21 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCreateCollectionStore } from '@/stores/create-collection-store';
+import { SectionDescription, SectionTitle } from '../section';
 
 export default function CollectionsSectionHeader() {
   const { toggle } = useCreateCollectionStore();
   return (
-    <CardHeader className='flex items-center justify-between font-semibold'>
+    <>
       <div className='space-y-1.5'>
-        <CardTitle>Collections</CardTitle>
-        <CardDescription>Browse our wallpaper collections.</CardDescription>
+        <SectionTitle>Collections</SectionTitle>
+        <SectionDescription>
+          Browse our wallpaper collections.
+        </SectionDescription>
       </div>
-
       <Button onClick={() => toggle()} className='font-semibold'>
         Add Collections
       </Button>
-    </CardHeader>
+    </>
   );
 }
