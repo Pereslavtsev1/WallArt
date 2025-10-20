@@ -1,7 +1,8 @@
+'use server';
 import { notFound } from 'next/navigation';
-import { ProfileTabs } from '@/components/general/profile/profile-tabs';
 import UserItem from '@/components/general/user-item/user-item';
 import { Stream } from '@/components/general/utils/stream';
+import { ProfileTabs } from '@/components/profile/profile-tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { findUserByIdAction } from '@/server/actions/user-actions';
 
@@ -25,7 +26,7 @@ export default async function ProfilePage({
   });
 
   return (
-    <div className='mx-auto max-w-7xl space-y-4'>
+    <div className='mx-auto max-w-7xl space-y-4 py-6'>
       <section>
         <Stream
           value={userPromise}

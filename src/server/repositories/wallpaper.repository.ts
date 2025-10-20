@@ -9,7 +9,6 @@ import {
   wallpapersTable,
   wallpapersToTagsTable,
 } from '@/db/schema';
-import type { LikeCollumns } from './likes.repository';
 
 export async function createWallpaperWithExistingTags(
   data: WallpaperInsert & { tags: Tag[] },
@@ -55,16 +54,6 @@ export async function createWallpaperWithExistingTags(
   );
 }
 
-export async function findAllWallpapers1() {
-  return withDb((db) =>
-    db.query.wallpapersTable.findMany({
-      with: {
-        user: true,
-      },
-    }),
-  );
-}
-
 export type WallpaperColumns = {
   [K in keyof typeof wallpapersTable.$inferSelect]?: boolean;
 };
@@ -78,52 +67,61 @@ export type PaginationParams = {
   offset: number;
 };
 
-export function findAllWallpapersWithUser<
+export async function findAllWallpapersWithUserAndLikesStatus<
   W extends WallpaperColumns,
   U extends UserColumns,
->(columns: W & { user: U }, { limit, offset }: PaginationParams) {
-  return withDb((db) =>
-    db.query.wallpapersTable.findMany({
-      with: {
-        user: {
-          columns: columns.user,
-        },
-      },
-      columns: {
-        ...columns,
-      },
-      limit,
-      offset,
-    }),
-  );
-}
-export function findAllWallpapersWithUserAndLikeStatus<
-  W extends WallpaperColumns,
-  U extends UserColumns,
-  L extends LikeCollumns,
->(columns: W & { user: U; likes: L }, userId: string) {
-  return withDb((db) =>
-    db.query.wallpapersTable.findMany({
-      with: {
-        user: {
-          columns: columns.user,
-        },
-        likes: {
+>({
+  columns,
+  userId,
+  params,
+}: {
+  columns: W & { user: U };
+  userId?: string;
+  params: PaginationParams;
+}) {
+  return withDb(async (db) => {
+    const likeFilter = userId
+      ? {
           where: eq(likesTable.userId, userId),
-          columns: columns.likes,
-        },
-      },
+          columns: { wallpaperId: true },
+        }
+      : undefined;
+
+    const wallpapers = await db.query.wallpapersTable.findMany({
       columns,
-    }),
-  );
+      with: {
+        user: {
+          columns: columns.user,
+        },
+        likes: likeFilter,
+      },
+      ...params,
+    });
+
+    return wallpapers.map(({ likes, ...rest }) => ({
+      ...rest,
+      isLiked: likes.length > 0,
+    }));
+  });
 }
 
-export async function findWallpaperWithUserAndLikesById<
+export async function findWallpaperWithUserAndLikeStatusById<
   W extends WallpaperColumns,
   U extends UserColumns,
-  L extends LikeCollumns,
->(columns: W & { user: U; likes: L }, userId: string, wallpaperId: string) {
+>({
+  columns,
+  userId,
+  wallpaperId,
+}: {
+  columns: W & { user: U };
+  userId?: string;
+  wallpaperId: string;
+}) {
   return withDb(async (db) => {
+    const likeFilter = userId
+      ? { where: eq(likesTable.userId, userId), columns: { wallpaperId: true } }
+      : undefined;
+
     const wallpaper = await db.query.wallpapersTable.findFirst({
       columns,
       where: eq(wallpapersTable.id, wallpaperId),
@@ -131,13 +129,17 @@ export async function findWallpaperWithUserAndLikesById<
         user: {
           columns: columns.user,
         },
-        likes: {
-          where: eq(likesTable.userId, userId),
-          columns: columns.likes,
-        },
+        likes: likeFilter,
       },
     });
-    return wallpaper === undefined ? null : wallpaper;
+
+    if (!wallpaper) return null;
+
+    const { likes, ...rest } = wallpaper;
+    return {
+      ...rest,
+      isLiked: likes.length > 0,
+    };
   });
 }
 
@@ -145,18 +147,19 @@ export async function findWallpaperWithUserById<
   W extends WallpaperColumns,
   U extends UserColumns,
 >(columns: W & { user: U }, wallpaperId: string) {
-  return withDb(async (db) => {
-    const wallpaper = await db.query.wallpapersTable.findFirst({
-      columns,
-      where: eq(wallpapersTable.id, wallpaperId),
-      with: {
-        user: {
-          columns: columns.user,
+  return withDb(async (db) =>
+    db.query.wallpapersTable
+      .findFirst({
+        columns,
+        where: eq(wallpapersTable.id, wallpaperId),
+        with: {
+          user: {
+            columns: columns.user,
+          },
         },
-      },
-    });
-    return wallpaper === undefined ? null : wallpaper;
-  });
+      })
+      .then((w) => w ?? null),
+  );
 }
 export async function findWallpapersWithUserByCollectionId<
   const W extends WallpaperColumns,
@@ -218,32 +221,40 @@ export async function findAllWallpapersWithUserByUserId<
 }
 
 export async function findAllWallpapersWithUserAndLikesByUserId<
-  const W extends WallpaperColumns,
-  const U extends UserColumns,
-  const L extends LikeCollumns,
+  W extends WallpaperColumns,
+  U extends UserColumns,
 >({
   columns,
   userId,
   params,
 }: {
-  columns: W & { user: U; likes: L };
+  columns: W & { user: U };
   userId: string;
   params: PaginationParams;
 }) {
-  return withDb((db) =>
-    db.query.wallpapersTable.findMany({
-      where: eq(wallpapersTable.userId, userId),
+  return withDb(async (db) => {
+    const likeFilter = userId
+      ? {
+          where: eq(likesTable.userId, userId),
+          columns: { wallpaperId: true },
+        }
+      : undefined;
+
+    const wallpapers = await db.query.wallpapersTable.findMany({
       columns,
+      where: eq(wallpapersTable.userId, userId),
       with: {
         user: {
           columns: columns.user,
         },
-        likes: {
-          where: eq(likesTable.userId, userId),
-          columns: columns.likes,
-        },
+        likes: likeFilter,
       },
       ...params,
-    }),
-  );
+    });
+
+    return wallpapers.map(({ likes, ...rest }) => ({
+      ...rest,
+      isLiked: likes.length > 0,
+    }));
+  });
 }

@@ -7,15 +7,11 @@ import {
   Tab,
   Tabs,
 } from '@/components/general/tabs';
-import { useInfinityScroll } from '@/hooks/use-infinity-scroll';
-import InfinityScrollCollectionList from '../collection-list/infinity-scroll-collection-list';
-import type { WallpaperCardProps } from '../wallpaper-list/wallpaper-card';
-import { loadMoreCollectionByUserId } from './actions';
+import WallpapersTab from './wallpapers-tab';
 
 export function ProfileTabs({ userId }: { userId: string }) {
   const tabTitles = ['Wallpapers', 'Collections'];
   const [selectedTab, setSelectedTab] = useState('Wallpapers');
-  const {} = useInfinityScroll<WallpaperCardProps[]>();
 
   return (
     <div>
@@ -38,17 +34,9 @@ export function ProfileTabs({ userId }: { userId: string }) {
 
       <div className='pt-4'>
         {selectedTab === 'Wallpapers' ? (
-          <div className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-3'></div>
+          <WallpapersTab userId={userId} />
         ) : (
-          <div className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-3'>
-            <InfinityScrollCollectionList
-              className=''
-              props={{
-                loadMoreAction: async ({ limit, page }) =>
-                  loadMoreCollectionByUserId({ page, limit, userId }),
-              }}
-            />
-          </div>
+          <div className='columns-1 gap-x-2 sm:columns-2 md:columns-3 lg:columns-3'></div>
         )}
       </div>
     </div>

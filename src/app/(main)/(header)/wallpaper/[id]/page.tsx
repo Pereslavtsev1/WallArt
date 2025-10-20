@@ -1,29 +1,13 @@
 'use server';
-import { DownloadIcon, HeartIcon, PlusIcon } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import DownloadButton from '@/components/buttons/download-button';
-import UserItem from '@/components/general/user-item/user-item';
 import { Stream } from '@/components/general/utils/stream';
 import SkeletonList from '@/components/skeletons/list-skeleton';
 import UserItemSekeleton from '@/components/skeletons/user-item-skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { buildImageUrl } from '@/lib/utils';
+import WallpaperView from '@/components/wallpaper/wallpaper-view';
 import { findTagsByWallpaperIdAction } from '@/server/actions/tag-actions';
 import { findWallpaperWithUserAndLikesByIdAction } from '@/server/actions/wallpaper-actions';
-import { PixelImage } from '@/components/magicui/pixel-image';
-import { AspectRatio } from '@radix-ui/react-aspect-ratio';
 
 export default async function WallpaperPage({
   params,
@@ -47,7 +31,6 @@ export default async function WallpaperPage({
         firstName: true,
         lastName: true,
       },
-      likes: { wallpaperId: true },
     },
     id,
   );
@@ -58,7 +41,7 @@ export default async function WallpaperPage({
       <section>
         <Stream
           value={wallpaper}
-          fallback={<WallpaperSkeleton />}
+          fallback={<WallpaperSectionSkeleton />}
           errorFallback={<div></div>}
         >
           {(data) => {
@@ -67,70 +50,10 @@ export default async function WallpaperPage({
 
             const wallpaper = data.data;
 
-            return (
-              <div className='flex w-full gap-x-2'>
-                <Card className='w-full border-none bg-background px-0 shadow-none'>
-                  <CardHeader className='flex items-center justify-between px-0'>
-                    <div className='flex items-center gap-x-2'>
-                      <Link href={`/profile/${wallpaper.user.id}`}>
-                        <UserItem
-                          src={wallpaper.user.image || ''}
-                          alt={wallpaper.user.username}
-                        />
-                      </Link>
-                      <div className='flex flex-col font-semibold'>
-                        <p className='truncate text-sm font-semibold'>
-                          {wallpaper.user.firstName} {wallpaper.user.lastName}
-                        </p>
-
-                        <p className='truncate text-xs font-semibold text-muted-foreground'>
-                          {wallpaper.user.username}
-                        </p>
-                      </div>
-                    </div>
-                    <div className='flex gap-x-1'>
-                      <Button size='icon' variant='secondary'>
-                        <HeartIcon />
-                      </Button>
-                      <Button size='icon' variant='secondary'>
-                        <PlusIcon className='size-4.5' />
-                      </Button>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className='px-0'>
-                    <AspectRatio ratio={wallpaper.width / wallpaper.height}>
-                      <PixelImage
-                        src={buildImageUrl(wallpaper.fileKey)}
-                        alt={wallpaper.title}
-                        className='rounded-2xl object-cover'
-                      />
-                    </AspectRatio>
-                  </CardContent>
-
-                  <CardFooter className='flex items-start justify-between px-0'>
-                    <div className='font-semibold'>
-                      <CardTitle className='text-sm'>
-                        {wallpaper.title}
-                      </CardTitle>
-                      <CardDescription className='text-xs'>
-                        {wallpaper.description}
-                      </CardDescription>
-                    </div>
-                    <DownloadButton fileKey={wallpaper.fileKey}>
-                      <DownloadIcon />
-                      <span className='hidden font-semibold sm:inline'>
-                        Download
-                      </span>
-                    </DownloadButton>
-                  </CardFooter>
-                </Card>
-              </div>
-            );
+            return <WallpaperView wallpaper={wallpaper} />;
           }}
         </Stream>
       </section>
-
       <section className='mt-4'>
         <h3 className='mb-2 font-semibold'>Tags</h3>
         <Stream
@@ -165,7 +88,8 @@ export default async function WallpaperPage({
     </div>
   );
 }
-function WallpaperSkeleton() {
+
+function WallpaperSectionSkeleton() {
   return (
     <div className='w-full space-y-6 py-6'>
       <div className='flex items-center justify-between'>

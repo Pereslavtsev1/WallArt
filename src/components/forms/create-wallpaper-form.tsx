@@ -16,7 +16,7 @@ import Dropzone from '../general/dropzone/dropzone-input';
 import { SelectedImagePreview } from '../general/selected-image-preview/selected-image-preview';
 import { Stream } from '../general/utils/stream';
 import type { WallpaperCardProps } from '../general/wallpaper-list/wallpaper-card';
-import { useUserWallpapers } from '../providers/user-wallpapers';
+import { useUserWallpapers } from '../providers/user-wallpapers-provider';
 import { Button } from '../ui/button';
 import {
   Form,

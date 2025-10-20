@@ -5,11 +5,12 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'images.unsplash.com',
+                hostname: 'wall-art.t3.storage.dev',
             },
+
             {
                 protocol: 'https',
-                hostname: 'wall-art.t3.storage.dev',
+                hostname: 'lh3.googleusercontent.com',
             },
         ],
     },
@@ -17,6 +18,7 @@ const nextConfig: NextConfig = {
         serverActions: {
             bodySizeLimit: "10mb",
         }
-    }
+    },
+    reactStrictMode: false
 };
 export default nextConfig;
